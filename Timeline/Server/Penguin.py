@@ -63,8 +63,8 @@ class Penguin(LineReceiver):
 			return self.sendLine(buffers[0])
 
 		server_internal_id = "-1"
-		if self.room != None:
-			server_internal_id = self.room.internal_id
+		if self["room"] != None:
+			server_internal_id = self["room"].internal_id
 
 		buffering = ['', PACKET_TYPE]
 		buffering.append(buffers[0])
