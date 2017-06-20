@@ -151,15 +151,20 @@ class ModuleHandler(ModulesEventHandler):
 						Event.unsetEventsInModulesAndSubModules(module.__name__)
 					else:
 						Event.unsetEventInModule(module.__name__)
+					
+					self.modules.remove(module)
 					del module
 			else:
 				if submodules:
 					Event.unsetEventsInModulesAndSubModules(module.__name__)
 				else:
 					Event.unsetEventInModule(module.__name__)
+				
+				self.modules.remove(module)
 				del module
-
-		self.modules.clear()
+		
+		if name == None and submodules == False:
+			self.modules.clear()
 
 	def reloadModules(self, name = None):
 		for i in range(len(self.modules)):
