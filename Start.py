@@ -61,7 +61,13 @@ MHandler = ModuleHandler(Handlers)
 MHandler.startLoadingModules()
 
 # Example of initiating server to listen to given endpoint.
-Server = Engine(Penguin)
-Server.run('127.0.0.1', 6112)
+'''
+LOGIN_SERVER => Initiates Engine to be a Login server
+WORLD_SERVER => Initiates Engine to be a World Server
+
+The type of server *must* be sent to Engine as a parameter!
+'''
+LoginServer = Engine(Penguin, Constants.LOGIN_SERVER)
+LoginServer.run('127.0.0.1', 6112)
 
 reactor.run()

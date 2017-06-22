@@ -32,7 +32,7 @@ class Event(object):
 			_func = EventListener(event, function)
 			self.addListener(event, _func)
 
-			return _func
+			return function
 
 		if function != None:
 			self.addListener(event, function)
@@ -40,16 +40,18 @@ class Event(object):
 
 		return func
 
-	def call(self, e, a, kw):
+	def call(self, e, *a, **kw):
 		defer = Deferred()
 
 		if not e in self.events:
 			return defer
 
 		for l in self.events[e]:
-			defer.addCallback(l, a = a, kw = kw)
+			defer.addCallback(l)
 
-		defer.callback(e)
+		EventDetails = {'e' : e, 'a' : a, 'kw' : kw}
+
+		defer.callback(EventDetails)
 		return defer
 
 	def unsetEventInModule(self, module):
@@ -73,7 +75,7 @@ class Event(object):
 		return True
 
 	def __call__(self, event, *a, **kw):
-		return self.call(event, a, kw)
+		return self.call(event, *a, **kw)
 
 	@staticmethod
 	def Event():
@@ -89,8 +91,8 @@ class EventListener(object):
 		self.function = func
 		self.module = self.function.__module__
 
-	def __call__(self, e, a, kw):
-		return self.function(*a, **kw)
+	def __call__(self, event):
+		self.function(*(event['a']), **(event['kw']))
 
 class PacketEvent(Event):
 
@@ -102,24 +104,24 @@ class PacketEvent(Event):
 		super(PacketEvent, self).__init__()
 		self.Event = Event.Event()
 
-	def on(self, _type, category, handler=None):
+	def on(self, _type, category, server_type, handler=None):
 		_type = str(_type).lower()
 		if _type == 'xml':
-			return self.onXML(category)
+			return self.onXML(category, server_type)
 
 		elif _type == 'xt':
-			return self.onXT(category, handler)
+			return self.onXT(category, handler, server_type)
 
 		else:
 			raise TypeError("Unknown or unhandled packet type {0}".format(_type))
 
-	def onXML(self, action):
-		event = "</{0}>".format(str(action))
-		return self.Event.on(event)
+	def onXML(self, action, server_type, type = 'sys'):
+		event = "{2}-></{1}-{0}>".format(str(action), type, str(server_type))
+		return super(PacketEvent, self).on(event)
 
-	def onXT(self, c, h):
-		event = "%{0}%{1}%".format(str(c), str(h))
-		return self.Event.on(event)
+	def onXT(self, c, h, s_t):
+		event = "{2}->%{0}%{1}%".format(str(c), str(h), str(s_t))
+		return super(PacketEvent, self).on(event)
 
 class GeneralEvent(Event):
 

@@ -2,8 +2,11 @@
 Timeline - An AS3 CPPS emulator, written by dote, in python. Extensively using Twisted modules and is event driven.
 Penguin is a extension of LineReceiver, protocol. Implements the base of Client Object
 '''
+
 from Timeline.Server.Constants import TIMELINE_LOGGER, PACKET_TYPE, PACKET_DELIMITER
 from Timeline.Utils.Events import Event
+from Timeline.Utils.Cryptography import Crypto
+from Timeline.Server.Packets import PacketHandler
 
 from twisted.protocols.basic import LineReceiver
 from twisted.internet import threads
@@ -21,14 +24,33 @@ class Penguin(LineReceiver):
 		self.factory = self.engine = engine
 		self.logger = logging.getLogger(TIMELINE_LOGGER)
 
+		self.errored = None
+
 		self.buildPenguin()
 
 	def buildPenguin(self):
+		self.handshakeStage = -1
+
+		self.canRecvPacket = False
+		self.ReceivePacketEnabled = True # Penguin can receive packet only if both this and self.canRecvPacket is true.
+
+		# Some XT packets are sent before J#JS to make sure client is alive, just to make sure to ignore it ;)
+		# ('category', 'handler', 0 or 1 : execute : don't execute)
+		self.ignorableXTPackets = [('s', 'j#js', 1), ('s', 'p#getdigcooldown', 0), ('s', 'u#h', 0)] 
+
 		self.penguin = PenguinObject() # POvalue should be penguin name. Sooner.
 		self.penguin.name = None
 		self.penguin.id = None
 
 		self.penguin.room = None
+
+		# Initiate Packet Handler
+		self.PacketHandler = PacketHandler(self)
+		self.CryptoHandler = Crypto(self)
+
+	def handleCrossDomainPolicy(self):
+		self.send("<cross-domain-policy><allow-access-from domain='*' to-ports='{0}' /></cross-domain-policy>".format(self.engine.ip))
+		self.disconnect()
 
 	def getPortableName(self):
 		if self["name"] == None and self["id"] == None:
@@ -49,9 +71,17 @@ class Penguin(LineReceiver):
 	def __setitem__(self, prop, val):
 		self.penguin[prop] = val
 
+	def checkForExceptions(self, err):
+		self.errored = err
+		self.engine.log("error", self.errored.getErrorMessage(), self.getPortableName())
+
 	def lineReceived(self, line):
 		me = self.getPortableName()
 		self.engine.log("debug", "[RECV]", me, line)
+
+		receivedPacketDefer = self.PacketHandler.handlePacketReceived(line)
+		receivedPacketDefer.addErrback(self.checkForExceptions)
+		# Defer some other stuff? Probably?
 
 	def send(self, *args):
 		buffers = list(args)
@@ -63,8 +93,8 @@ class Penguin(LineReceiver):
 			return self.sendLine(buffers[0])
 
 		server_internal_id = "-1"
-		if self["room"] != None:
-			server_internal_id = self["room"].internal_id
+		if self.room != None:
+			server_internal_id = self.room.internal_id
 
 		buffering = ['', PACKET_TYPE]
 		buffering.append(buffers[0])
@@ -129,9 +159,9 @@ class PenguinObject(dict):
 
 	def __getattr__(self, attr):
 		try:
-			value = (dict.__getitem__(self, key)).POvalue
+			value = (dict.__getitem__(self, key))
 		except:
 			value = PenguinObject()
 			dict.__setitem__(self, key, value)
 		finally:
-			return value
+			return value.POvalue

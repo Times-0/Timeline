@@ -24,8 +24,9 @@ class Engine(Factory):
 	Implements the base class for reactor. Here is where things get sorted up!
 	"""
 	
-	def __init__(self, protocol, name="World Server 1", _max=300):
+	def __init__(self, protocol, _type, name="World Server 1", _max=300):
 		self.protocol = protocol
+		self.type = _type
 		self.logger = logging.getLogger(TIMELINE_LOGGER)
 		self.name = name
 		self.users = deque() # Thread safe
