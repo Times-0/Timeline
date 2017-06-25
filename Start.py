@@ -13,6 +13,7 @@ from Timeline.Server.Penguin import Penguin
 from Timeline.Utils.Events import GeneralEvent
 from Timeline.Utils.Modules import ModuleHandler
 from Timeline import Handlers
+from Timeline import PacketHandler
 from twisted.internet import reactor
 import logging
 import os
@@ -59,6 +60,11 @@ InitiateLogger()
 # Example of initiating the ModuleHandler which deals extensively with Modifications of modules at runtime.
 MHandler = ModuleHandler(Handlers)
 MHandler.startLoadingModules()
+
+# Initiating PacketHandler which deals with modification  of Packet Rule handlers
+PHandler = ModuleHandler(PacketHandler)
+PHandler.startLoadingModules()
+
 
 # Example of initiating server to listen to given endpoint.
 '''
