@@ -16,6 +16,95 @@ import pkgutil
 import importlib
 import os
 
+class ModuleHandler(ModulesEventHandler):
+
+	def __init__(self, module):
+		super(ModuleHandler, self).__init__()
+
+		self.module_parent = module
+		self.parent_module_name = self.module_parent.__name__
+		self.module_package = self.module_parent.__path__[-1]
+		self.modules = deque()
+		self.logger = logging.getLogger(TIMELINE_LOGGER)
+
+	def clearModules(self, name = None, submodules = False, only_unset = False):
+		main_module = False
+
+		for module in self.modules.__copy__():
+			if name != None:
+				if module.__name__ == name or (submodules and module.__name__.startswith(name) and main_module):
+					if submodules:
+						Event.unsetEventsInModulesAndSubModules(module.__name__)
+						main_module = True
+					else:
+						Event.unsetEventInModule(module.__name__)
+
+					if not only_unset:
+						self.modules.remove(module)
+						del module
+			else:
+				if submodules:
+					Event.unsetEventsInModulesAndSubModules(module.__name__)
+				else:
+					Event.unsetEventInModule(module.__name__)
+
+				if not only_unset:
+					self.modules.remove(module)
+					del module
+
+		if name == None and submodules == False:
+			self.modules.clear()
+
+	def reloadModules(self, name = None):
+		for i in range(len(self.modules)):
+			try:
+				if name == None:
+					self.modules[i] = rebuild(self.modules[i])
+				elif self.modules[i].__name__ == name:
+					self.modules[i] = rebuild(self.modules[i])
+			except Exception, e:
+				self.logger.error("Error rebuilding - {0}".format(self.modules[i].__name__))
+				self.logger.error("[TE030] {0}".format(e))
+
+		return self.modules
+
+	def loadModules(self, scope = None, _path = None):
+		ms_path = self.module_parent.__path__ if _path == None else _path
+		ms_name = self.module_parent.__name__ if scope == None else scope
+		for im, name, ispkg in pkgutil.iter_modules(ms_path):
+			mscope = "{0}.{1}".format(ms_name, name)
+
+			hm = importlib.import_module(mscope, package=ms_path)
+			if ispkg:
+				self.loadModules(hm.__name__, hm.__path__)
+				continue
+
+			self.modules.append(hm)
+
+	def modulesLoaded(self, a):
+		for module in self.modules:
+			if hasattr(module, 'init'):
+				getattr(module, 'init')()
+
+		self.logger.info("Loaded a fresh set of {1} module(s) in {0}".format(self.module_parent.__name__, len(self.modules)))
+
+	def autoReloadModules(self, a):
+		Observer = ModuleObserver()
+		ModuleEventHandler = self
+
+		Observer.schedule(ModuleEventHandler, path=self.module_parent.__path__[0], recursive=False)
+		Observer.start()
+
+	def startLoadingModules(self):
+		self.modules.clear()
+
+		defer = threads.deferToThread(self.loadModules)
+		defer.addCallback(self.modulesLoaded)
+		defer.addCallback(self.autoReloadModules) #Prefer doing more research on this to get a better implementation
+
+		self.logger.info("Loading modules in: {0}".format(self.module_parent.__name__))
+		return defer
+
 class ModulesEventHandler(FileSystemEventHandler):
 	def __init__(self):
 		super(ModulesEventHandler, self).__init__()
@@ -127,90 +216,7 @@ class ModulesEventHandler(FileSystemEventHandler):
 		relative_path = path[len(self.module_package):-3].rstrip("/").rstrip("\\").lstrip("/").lstrip("\\").replace("\\", ".").replace("/", '.')
 		module_name = "{0}.{1}".format(self.parent_module_name, relative_path)
 
-		self.clearModules(module_name)
+		self.clearModules(module_name, only_unset = True)
 		self.reloadModules(module_name)
 
 		self.logger.info("on_modified: {0}".format(module_name))
-
-class ModuleHandler(ModulesEventHandler):
-
-	def __init__(self, module):
-		super(ModuleHandler, self).__init__()
-
-		self.module_parent = module
-		self.parent_module_name = self.module_parent.__name__
-		self.module_package = self.module_parent.__path__[-1]
-		self.modules = deque()
-		self.logger = logging.getLogger(TIMELINE_LOGGER)
-
-	def clearModules(self, name = None, submodules = False):
-		main_module = False
-
-		for module in self.modules.__copy__():
-			if name != None:
-				if module.__name__ == name or (submodules and module.startswith(name) and main_module):
-					if submodules:
-						Event.unsetEventsInModulesAndSubModules(module.__name__)
-						main_module = True
-					else:
-						Event.unsetEventInModule(module.__name__)
-
-					self.modules.remove(module)
-					del module
-			else:
-				if submodules:
-					Event.unsetEventsInModulesAndSubModules(module.__name__)
-				else:
-					Event.unsetEventInModule(module.__name__)
-
-				self.modules.remove(module)
-				del module
-
-		if name == None and submodules == False:
-			self.modules.clear()
-
-	def reloadModules(self, name = None):
-		for i in range(len(self.modules)):
-			if name == None:
-				self.modules[i] = rebuild(self.modules[i])
-			elif self.modules[i].__name__ == name:
-				self.modules[i] = rebuild(self.modules[i])
-
-		return self.modules
-
-	def loadModules(self, scope = None, _path = None):
-		ms_path = self.module_parent.__path__ if _path == None else _path
-		ms_name = self.module_parent.__name__ if scope == None else scope
-		for im, name, ispkg in pkgutil.iter_modules(ms_path):
-			mscope = "{0}.{1}".format(ms_name, name)
-
-			hm = importlib.import_module(mscope, package=ms_path)
-			if ispkg:
-				self.loadModules(hm.__name__, hm.__path__)
-				continue
-
-			self.modules.append(hm)
-
-	def modulesLoaded(self, a):
-		for module in self.modules:
-			if hasattr(module, 'init'):
-				getattr(module, 'init')()
-
-		self.logger.info("Loaded a fresh set of {1} module(s) in {0}".format(self.module_parent.__name__, len(self.modules)))
-
-	def autoReloadModules(self, a):
-		Observer = ModuleObserver()
-		ModuleEventHandler = self
-
-		Observer.schedule(ModuleEventHandler, path=self.module_parent.__path__[0], recursive=False)
-		Observer.start()
-
-	def startLoadingModules(self):
-		self.modules.clear()
-
-		defer = threads.deferToThread(self.loadModules)
-		defer.addCallback(self.modulesLoaded)
-		defer.addCallback(self.autoReloadModules) #Prefer doing more research on this to get a better implementation
-
-		self.logger.info("Loading modules in: {0}".format(self.module_parent.__name__))
-		return defer
