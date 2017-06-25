@@ -118,17 +118,31 @@ class PacketHandler(object):
 				action = body.get("action")
 
 				event = "{2}-></{0}-{1}>".format(data[0], action, self.penguin.engine.type)
+				RuleHandler = PacketEventHandler.FetchRule('xml', action, data[0], self.penguin.engine.type)
+				if RuleHandler != None:
+					args, kwargs = RuleHandler(body)
+				else:
+					args, kwargs = [[], {}]
 
-				PacketEventHandler(event, self.penguin, body)
+				args = [self.penguin] + args
+
+				PacketEventHandler(event, args = (self.penguin, body), rules_a = args, rules_kwarg = kwargs)
 
 		elif type == 2:
 			if data == True:
 				return False
 
-			# TODO : Force check packet structure for some which is said to have so
-
 			event = "{2}->%{0}%{1}%".format(data[0], data[1], self.penguin.engine.type)
-			PacketEventHandler(event, self.penguin, data[3])
+			RuleHandler = PacketEventHandler.FetchRule('xt', data[0], data[1], self.penguin.engine.type)
+			if RuleHandler != None:
+				args, kwargs = RuleHandler(data)
+			else:
+				args = []
+				kwargs = {}
+
+			args = [self.penguin] + args
+
+			PacketEventHandler(event, args = [self.penguin, data], rules_a = args, rules_kwarg = kwargs)
 
 		elif type == 3:
 			return False
