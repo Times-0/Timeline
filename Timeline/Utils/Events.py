@@ -92,6 +92,10 @@ class EventListener(object):
 		self.module = self.function.__module__
 
 	def __call__(self, event):
+		if 'ra' in event and self in PacketEventHandler.function_w_rules:
+			self.function(*(event['ra']), **(event['rkw']))
+			return
+
 		self.function(*(event['a']), **(event['kw']))
 
 class PacketEvent(Event):
@@ -103,6 +107,41 @@ class PacketEvent(Event):
 	def __init__(self):
 		super(PacketEvent, self).__init__()
 		self.Event = Event.Event()
+		self.packet_rules = dict() # Available packet rules. ie, cat|handler : rule
+		self.function_w_rules = list() # Functions
+
+	def FetchRule(self, type, c, h_t, s_t):
+		type = str(type).lower()
+		rule = "{3}->{2}^{0}|{1}".format(c, h_t, type, s_t)
+
+		if rule in self.packet_rules:
+			return self.packet_rules[rule]
+
+		return None
+
+	def XTPacketRule(self, c, h, s_t, function = None):
+		rule = '{2}->xt^{0}|{1}'.format(c, h, s_t)
+		def func(function):
+			self.packet_rules[rule] = function
+			return function
+
+		if function != None:
+			self.packet_rules[rule] = function
+			return function
+
+		return func
+
+	def XMLPacketRule(self, a, s_t, t = 'sys', function = None):
+		rule = "{2}->xml^{0}|{1}".format(a, t, s_t)
+		def func(function):
+			self.packet_rules[rule] = function
+			return function
+
+		if function != None:
+			self.packet_rules[rule] = function
+			return function
+
+		return func
 
 	def on(self, _type, category, server_type, handler=None):
 		_type = str(_type).lower()
@@ -115,13 +154,40 @@ class PacketEvent(Event):
 		else:
 			raise TypeError("Unknown or unhandled packet type {0}".format(_type))
 
-	def onXML(self, action, server_type, type = 'sys'):
-		event = "{2}-></{1}-{0}>".format(str(action), type, str(server_type))
-		return super(PacketEvent, self).on(event)
+	def call(self, e, args = (), kwargs = {}, rules_a = (), rules_kwarg = {}):
+		defer = Deferred()
 
-	def onXT(self, c, h, s_t):
+		if not e in self.events:
+			return defer
+
+		for l in self.events[e]:
+			defer.addCallback(l)
+
+		EventDetails = {'e' : e, 'a' : args, 'kw' : kwargs, 'ra' : rules_a, 'rkw' : rules_kwarg}
+
+		defer.callback(EventDetails)
+		return defer
+
+	def on_packet(self, event, isruled):
+		event = str(event)
+
+		def func(function):
+			_func = EventListener(event, function)
+			self.addListener(event, _func)
+			if isruled:
+				self.function_w_rules.append(_func)
+
+			return function
+
+		return func
+
+	def onXML(self, action, server_type, type = 'sys', packet_rule = False):
+		event = "{2}-></{1}-{0}>".format(str(action), type, str(server_type))
+		return self.on_packet(event, packet_rule) #super(PacketEvent, self).on(event)
+
+	def onXT(self, c, h, s_t, p_r = False):
 		event = "{2}->%{0}%{1}%".format(str(c), str(h), str(s_t))
-		return super(PacketEvent, self).on(event)
+		return self.on_packet(events, packet_rule) #super(PacketEvent, self).on(event)
 
 class GeneralEvent(Event):
 
