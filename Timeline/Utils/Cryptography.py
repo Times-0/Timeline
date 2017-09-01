@@ -46,4 +46,4 @@ class Crypto(object):
 		_hash += self.randomKey
 		_hash += self.salt
 
-		return self.swap(self.md5(_hash),)
+		return self.swap(self.md5(_hash),16)
