@@ -43,15 +43,22 @@ def InitiateLogger(name="Timeline"):
 
 print \
 """
-_________________________________________________________
-|                      TIMELINE                         |
-|          AS3 CPPS Emulator, Written in Python         |
-|          Developer: Dote                              |
-|_______________________________________________________|
-|                                                       |
-|         Version : 0.1 [Development]                   |
-|         Updates : Added logger, Added handlers        |
-|_______________________________________________________|
+ _______
+|__   __|
+   | |  #   _ _     __  ||  #  __     __  
+   | | | | | | |  / //| || || |  |  / //|     
+   | | | | | | | |_||/  || || |  | |_||/          
+   |_| |_| | | |  \__   || || |  |  \__     
+----------------------------------------------
+> AS3 CPPS Emulator. Written in Python
+> Developer : Dote
+> Version   : 1.0x (Development)
+> Updates   : [+] Packet rules
+              [+] Handlers
+              [+] Cryptography
+              [+] Error handling
+              [-] Bugs and errors
+_______________________________________________
 """
 
 # Example of starting the logger!
