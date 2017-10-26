@@ -48,7 +48,7 @@ def XMLoginLiteralsRule(data):
 		raise Exception("[TE011] Invalid username length - {0}".format(len(username)))
 
 	username_w_space = username.replace(" ", '')
-	if not username.isalnum():
+	if not username_w_space.isalnum():
 		raise Exception("[TE012] Invalid characters found in username - {0}".format(username))
 
 	# Is password check necessary?
