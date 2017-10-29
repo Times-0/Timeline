@@ -3,7 +3,7 @@ Timeline's memory based redis databases' handler
 """
 
 from Timeline.Server.Constants import LOGIN_SERVER, WORLD_SERVER
-=======
+
 
 
 import txredisapi as redis
@@ -53,7 +53,7 @@ class Redis(object):
     def log(self, k, *a):
         msg = ["(Redis)"] + list(a)
         self.engine.log(k, *msg)
-=======
+
         
         name = "server:{0}".format(self.engine.id)
         yield self.server.hmset(name, {
