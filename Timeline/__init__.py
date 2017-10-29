@@ -9,7 +9,7 @@ class Username(str):
     def __new__(self, u, c):
         return super(Username, self).__new__(self, u)
     
-=======
+
 class Username(object):
 
     def __init__(self, username, client):
@@ -45,7 +45,7 @@ class Nickname(str):
     def __new__(self, n, c):
         return super(Nickname, self).__new__(self, n)
     
-=======
+
 class Nickname(object):
 
     def __init__(self, n, c):
@@ -73,7 +73,7 @@ class Nickname(object):
         
         if x:
             self.n = n
-=======
+
     def value(self, n):
         if self.c.db_nicknameUpdate(n):
             self.n = n
