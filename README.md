@@ -14,7 +14,8 @@ Timeline is built heavily on Twisted and is even-driven, most of methods are Def
   - [txredisapi](https://github.com/fiorix/txredisapi)
   - [Twistar](http://findingscience.com/twistar/)
   - [BCrypt](https://pypi.python.org/pypi/bcrypt/)
-
+  - [lxml](http://lxml.de/installation.html)
+  
 # Installation and Usage
 Download **Timeline**, put it in an accessable and readable directory. Navigate to that directory using CMD or Shell or any console client. Run `Start.py`. The server will start running.
 
