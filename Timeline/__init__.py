@@ -9,9 +9,6 @@ class Username(str):
     def __new__(self, u, c):
         return super(Username, self).__new__(self, u)
     
-
-class Username(object):
-
     def __init__(self, username, client):
         self.u = username
         self.c = client
@@ -45,9 +42,6 @@ class Nickname(str):
     def __new__(self, n, c):
         return super(Nickname, self).__new__(self, n)
     
-
-class Nickname(object):
-
     def __init__(self, n, c):
         self.n = n
         self.c = c
