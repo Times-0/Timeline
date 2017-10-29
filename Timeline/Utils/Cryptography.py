@@ -10,6 +10,7 @@ from string import *
 from random import shuffle, choice
 import string
 from hashlib import md5 as MD5
+import bcrypt
 import logging
 
 class Crypto(object):
@@ -19,7 +20,7 @@ class Crypto(object):
 
 		self.penguin = penguin
 		self.logger = logging.getLogger(TIMELINE_LOGGER)
-		self.random_literals = list(ascii_letters + str(digits) + punctuation)
+		self.random_literals = list(ascii_letters + str(digits) + "+_=/_@#$%^&*()-':;!?,.`~\|<>{}")
 		self.randomKey = self.random(5) + "-" + self.random(4)
 		self.salt = "a1ebe00441f5aecb185d0ec178ca2305Y(02.>'H}t\":E1_root"
 
@@ -28,6 +29,12 @@ class Crypto(object):
 
 	def md5(self, text):
 		return MD5(text).hexdigest()
+		
+	def bcrypt(self, text):
+		return bcrypt.hashpw(text, bcrypt.gensalt())
+		
+	def bcheck(self, psd, h):
+		return bcrypt.hashpw(psd, h) == h
 
 	def pureMD5(self, text):
 		return MD5(text)
@@ -47,3 +54,16 @@ class Crypto(object):
 		_hash += self.salt
 
 		return self.swap(self.md5(_hash),16)
+		
+	def confirmHash(self):
+		if self.penguin["swid"] == None:
+			return None
+			
+		adkey = self.randomKey.split('-')[1]
+		antekey = self.penguin["swid"][1:-1].split('-')
+		
+		usab = antekey[0][:4] + antekey[-1][:6]
+		
+		h = usab + adkey
+		
+		return h

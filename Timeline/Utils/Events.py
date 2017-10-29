@@ -86,12 +86,15 @@ class Event(object):
 
 class EventListener(object):
 
-	def __init__(self, name, func):
+	def __init__(self, name, func, k):
 		self.name = name
 		self.function = func
 		self.module = self.function.__module__
+		self.x = k
 
 	def __call__(self, event):
+		if event == None:
+			return
 		if 'ra' in event and self in PacketEventHandler.function_w_rules:
 			self.function(*(event['ra']), **(event['rkw']))
 			return
@@ -110,6 +113,7 @@ class PacketEvent(Event):
 		self.packet_rules = dict() # Available packet rules. ie, cat|handler : rule
 		self.function_w_rules = list() # Functions
 
+    #                   xml   action data engin  
 	def FetchRule(self, type, c, h_t, s_t):
 		type = str(type).lower()
 		rule = "{3}->{2}^{0}|{1}".format(c, h_t, type, s_t)
@@ -133,6 +137,7 @@ class PacketEvent(Event):
 
 	def XMLPacketRule(self, a, s_t, t = 'sys', function = None):
 		rule = "{2}->xml^{0}|{1}".format(a, t, s_t)
+		
 		def func(function):
 			self.packet_rules[rule] = function
 			return function
@@ -170,9 +175,9 @@ class PacketEvent(Event):
 
 	def on_packet(self, event, isruled):
 		event = str(event)
-
+		
 		def func(function):
-			_func = EventListener(event, function)
+			_func = EventListener(event, function, self)
 			self.addListener(event, _func)
 			if isruled:
 				self.function_w_rules.append(_func)
@@ -181,13 +186,13 @@ class PacketEvent(Event):
 
 		return func
 
-	def onXML(self, action, server_type, type = 'sys', packet_rule = False):
+	def onXML(self, action, server_type, type = 'sys', p_r = True):
 		event = "{2}-></{1}-{0}>".format(str(action), type, str(server_type))
-		return self.on_packet(event, packet_rule) #super(PacketEvent, self).on(event)
+		return self.on_packet(event, p_r) #super(PacketEvent, self).on(event)
 
-	def onXT(self, c, h, s_t, p_r = False):
+	def onXT(self, c, h, s_t, p_r = True):
 		event = "{2}->%{0}%{1}%".format(str(c), str(h), str(s_t))
-		return self.on_packet(events, packet_rule) #super(PacketEvent, self).on(event)
+		return self.on_packet(event, p_r) #super(PacketEvent, self).on(event)
 
 class GeneralEvent(Event):
 

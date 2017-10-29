@@ -119,6 +119,7 @@ class PacketHandler(object):
 
 				event = "{2}-></{0}-{1}>".format(data[0], action, self.penguin.engine.type)
 				RuleHandler = PacketEventHandler.FetchRule('xml', action, data[0], self.penguin.engine.type)
+				
 				if RuleHandler != None:
 					args, kwargs = RuleHandler(body)
 				else:
@@ -126,7 +127,7 @@ class PacketHandler(object):
 
 				args = [self.penguin] + args
 
-				PacketEventHandler(event, args = (self.penguin, body), rules_a = args, rules_kwarg = kwargs)
+				PacketEventHandler.call(event, args = (self.penguin, body), rules_a = args, rules_kwarg = kwargs)
 
 		elif type == 2:
 			if data == True:
@@ -142,7 +143,7 @@ class PacketHandler(object):
 
 			args = [self.penguin] + args
 
-			PacketEventHandler(event, args = [self.penguin, data], rules_a = args, rules_kwarg = kwargs)
+			PacketEventHandler.call(event, args = [self.penguin, data], rules_a = args, rules_kwarg = kwargs)
 
 		elif type == 3:
 			return False

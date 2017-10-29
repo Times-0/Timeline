@@ -3,6 +3,7 @@ Timeline - An AS3 CPPS emulator, written by dote, in python. Extensively using T
 Engine is the main reactor, based on Twisted which starts the server and listens to given details
 '''
 from Timeline.Server.Constants import TIMELINE_LOGGER
+from Timeline.Server.Redis import Redis
 from Timeline.Utils.Events import Event
 
 from twisted.internet.protocol import Factory
@@ -24,14 +25,17 @@ class Engine(Factory):
 	Implements the base class for reactor. Here is where things get sorted up!
 	"""
 	
-	def __init__(self, protocol, _type, name="World Server 1", _max=300):
+	def __init__(self, protocol, _type, _id, name="World Server 1", _max=300):
 		self.protocol = protocol
 		self.type = _type
+		self.id = _id
 		self.logger = logging.getLogger(TIMELINE_LOGGER)
 		self.name = name
 		self.users = deque() # Thread safe
 		self.dbDetails = dict()
 		self.maximum = _max - 1
+		
+		self.redis = Redis(self)
 
 		self.log("info", "Timeline Factory Started!")
 		self.log("info", "Running:", self.name)
@@ -68,7 +72,8 @@ class Engine(Factory):
 	def log(self, type, *a):
 		a = map(str, a)
 		message = " ".join(a)
-
+		message = "[{1}:{0}] {2}".format(self.name, self.type, message)
+		
 		if type == "info":
 			self.logger.info(message)
 		elif type == "warn":
@@ -80,3 +85,5 @@ class Engine(Factory):
 
 	def connectionLost(self, reason):
 		self.log('error', "Server exited! reason:", reason)
+		
+		self.redis.server.hmset("server:{}".format(self.id), {'population':0})

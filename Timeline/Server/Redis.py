@@ -1,6 +1,10 @@
 """
 Timeline's memory based redis databases' handler
 """
+<<<<<<< HEAD
+from Timeline.Server.Constants import LOGIN_SERVER, WORLD_SERVER
+=======
+>>>>>>> 654a344afaf9c49724dbd915e359d8e0f599d571
 
 import txredisapi as redis
 import json
@@ -20,6 +24,36 @@ class Redis(object):
         self.server = pool
         
         self.log("info", "Setting redis data...")
+<<<<<<< HEAD
+        if self.engine.type == WORLD_SERVER:
+            name = "server:{0}".format(self.engine.id)
+            yield self.server.hmset(name, {
+                'name' : self.engine.name,
+                'max' : self.engine.maximum,
+                'population' : 0
+                
+            })
+            
+            yield self.server.sadd("servers", self.engine.id)
+        
+        
+        self.log("info", "Setup memcache data successful!")
+    
+    
+    @inlineCallbacks     
+    def getWorldServers(self):
+        servers = yield self.server.smembers("servers")
+        s = dict({})
+        
+        for sid in servers:
+            s[sid] = yield self.server.hgetall("server:{0}".format(self.engine.id))
+        
+        returnValue(s)
+        
+    def log(self, k, *a):
+        msg = ["(Redis)"] + list(a)
+        self.engine.log(k, *msg)
+=======
         
         name = "server:{0}".format(self.engine.id)
         yield self.server.hmset(name, {
@@ -40,3 +74,4 @@ class Redis(object):
     def log(self, k, *a):
         msg = ["(Redis)"] + list(a)
         self.engine.log(k, *msg)
+>>>>>>> 654a344afaf9c49724dbd915e359d8e0f599d571

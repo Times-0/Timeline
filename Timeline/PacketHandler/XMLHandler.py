@@ -13,7 +13,7 @@ import logging
 
 '''
 Example:
-@PacketEventHandler._PakcetRule('action/category', 'type/handler')
+@PacketEventHandler._PacketRule('action/category', 'type/handler')
 def handler(data):
 	// do something
 
@@ -58,6 +58,6 @@ def XMLoginLiteralsRule(data):
 
 	# Check for hexadecimal validity
 	try: int(password, 16)
-	except: raise Exception("[TR014] Invalid md5 hash (hexadecimal check) - {0}".format(password))
+	except: raise Exception("[TE014] Invalid md5 hash (hexadecimal check) - {0}".format(password))
 
 	return [[username, password], {}]

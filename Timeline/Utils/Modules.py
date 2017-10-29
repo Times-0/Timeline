@@ -5,7 +5,7 @@ Modules : ModuleHandler handles all modules in the given dir, and takes carre of
 '''
 
 from Timeline.Server.Constants import TIMELINE_LOGGER
-from Timeline.Utils.Events import Event
+from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
 from twisted.python.rebuild import rebuild
 from twisted.internet import threads
 from watchdog.observers import Observer as ModuleObserver
@@ -36,14 +36,13 @@ class ModulesEventHandler(FileSystemEventHandler):
 			return
 
 		if not path.startswith(self.module_package) or not path.endswith(".py"):
-			print event
 			return
 
 		relative_path = path[len(self.module_package):-3].rstrip("/").rstrip("\\").lstrip("/").lstrip("\\").replace("\\", ".").replace("/", '.')
 		module_name = "{0}.{1}".format(self.parent_module_name, relative_path)
 
 		module_parent_path = "/".join(path.replace("\\", "/").split("/")[:-1])
-		module_parent_scope = ".".join(module_name.split(".")[:-1])
+		module_parent_scope = (".".join(module_name.split(".")[:-1]))
 		self.loadModules(module_parent_scope, [module_parent_path])		
 
 		self.logger.info("on_created: {0}".format(module_name))
@@ -106,7 +105,6 @@ class ModulesEventHandler(FileSystemEventHandler):
 			return
 
 		if not path.startswith(self.module_package) or not path.endswith(".py"):
-			print event
 			return
 
 		self.clearModules(module_name)
@@ -121,7 +119,6 @@ class ModulesEventHandler(FileSystemEventHandler):
 		path = event.src_path
 
 		if not path.startswith(self.module_package) or not path.endswith(".py") or directory:
-			print event
 			return
 
 		relative_path = path[len(self.module_package):-3].rstrip("/").rstrip("\\").lstrip("/").lstrip("\\").replace("\\", ".").replace("/", '.')
@@ -145,15 +142,19 @@ class ModuleHandler(ModulesEventHandler):
 
 	def clearModules(self, name = None, submodules = False, only_unset = False):
 		main_module = False
-
-		for module in self.modules.__copy__():
+		
+		for module in list(self.modules):
 			if name != None:
 				if module.__name__ == name or (submodules and module.__name__.startswith(name) and main_module):
 					if submodules:
 						Event.unsetEventsInModulesAndSubModules(module.__name__)
+						PacketEventHandler.unsetEventsInModulesAndSubModules(module.__name__)
+						GeneralEvent.unsetEventsInModulesAndSubModules(module.__name__)
 						main_module = True
 					else:
 						Event.unsetEventInModule(module.__name__)
+						PacketEventHandler.unsetEventInModule(module.__name__)
+						GeneralEvent.unsetEventInModule(module.__name__)
 
 					if not only_unset:
 						self.modules.remove(module)
@@ -161,8 +162,12 @@ class ModuleHandler(ModulesEventHandler):
 			else:
 				if submodules:
 					Event.unsetEventsInModulesAndSubModules(module.__name__)
+					PacketEventHandler.unsetEventsInModulesAndSubModules(module.__name__)
+					GeneralEvent.unsetEventsInModulesAndSubModules(module.__name__)
 				else:
 					Event.unsetEventInModule(module.__name__)
+					PacketEventHandler.unsetEventInModule(module.__name__)
+					GeneralEvent.unsetEventInModule(module.__name__)
 
 				if not only_unset:
 					self.modules.remove(module)
@@ -186,7 +191,7 @@ class ModuleHandler(ModulesEventHandler):
 
 	def loadModules(self, scope = None, _path = None):
 		ms_path = self.module_parent.__path__ if _path == None else _path
-		ms_name = self.module_parent.__name__ if scope == None else scope
+		ms_name = self.module_parent.__name__ if scope == None else scope.strip('.')
 		for im, name, ispkg in pkgutil.iter_modules(ms_path):
 			mscope = "{0}.{1}".format(ms_name, name)
 

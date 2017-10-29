@@ -7,6 +7,7 @@ from Timeline.Server.Constants import TIMELINE_LOGGER, PACKET_TYPE, PACKET_DELIM
 from Timeline.Utils.Events import Event
 from Timeline.Utils.Cryptography import Crypto
 from Timeline.Server.Packets import PacketHandler
+from Timeline.Database.DB import PenguinDB
 
 from twisted.protocols.basic import LineReceiver
 from twisted.internet import threads
@@ -16,11 +17,13 @@ from repr import Repr
 from collections import deque
 import logging
 
-class Penguin(LineReceiver):
+class Penguin(LineReceiver, PenguinDB):
 
 	delimiter = chr(0)
 
 	def __init__(self, engine):
+		super(Penguin, self).__init__()
+		
 		self.factory = self.engine = engine
 		self.logger = logging.getLogger(TIMELINE_LOGGER)
 
@@ -47,6 +50,12 @@ class Penguin(LineReceiver):
 		# Initiate Packet Handler
 		self.PacketHandler = PacketHandler(self)
 		self.CryptoHandler = Crypto(self)
+		
+	def checkPassword(self, password):
+		return self.CryptoHandler.loginHash() == password
+		
+	def banned(self):
+		return False #TODO
 
 	def handleCrossDomainPolicy(self):
 		self.send("<cross-domain-policy><allow-access-from domain='*' to-ports='{0}' /></cross-domain-policy>".format(self.engine.ip))
@@ -73,7 +82,7 @@ class Penguin(LineReceiver):
 
 	def checkForExceptions(self, err):
 		self.errored = err
-		self.engine.log("error", self.errored.getErrorMessage(), self.getPortableName())
+		self.engine.log("error", self.getPortableName(), self.errored.getErrorMessage())
 
 	def lineReceived(self, line):
 		me = self.getPortableName()
@@ -93,19 +102,22 @@ class Penguin(LineReceiver):
 			return self.sendLine(buffers[0])
 
 		server_internal_id = "-1"
-		if self.room != None:
+		if self.penguin.room != None:
 			server_internal_id = self.room.internal_id
 
 		buffering = ['', PACKET_TYPE]
 		buffering.append(buffers[0])
 		buffering.append(server_internal_id)
 
-		buffering += packets[1:]
+		buffering += buffers[1:]
 		buffering.append('')
 
 		buffering = PACKET_DELIMITER.join(list(map(str, buffering)))
 		self.engine.log("debug", "[SEND]", buffering)
 		return self.sendLine(buffering)
+		
+	def log(self, l, *a):
+		self.engine.log(l, self.getPortableName(), *a)
 
 
 	def disconnect(self):
@@ -142,7 +154,7 @@ class PenguinObject(dict):
 		try:
 			value = (dict.__getitem__(self, key))
 		except:
-			value = PenguinObject()
+			value = None
 			dict.__setitem__(self, key, value)
 		finally:
 			return value
@@ -152,16 +164,16 @@ class PenguinObject(dict):
 
 	def __setattr__(self, attr, value):
 		if attr != "POvalue":
-			value = PenguinObject(value)
+			value = value
 
 		dict.__setitem__(self, attr, value)
 		object.__setattr__(self, attr, value)
 
 	def __getattr__(self, attr):
 		try:
-			value = (dict.__getitem__(self, key))
+			value = (dict.__getitem__(self, attr))
 		except:
-			value = PenguinObject()
-			dict.__setitem__(self, key, value)
+			value = None
+			dict.__setitem__(self, attr, value)
 		finally:
-			return value.POvalue
+			return value

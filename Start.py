@@ -1,3 +1,4 @@
+#-*-coding: utf-8-*-
 '''
 Timeline - An AS3 CPPS emulator, written by dote, in python. Extensively using Twisted modules and is event driven.
 Below shows examples of starting a World-Server and Login-Server
@@ -8,6 +9,7 @@ Basic imports : These are mandatory to import before starting any server.
 '''
 import Timeline
 from Timeline.Server import Constants
+from Timeline.Database import DBManagement as DBM
 from Timeline.Server.Engine import Engine
 from Timeline.Server.Penguin import Penguin
 from Timeline.Utils.Events import GeneralEvent
@@ -16,7 +18,7 @@ from Timeline import Handlers
 from Timeline import PacketHandler
 from twisted.internet import reactor
 import logging
-import os
+import os, sys
 
 '''
 global -> TIMELINE_LOGGER : Defines the name of logging class used globally!
@@ -52,12 +54,12 @@ print \
 ----------------------------------------------
 > AS3 CPPS Emulator. Written in Python
 > Developer : Dote
-> Version   : 1.0x (Development)
-> Updates   : [+] Packet rules
-              [+] Handlers
-              [+] Cryptography
-              [+] Error handling
-              [-] Bugs and errors
+> Version   : 2.0x (Development)
+> Updates   : [+] Database
+              [+] on memory Redis Server
+              [+] Login handler 
+              [+] Errors fixed
+              [-] Bugs fixed and deferred
 _______________________________________________
 """
 
@@ -72,6 +74,10 @@ MHandler.startLoadingModules()
 PHandler = ModuleHandler(PacketHandler)
 PHandler.startLoadingModules()
 
+#Checking database, databas details once set cannot be change during runtime
+DBMS = DBM(user = "root", passd = "", db = "times-cp")
+if not DBMS.conn:
+	sys.exit()
 
 # Example of initiating server to listen to given endpoint.
 '''
@@ -80,7 +86,7 @@ WORLD_SERVER => Initiates Engine to be a World Server
 
 The type of server *must* be sent to Engine as a parameter!
 '''
-LoginServer = Engine(Penguin, Constants.LOGIN_SERVER)
+LoginServer = Engine(Penguin, Constants.LOGIN_SERVER, 100, "Login")
 LoginServer.run('127.0.0.1', 6112)
 
 reactor.run()
