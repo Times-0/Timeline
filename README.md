@@ -3,12 +3,17 @@ AS3 CPPS Emulator, written in Python.
 Timeline is built heavily on Twisted and is even-driven, most of methods are Deferred too!
 
 # Requirements
-- Python >= 2.7
-- [Twisted](https://twistedmatrix.com)
-- [Watchdog](http://pythonhosted.org/watchdog/)
-- [txredisapi](https://github.com/fiorix/txredisapi)
-- [Twistar](http://findingscience.com/twistar/)
-- [BCrypt](https://pypi.python.org/pypi/bcrypt/)
+* Softwares:
+  - Python >= 2.7
+  - MySQL, with MySQL-c and MySQL-python connector
+  - Redis server
+
+* Python Modules: 
+  - [Twisted](https://twistedmatrix.com)
+  - [Watchdog](http://pythonhosted.org/watchdog/)
+  - [txredisapi](https://github.com/fiorix/txredisapi)
+  - [Twistar](http://findingscience.com/twistar/)
+  - [BCrypt](https://pypi.python.org/pypi/bcrypt/)
 
 # Installation and Usage
 Download **Timeline**, put it in an accessable and readable directory. Navigate to that directory using CMD or Shell or any console client. Run `Start.py`. The server will start running.
