@@ -3,15 +3,17 @@ Timeline - An AS3 CPPS emulator, written by dote, in python. Extensively using T
 Penguin is a extension of LineReceiver, protocol. Implements the base of Client Object
 '''
 
-from Timeline.Server.Constants import TIMELINE_LOGGER, PACKET_TYPE, PACKET_DELIMITER
+from Timeline.Server.Constants import TIMELINE_LOGGER, PACKET_TYPE, PACKET_DELIMITER, WORLD_SERVER
 from Timeline.Utils.Events import Event
 from Timeline.Utils.Cryptography import Crypto
 from Timeline.Server.Packets import PacketHandler
 from Timeline.Database.DB import PenguinDB
+from Timeline import Username, Password, Nickname, Inventory, Membership, Coins, Age, Cache
+from Timeline.Utils.Crumbs.Items import Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo, Award
 
 from twisted.protocols.basic import LineReceiver
 from twisted.internet import threads
-from twisted.internet.defer import Deferred
+from twisted.internet.defer import Deferred, inlineCallbacks
 
 from repr import Repr
 from collections import deque
@@ -50,7 +52,28 @@ class Penguin(LineReceiver, PenguinDB):
 		# Initiate Packet Handler
 		self.PacketHandler = PacketHandler(self)
 		self.CryptoHandler = Crypto(self)
+
+	def initialize(self):
+		self.penguin.nickname = Nickname(self.dbpenguin.nickname, self)
+		self.penguin.inventory = Inventory(self)
+		self.penguin.inventory.parseFromString(self.dbpenguin.inventory)
+
+		self.penguin.member = Membership(self.dbpenguin.membership, self)
+		self.penguin.moderator = False #:P
+		self.penguin.epf = False #TODO
+
+		self.penguin.x = self.penguin.y = self.penguin.frame = self.penguin.avatar = 0 #TODO
+
+		self.penguin.coins = Coins(self.dbpenguin.coins, self)
+		self.penguin.age = Age(self.dbpenguin.create, self)
+
+		self.penguin.cache = Cache(self)
 		
+		clothing = [Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo]
+		for cloth in clothing:
+			name = cloth.__name__.lower()
+			self.penguin[name] = cloth(0, 0, name + " item", False, False, False)
+
 	def checkPassword(self, password):
 		return self.CryptoHandler.loginHash() == password
 		
@@ -58,20 +81,77 @@ class Penguin(LineReceiver, PenguinDB):
 		return False #TODO
 
 	def handleCrossDomainPolicy(self):
-		self.send("<cross-domain-policy><allow-access-from domain='*' to-ports='{0}' /></cross-domain-policy>".format(self.engine.ip))
+		self.send("<cross-domain-policy><allow-access-from domain='*' to-ports='{0}' /></cross-domain-policy>".format(self.engine.port))
 		self.disconnect()
 
 	def getPortableName(self):
-		if self["name"] == None and self["id"] == None:
+		if self["username"] == None and self["id"] == None:
 			return self.client
 
-		if self["name"] != None:
-			return self["name"]
+		if self["username"] != None:
+			return self["username"]
 
 		if self["id"] != None:
 			return self["id"]
 
-		return self["name"]
+		return self["username"]
+
+	def addItem(self, item):
+		if isinstance(item, int):
+			item = self.engine.itemCrumbs[item]
+		elif isinstance(item, str):
+			try:
+				item = self.engine.itemCrumbs[int(item)]
+			except:
+				item = None
+
+		if item is None:
+			return False
+
+		cost = item.cost
+		if self.coins < cost:
+			self.send('e', 401)
+			return False
+
+		if item in self.penguin.inventory:
+			return False
+
+		self.penguin.inventory += item
+		return True
+
+	def __str__(self):
+		data = [
+			self['id'],			
+			self['username'],
+
+			45,						#Language, 45=English
+
+			self['color'],		
+			self['head'],
+			self['face'],
+			self['neck'],
+			self['body'],
+			self['hand'],
+			self['feet'],
+			self['photo'],
+			self['pin'],
+
+			self['x'],				#Cached coordinates
+			self['y'],				#Cached coordinates
+			self['frame'],
+
+			int(self['member'] > 0),#Is member
+			self['member'],			#Membership days remaining
+
+			self['avatar'],			#wtf?
+			None,
+			None,					#Party Info
+
+			'', '' #Walking puffle's id and item. TODO
+		]
+
+		return '|'.join(map(str, data))
+
 
 	# Easy access to penguin properties
 	def __getitem__(self, prop):
@@ -98,7 +178,7 @@ class Penguin(LineReceiver, PenguinDB):
 			return
 
 		if len(buffers) == 1:
-			self.engine.log("debug", "[SEND]", buffers[0])
+			self.engine.log("debug", "[SEND]", self.getPortableName(), buffers[0])
 			return self.sendLine(buffers[0])
 
 		server_internal_id = "-1"
@@ -113,7 +193,7 @@ class Penguin(LineReceiver, PenguinDB):
 		buffering.append('')
 
 		buffering = PACKET_DELIMITER.join(list(map(str, buffering)))
-		self.engine.log("debug", "[SEND]", buffering)
+		self.engine.log("debug", "[SEND]", self.getPortableName(), buffering)
 		return self.sendLine(buffering)
 		
 	def log(self, l, *a):
@@ -124,8 +204,14 @@ class Penguin(LineReceiver, PenguinDB):
 		self.transport.loseConnection()
 		return
 
+	@inlineCallbacks
 	def connectionLost(self, reason):
 		self.engine.log("info", self.getPortableName(), "Disconnected!")
+
+		if self.engine.type == WORLD_SERVER and self.penguin.id != None:
+			yield self.engine.redis.server.delete("online:{}".format(self.penguin.id))
+			yield self.engine.redis.server.hincrby('server:{}'.format(self.engine.id), 'population', -1)
+
 
 		self.engine.disconnect(self)
 
@@ -160,11 +246,9 @@ class PenguinObject(dict):
 			return value
 
 	def __setitem__(self, key, value):
-		dict.__setitem__(self, key, PenguinObject(value))
+		dict.__setitem__(self, key, value)
 
 	def __setattr__(self, attr, value):
-		if attr != "POvalue":
-			value = value
 
 		dict.__setitem__(self, attr, value)
 		object.__setattr__(self, attr, value)

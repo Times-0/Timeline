@@ -3,7 +3,9 @@ Timeline - An AS3 CPPS emulator, written by dote, in python. Extensively using T
 Events : Initiates Twisted-defer based Packet-Event handler!!
 '''
 
+from Timeline.Server.Constants import TIMELINE_LOGGER
 from twisted.internet.defer import Deferred
+import logging
 
 class Event(object):
 
@@ -95,11 +97,20 @@ class EventListener(object):
 	def __call__(self, event):
 		if event == None:
 			return
+		ra = event['a']
+		kw = event['kw']
 		if 'ra' in event and self in PacketEventHandler.function_w_rules:
-			self.function(*(event['ra']), **(event['rkw']))
-			return
+			ra = event['ra']
+			kw = event['rkw']
 
-		self.function(*(event['a']), **(event['kw']))
+		a = self.function(*ra, **kw)
+
+		if isinstance(a, Deferred):
+			def err(x):
+				a = x.getTraceback().split('\n')
+				self.x.logger.error("Error executing method - {} : {}".format(self.function.__name__, x.getErrorMessage() + "["+ a[-2].strip() + ' in ' + a[-4].strip() +"]"))
+				
+			a.addErrback(err)
 
 class PacketEvent(Event):
 
@@ -112,6 +123,7 @@ class PacketEvent(Event):
 		self.Event = Event.Event()
 		self.packet_rules = dict() # Available packet rules. ie, cat|handler : rule
 		self.function_w_rules = list() # Functions
+		self.logger = logging.getLogger(TIMELINE_LOGGER)
 
     #                   xml   action data engin  
 	def FetchRule(self, type, c, h_t, s_t):

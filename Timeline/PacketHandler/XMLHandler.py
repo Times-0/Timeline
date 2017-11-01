@@ -61,3 +61,32 @@ def XMLoginLiteralsRule(data):
 	except: raise Exception("[TE014] Invalid md5 hash (hexadecimal check) - {0}".format(password))
 
 	return [[username, password], {}]
+
+@PacketEventHandler.XMLPacketRule('login', WORLD_SERVER)
+def XMLWorldLiteralsRule(data):
+	login = data.find('login')
+
+	nick = login.find('nick').text.strip()
+	passd = login.find('pword').text
+
+	_id, swid, user, pwd = nick.split('|')[:4]
+
+	_id = int(_id)
+	swid = str(swid)
+
+	if not (swid.startswith('{') and swid.endswith('}') and len(swid) == 38):
+		raise Exception("[TE015] Invalid SWID : {}".format(swid))
+
+	username_length = len(user)
+	if username_length < 4 or username_length > 12:
+		raise Exception("[TE011] Invalid username length - {0}".format(len(user)))
+
+	username_w_space = user.replace(" ", '')
+	if not username_w_space.isalnum():
+		raise Exception("[TE012] Invalid characters found in username - {0}".format(user))
+
+	loginKey, confirmHash = passd.split('#')
+	if loginKey == '' or confirmHash == '' or loginKey == None or confirmHash == None:
+		raise Exception("[TE016] Invalid LoginKey or ConfirmationHash : {}, {}".format(loginKey, confirmHash))
+
+	return [[_id, user, swid, pwd, confirmHash, loginKey], {}]

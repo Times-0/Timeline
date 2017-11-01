@@ -2,9 +2,10 @@
 Timeline - An AS3 CPPS emulator, written by dote, in python. Extensively using Twisted modules and is event driven.
 Engine is the main reactor, based on Twisted which starts the server and listens to given details
 '''
-from Timeline.Server.Constants import TIMELINE_LOGGER
+from Timeline.Server.Constants import TIMELINE_LOGGER, WORLD_SERVER
 from Timeline.Server.Redis import Redis
 from Timeline.Utils.Events import Event
+from Timeline.Utils.Crumbs import Items
 
 from twisted.internet.protocol import Factory
 from twisted.internet.protocol import Protocol
@@ -40,6 +41,13 @@ class Engine(Factory):
 		self.log("info", "Timeline Factory Started!")
 		self.log("info", "Running:", self.name)
 		self.log("info", "Maximum users:", self.maximum)
+
+		if self.type == WORLD_SERVER:
+			self.initializeWorld()
+
+	def initializeWorld(self):
+		# Set item crumbs
+		self.itemCrumbs = Items.PaperItems(self)
 
 	def run(self, ip, port):
 		self.ip, self.port = ip, port

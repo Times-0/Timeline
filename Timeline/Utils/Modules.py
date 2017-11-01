@@ -140,6 +140,16 @@ class ModuleHandler(ModulesEventHandler):
 		self.modules = deque()
 		self.logger = logging.getLogger(TIMELINE_LOGGER)
 
+	def unsetEventsInModulesAndSubModules(self, name):
+		Event.unsetEventsInModulesAndSubModules(name)
+		PacketEventHandler.unsetEventsInModulesAndSubModules(name)
+		GeneralEvent.unsetEventsInModulesAndSubModules(name)
+
+	def unsetEventInModule(self, name):
+		Event.unsetEventInModule(name)
+		PacketEventHandler.unsetEventInModule(name)
+		GeneralEvent.unsetEventInModule(name)
+
 	def clearModules(self, name = None, submodules = False, only_unset = False):
 		main_module = False
 		
@@ -147,27 +157,19 @@ class ModuleHandler(ModulesEventHandler):
 			if name != None:
 				if module.__name__ == name or (submodules and module.__name__.startswith(name) and main_module):
 					if submodules:
-						Event.unsetEventsInModulesAndSubModules(module.__name__)
-						PacketEventHandler.unsetEventsInModulesAndSubModules(module.__name__)
-						GeneralEvent.unsetEventsInModulesAndSubModules(module.__name__)
+						self.unsetEventsInModulesAndSubModules(module.__name__)
 						main_module = True
 					else:
-						Event.unsetEventInModule(module.__name__)
-						PacketEventHandler.unsetEventInModule(module.__name__)
-						GeneralEvent.unsetEventInModule(module.__name__)
+						self.unsetEventInModule(module.__name__)
 
 					if not only_unset:
 						self.modules.remove(module)
 						del module
 			else:
 				if submodules:
-					Event.unsetEventsInModulesAndSubModules(module.__name__)
-					PacketEventHandler.unsetEventsInModulesAndSubModules(module.__name__)
-					GeneralEvent.unsetEventsInModulesAndSubModules(module.__name__)
+					self.unsetEventsInModulesAndSubModules(module.__name__)
 				else:
-					Event.unsetEventInModule(module.__name__)
-					PacketEventHandler.unsetEventInModule(module.__name__)
-					GeneralEvent.unsetEventInModule(module.__name__)
+					self.unsetEventInModule(module.__name__)
 
 				if not only_unset:
 					self.modules.remove(module)
@@ -216,12 +218,16 @@ class ModuleHandler(ModulesEventHandler):
 		Observer.schedule(ModuleEventHandler, path=self.module_parent.__path__[0], recursive=False)
 		Observer.start()
 
+	def loadingException(self, err):
+		self.logger.error("[Error loading module] : {}".format(err.getErrorMessage()))
+
 	def startLoadingModules(self):
 		self.modules.clear()
 
 		defer = threads.deferToThread(self.loadModules)
 		defer.addCallback(self.modulesLoaded)
 		defer.addCallback(self.autoReloadModules) #Prefer doing more research on this to get a better implementation
+		defer.addErrback(self.loadingException)
 
 		self.logger.info("Loading modules in: {0}".format(self.module_parent.__name__))
 		return defer

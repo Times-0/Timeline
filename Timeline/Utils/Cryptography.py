@@ -31,10 +31,10 @@ class Crypto(object):
 		return MD5(text).hexdigest()
 		
 	def bcrypt(self, text):
-		return bcrypt.hashpw(text, bcrypt.gensalt())
+		return bcrypt.hashpw(text, '$2b$12$xxcjQIy5KifXvMdfSdq25O')
 		
 	def bcheck(self, psd, h):
-		return bcrypt.hashpw(psd, h) == h
+		return bcrypt.hashpw(str(psd), '$2b$12$xxcjQIy5KifXvMdfSdq25O') == h
 
 	def pureMD5(self, text):
 		return MD5(text)

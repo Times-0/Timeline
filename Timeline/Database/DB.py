@@ -24,13 +24,14 @@ class PenguinDB(object):
     
     @inlineCallbacks
     def db_init(self):
+
         if self.dbpenguin is None:
             column, value = 'username', self.penguin.username
             if not self.penguin.id is None:
-                column, value = 'ID', self.penguin.ID
+                column, value = 'ID', self.penguin.id
             elif not self.penguin.swid is None:
                 column, value = 'swid', self.penguin.swid
-            
+
             self.dbpenguin = yield Penguin.find(where = ['%s = ?' % column, value], limit = 1)
             
             if self.dbpenguin is None:

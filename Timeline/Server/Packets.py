@@ -65,7 +65,7 @@ class PacketHandler(object):
 
 			client_data = data[5:-1]
 
-			if not client.canRecvPacket:
+			if not self.penguin.canRecvPacket:
 				# Check for exceptions
 				ignores = [(i[0], i[1]) for i in self.penguin.ignorableXTPackets]
 				packet = (category, handler)
@@ -81,7 +81,8 @@ class PacketHandler(object):
 
 			return [category, handler, client_data]
 
-		except:
+		except Exception, e:
+			print e
 			return None
 
 	def parsePacket(self, data):

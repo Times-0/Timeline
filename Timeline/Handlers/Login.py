@@ -38,14 +38,16 @@ def HandlePrimaryPenguinLogin(client, user, passd):
 		client.send("e", 101)
 		returnValue(client.disconnect())
 	
-	client.penguin.username = Username(user, client) 
+	client.penguin.username = user
+
 	yield client.db_init()
-	
+
+	client.penguin.username = Username(client.dbpenguin.username, client)
 	client.penguin.password = Password(client.dbpenguin.password, client)
 	if not client.checkPassword(passd):
 		client.send('e', 101)
 		returnValue(client.disconnect())
-		
+
 	if client.banned():
 		returnValue(0)
 		
@@ -56,10 +58,11 @@ def HandlePrimaryPenguinLogin(client, user, passd):
 	fkey = client.CryptoHandler.md5(key)
 	
 	client.engine.redis.server.set("conf:{0}".format(client.dbpenguin.ID), key, 15*60)
-	
+
 	world = list()
+
 	w = yield client.engine.redis.getWorldServers()
-	
+
 	for k in w:
 		p = w[k]
 		bars = int(int(p['population']) * 5 / int(p['max']))
@@ -73,8 +76,54 @@ def HandlePrimaryPenguinLogin(client, user, passd):
 	
 	returnValue(client.disconnect())
 	
+@PacketEventHandler.onXML('login', WORLD_SERVER)
+@inlineCallbacks
+def HandleWorldPenguinLogin(client, _id, username, swid, password, confirmHash, loginkey):
+	exist = yield client.db_penguinExists(value = _id)
+	
+	if not exist:
+		client.send("e", 101)
+		returnValue(client.disconnect())
+
+	client.penguin.username = Username(username, client)
+	client.penguin.password = password
+	client.penguin.id = _id
+	client.penguin.swid = swid
+
+	yield client.db_init()
+
+	if not client.dbpenguin.swid == swid or not client.dbpenguin.username == username:
+		client.send('e', 101)
+		returnValue(client.disconnect())
+
+	isLoggedIn = yield client.engine.redis.isPenguinLoggedIn(client.penguin.id)
+	if isLoggedIn:
+		client.send('e', 3)
+		returnValue(client.disconnect())
+
+	details = yield client.engine.redis.getPlayerKey(client.penguin.id)
+	if not details:
+		client.send('e', 101)
+		returnValue(client.disconnect())
+
+	if not client.CryptoHandler.bcheck(details, loginkey[32:]) or not client.CryptoHandler.bcheck(details, confirmHash) or not client.CryptoHandler.bcheck(details, password):
+		client.send('e', 101)
+		returnValue(client.disconnect())
+	
+	yield client.engine.redis.server.delete("conf:{}".format(client.penguin.id))
+	yield client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {
+		'server' : client.engine.id,
+		'place'  : 0,
+		'playing': 0,
+		'waddling': 0,
+		'joined' : 0
+		})
+
+	client.ReceivePacketEnabled = True
+
+	client.send('l', 'timeline')
+
+
 def init():
 	logger.debug('Login Server::Login initiated!')
 	logger.debug('World Server::Login initiated!')
-
-print 'shit', 1

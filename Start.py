@@ -55,11 +55,11 @@ print \
 > AS3 CPPS Emulator. Written in Python
 > Developer : Dote
 > Version   : 2.0x (Development)
-> Updates   : [+] Database
-              [+] on memory Redis Server
-              [+] Login handler 
-              [+] Errors fixed
-              [-] Bugs fixed and deferred
+> Updates   : [+] Join Server Handler
+              [+] Inventory Handler
+              [+] Item crumbs
+              [+] 'js', 'ai', 'gi' packets
+              [-] Bugs fixed and errors fixed
 _______________________________________________
 """
 
@@ -86,7 +86,10 @@ WORLD_SERVER => Initiates Engine to be a World Server
 
 The type of server *must* be sent to Engine as a parameter!
 '''
-LoginServer = Engine(Penguin, Constants.LOGIN_SERVER, 100, "Login")
+LoginServer = Engine(Penguin, Constants.LOGIN_SERVER, 1, "Login")
 LoginServer.run('127.0.0.1', 6112)
+
+Gravity = Engine(Penguin, Constants.WORLD_SERVER, 100, "Gravity")
+Gravity.run('127.0.0.1', 9875)
 
 reactor.run()

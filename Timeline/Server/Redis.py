@@ -46,9 +46,22 @@ class Redis(object):
         s = dict({})
         
         for sid in servers:
-            s[sid] = yield self.server.hgetall("server:{0}".format(self.engine.id))
+            s[sid] = yield self.server.hgetall("server:{0}".format(sid))
         
         returnValue(s)
+
+    @inlineCallbacks
+    def isPenguinLoggedIn(self, peng_id):
+        exists = yield self.server.exists('online:{0}'.format(peng_id))
+
+        returnValue(exists)
+
+    @inlineCallbacks
+    def getPlayerKey(self, pid):
+        key = yield self.server.get('conf:{}'.format(pid))
+
+        returnValue(key)
+
         
     def log(self, k, *a):
         msg = ["(Redis)"] + list(a)
@@ -65,11 +78,6 @@ class Redis(object):
         yield self.server.sadd("servers", self.engine.id)
         
         self.log("info", "Setup memcache data successful!")
-    
-        
-    def getWorldServers(self):
-        with open("crumbs/servers.json", 'r') as file:
-            return json.loads(file.read())
         
     def log(self, k, *a):
         msg = ["(Redis)"] + list(a)

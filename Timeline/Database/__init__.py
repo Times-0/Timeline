@@ -47,6 +47,9 @@ def validateNickname(peng):
     
     if not m.isalnum():
         peng.errors.add('nickname', "Nickname should be alpha numeric")
+
+def validateInventory(peng):
+    peng.inventory = peng.inventory.strip('%')
         
 
 Penguin.addValidator(validateNickname)
