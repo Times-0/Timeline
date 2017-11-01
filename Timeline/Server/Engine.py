@@ -48,6 +48,8 @@ class Engine(Factory):
 	def initializeWorld(self):
 		# Set item crumbs
 		self.itemCrumbs = Items.PaperItems(self)
+		# Rooms handler!
+		self.roomHandler = RoomHandler(self)
 
 	def run(self, ip, port):
 		self.ip, self.port = ip, port
