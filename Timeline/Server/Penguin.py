@@ -9,6 +9,7 @@ from Timeline.Utils.Cryptography import Crypto
 from Timeline.Server.Packets import PacketHandler
 from Timeline.Database.DB import PenguinDB
 from Timeline import Username, Password, Nickname, Inventory, Membership, Coins, Age, Cache
+from Timeline.Utils.Mails import MailHandler
 from Timeline.Utils.Crumbs.Items import Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo, Award
 
 from twisted.protocols.basic import LineReceiver
@@ -48,6 +49,7 @@ class Penguin(LineReceiver, PenguinDB):
 		self.penguin.id = None
 
 		self.penguin.room = None
+		self.penguin.prevRooms = list()
 
 		# Initiate Packet Handler
 		self.PacketHandler = PacketHandler(self)
@@ -57,6 +59,7 @@ class Penguin(LineReceiver, PenguinDB):
 		self.penguin.nickname = Nickname(self.dbpenguin.nickname, self)
 		self.penguin.inventory = Inventory(self)
 		self.penguin.inventory.parseFromString(self.dbpenguin.inventory)
+		self.penguin.mail = MailHandler(self)
 
 		self.penguin.member = Membership(self.dbpenguin.membership, self)
 		self.penguin.moderator = False #:P
@@ -122,7 +125,7 @@ class Penguin(LineReceiver, PenguinDB):
 	def __str__(self):
 		data = [
 			self['id'],			
-			self['username'],
+			self['nickname'],
 
 			45,						#Language, 45=English
 
@@ -183,7 +186,7 @@ class Penguin(LineReceiver, PenguinDB):
 
 		server_internal_id = "-1"
 		if self.penguin.room != None:
-			server_internal_id = self.room.internal_id
+			server_internal_id = int(self.penguin.room)
 
 		buffering = ['', PACKET_TYPE]
 		buffering.append(buffers[0])
@@ -207,6 +210,9 @@ class Penguin(LineReceiver, PenguinDB):
 	@inlineCallbacks
 	def connectionLost(self, reason):
 		self.engine.log("info", self.getPortableName(), "Disconnected!")
+
+		if not self.penguin.room is None:
+			self.penguin.room.remove(self)
 
 		if self.engine.type == WORLD_SERVER and self.penguin.id != None:
 			yield self.engine.redis.server.delete("online:{}".format(self.penguin.id))

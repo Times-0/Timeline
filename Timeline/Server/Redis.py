@@ -57,6 +57,14 @@ class Redis(object):
         returnValue(exists)
 
     @inlineCallbacks
+    def isPenguinOnlineOnServer(self, peng, server):
+        if not self.isPenguinLoggedIn(peng):
+            returnValue(False)
+
+        online = yield self.server.hmgetall('online:{}'.format(peng))
+        returnValue(str(online['server']) == str(server))
+
+    @inlineCallbacks
     def getPlayerKey(self, pid):
         key = yield self.server.get('conf:{}'.format(pid))
 

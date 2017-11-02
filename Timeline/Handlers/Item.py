@@ -1,6 +1,7 @@
 from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER
-from Timeline import Username, Password
+from Timeline import Username, Password, Inventory
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
+from Timeline.Utils.Crumbs.Items import Pin, Award
 
 from twisted.internet.defer import inlineCallbacks, returnValue
 
@@ -12,7 +13,7 @@ logger = logging.getLogger(TIMELINE_LOGGER)
 
 @PacketEventHandler.onXT('s', 'i#gi', WORLD_SERVER, p_r = False)
 def handleGetInventory(client, data):
-	client.send('gi', client['inventory'])
+	client.send('gi', *client['inventory'])
 
 @PacketEventHandler.onXT('s', 'i#ai', WORLD_SERVER)
 def handleAddItem(client, item):
@@ -37,5 +38,35 @@ def handleAddItem(client, item):
 		return client.send('e', 410)
 
 	if client.addItem(item):
-		client.send('ai', item)
+		client.send('ai', item, client['coins'])
 		GeneralEvent.call('add-item:{}'.format(item))
+
+@PacketEventHandler.onXT('s', 'i#qpp', WORLD_SERVER)
+@inlineCallbacks
+def handleGetPins(client, _id):
+	penguin = yield client.db_getPenguin('ID = ?', _id)
+
+	if penguin == None:
+		returnValue(None)
+
+	inventory = Inventory(None)
+	inventory.parseFromString(penguin.inventory)
+
+	pins = map(lambda x: map(int, [x.id, x.release, x.is_member]), inventory.itemsByType(Pin))
+	
+	client.send('qpp', _id, *(map(lambda x: '|'.join(map(str, x)), pins)))
+
+@PacketEventHandler.onXT('s', 'i#qpa', WORLD_SERVER)
+@inlineCallbacks
+def handleGetAwards(client, _id):
+	penguin = yield client.db_getPenguin('ID = ?', _id)
+
+	if penguin is None:
+		return
+
+	inventory = Inventory(None)
+	inventory.parseFromString(penguin.inventory)
+
+	awards = inventory.itemsByType(Award)
+
+	client.send('qpa', _id, *awards)

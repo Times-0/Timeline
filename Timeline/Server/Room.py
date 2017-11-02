@@ -48,6 +48,8 @@ class Room (list):
 		super(Room, self).append(client)
 		client.penguin.room = self
 
+		GeneralEvent.call('joined-room', client, self.id)
+
 		self.onAdd(client)
 
 	def onAdd(self, client):
@@ -60,10 +62,11 @@ class Room (list):
 		if not client in self:
 			return
 
-		self.send('rp', client.id)
+		self.send('rp', client['id'])
 		client.penguin.room = None
 
 		super(Room, self).remove(client)
+		client.penguin.prevRooms.append(self)
 		self.onRemove(client)
 
 	def send(self, *a):
@@ -96,6 +99,12 @@ class Game(Room):
 	def onAdd(self, client):
 		client.send('jg', self.ext_id)
 
+		client.penguin.playing = True
+		client.penguin.previousGame = self
+
+	def onRemove(self, client):
+		client.penguin.playing = False
+
 class Arcade(Room):
 	# Non black-hole stuff
 
@@ -104,10 +113,19 @@ class Arcade(Room):
 	def onAdd(self, client):
 		client.send('jnbhg', self.ext_id)
 
+		client.penguin.playing = True
+		client.penguin.previousGame = self
+
+	def onRemove(self, client):
+		client.penguin.playing = False
+
 class Multiplayer(Room):
 	# Multiplayer? Know this is crazy, still :P
 
 	game = True
+
+	def onAdd(self, client):
+		client.penguin.waddling = True #MUST WADDLE!
 
 '''
 "110": {
@@ -137,6 +155,31 @@ class RoomHandler (object):
 		self.details = dict({Place:0, Arcade:0, Multiplayer:0, Game:0})
 
 		self.setup()
+
+	def joinRoom(self, client, _room, _type = 'ext'):
+		if client is None:
+			return
+
+		room = None
+		if _type == 'ext':
+			room = self.getRoomByExtId(_room)
+		elif _type == 'int':
+			room = self.getRoomById(_room)
+		elif _type == 'name':
+			room = self.getRoomByName(_room)
+
+		if room is None:
+			return client.send('e', 213)
+
+		if client['room'] is not None:
+			client['room'].remove(client)
+
+		if client['waddling'] or client['playing']:
+			client.send('e', 200)
+			# do more? TODO
+
+		client.penguin.frame = 1
+		room.append(client)
 
 	def setup(self):
 		self.rooms.clear()

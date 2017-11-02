@@ -91,7 +91,7 @@ class PaperItems(object):
 		self.items.clear()
 
 		if not os.path.exists(self.package):
-			self.log("error", "paper_items.json not found in path : ", self.package)
+			self.log("error", "paper_items.json not found in path :", self.package)
 			sys.exit() # OOps!
 
 		with open(self.package, 'r') as file:
@@ -115,6 +115,29 @@ class PaperItems(object):
 
 		for t in self.details:
 			self.log('info', "Loaded", self.details[t], Item.item_by_type[t].__name__, "Items")
+
+		self.loadPins()
+
+	def loadPins(self):
+		package = 'configs/crumbs/pins.json'
+		if not os.path.exists(package):
+			self.log('error', "pins.json not found in path :", self.package)
+			sys.exit()
+
+		with open(package, 'r') as file:
+			try:
+				crumbs = json.loads(file.read())
+				for pin in crumbs:
+					_id = pin['paper_item_id']
+					time = pin['unix']
+
+					pin_obj = self[_id]
+					if pin_obj:
+						pin_obj.release = time
+
+			except Exception, e:
+				self.log('error', "Error parsing JSON. E:", e)
+				sys.exit()
 
 	def getItemsByType(self, _type):
 		if issubclass(_type, Item):

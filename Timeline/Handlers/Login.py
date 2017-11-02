@@ -3,7 +3,7 @@ Timeline - An AS3 CPPS emulator, written by dote, in python. Extensively using T
 Login.py handles the incoming XML Packet used to login to server. Packets may not necessarily be `login packet`
 '''
 from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER
-from Timeline import Username, Password
+from Timeline import Username, Password, Nickname
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
 
 from twisted.internet.defer import inlineCallbacks, returnValue
@@ -57,7 +57,7 @@ def HandlePrimaryPenguinLogin(client, user, passd):
 	confh = client.CryptoHandler.bcrypt(key)
 	fkey = client.CryptoHandler.md5(key)
 	
-	client.engine.redis.server.set("conf:{0}".format(client.dbpenguin.ID), key, 15*60)
+	client.engine.redis.server.set("conf:{0}".format(client.dbpenguin.id), key, 15*60)
 
 	world = list()
 
@@ -69,7 +69,7 @@ def HandlePrimaryPenguinLogin(client, user, passd):
 		world.append("{},{}".format(k, bars))
 		
 	world = '|'.join(world)
-	player_data = "{}|{}|{}|{}|NULL|45|2".format(client.dbpenguin.ID, client.dbpenguin.swid, client['username'], client.CryptoHandler.bcrypt(key))
+	player_data = "{}|{}|{}|{}|NULL|45|2".format(client.dbpenguin.id, client.dbpenguin.swid, client.dbpenguin.nickname, client.CryptoHandler.bcrypt(key))
 	email = client.dbpenguin.email[0] + '***@' + client.dbpenguin.email.split('@')[1]
 	
 	client.send('l', player_data, confh, fkey, world, email)
@@ -78,21 +78,21 @@ def HandlePrimaryPenguinLogin(client, user, passd):
 	
 @PacketEventHandler.onXML('login', WORLD_SERVER)
 @inlineCallbacks
-def HandleWorldPenguinLogin(client, _id, username, swid, password, confirmHash, loginkey):
+def HandleWorldPenguinLogin(client, _id, nickname, swid, password, confirmHash, loginkey):
 	exist = yield client.db_penguinExists(value = _id)
 	
 	if not exist:
 		client.send("e", 101)
 		returnValue(client.disconnect())
 
-	client.penguin.username = Username(username, client)
+	client.penguin.nickname = Nickname(nickname, client)
 	client.penguin.password = password
 	client.penguin.id = _id
 	client.penguin.swid = swid
 
 	yield client.db_init()
-
-	if not client.dbpenguin.swid == swid or not client.dbpenguin.username == username:
+	client.penguin.username = Username(client.dbpenguin.username, client)
+	if not client.dbpenguin.swid == swid or not client.dbpenguin.nickname == nickname:
 		client.send('e', 101)
 		returnValue(client.disconnect())
 

@@ -20,3 +20,18 @@ def JoinServerRule(data):
 
 
 	return [[_id, pword, lang], {}]
+
+@PacketEventHandler.XTPacketRule('s', 'j#jr', WORLD_SERVER)
+def JoinRoomRule(data):
+	param = data[2]
+
+	room = int(param[0])
+	x = y = 0
+	
+	try:
+		x = int(param[1])
+		y = int(param[2])
+	except:
+		pass
+
+	return [[room, x, y], {}]

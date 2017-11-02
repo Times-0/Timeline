@@ -31,7 +31,7 @@ class Event(object):
 		event = str(event)
 
 		def func(function):
-			_func = EventListener(event, function)
+			_func = EventListener(event, function, self)
 			self.addListener(event, _func)
 
 			return function

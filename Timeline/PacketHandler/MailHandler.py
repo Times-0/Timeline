@@ -7,18 +7,15 @@ from twisted.internet.defer import Deferred
 from collections import deque
 import logging
 
-@PacketEventHandler.XTPacketRule('s', 'i#ai', WORLD_SERVER)
-def AddItemRule(data):
+@PacketEventHandler.XTPacketRule('s', "l#ms", WORLD_SERVER)
+def handleSendMailRule(data):
 	param = data[2]
 
-	item = param[0]
+	to = int(param[0])
+	post = int(param[1])
 
-	return [[int(item)], {}]
+	return [[to, post], {}]
 
-@PacketEventHandler.XTPacketRule('s', 'i#qpp', WORLD_SERVER)
-def GetPinsRule(data):
-	return [[int(data[2][0])], {}]
-
-@PacketEventHandler.XTPacketRule('s', 'i#qpa', WORLD_SERVER)
-def GetAwardsRule(data):
+@PacketEventHandler.XTPacketRule('s', 'l#md', WORLD_SERVER)
+def handleDeleteMailRule(data):
 	return [[int(data[2][0])], {}]

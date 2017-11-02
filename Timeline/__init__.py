@@ -174,28 +174,33 @@ class Coins(object):
 class Inventory(list):
 
     def __init__(self, penguin, *items):
-        super(Inventory, self).__init__()
+        super(Inventory, self).__init__([])
 
+        self.penguin = None
+        self += list(items)
         self.penguin = penguin
-
-        self += items
 
     def parseFromString(self, string, delimiter = '%'):
         if string == None or string == '':
             return
 
-        items = string.split(delimiter)
+        penguin = self.penguin
+        self.penguin = None
+
+        items = str(string).split(delimiter)
         self += items
 
+        self.penguin = penguin
+
     def __str__(self):
-        return '%'.join(str(i.id) for i in self)
+        return '%'.join(map(str, self))
 
     def __addItem(self, item):
         if self.penguin is None:
             return
 
-        self.dbpenguin.inventory += '%{}'.format(item)
-        self.dbpenguin.save()
+        self.penguin.dbpenguin.inventory = str(self.penguin.dbpenguin.inventory) + '%{}'.format(item)
+        self.penguin.dbpenguin.save()
 
     def itemsByType(self, _type):
         if issubclass(_type, Item):
@@ -223,6 +228,12 @@ class Inventory(list):
                 for i in self:
                     if i.__name__.lower() == item.lower().strip():
                         return True
+        elif isinstance(item, list):
+            for i in item:
+                if not i in self:
+                    return False
+
+            return True
 
         return False
 
@@ -245,7 +256,7 @@ class Inventory(list):
             return super(Inventory, self).append(item)
             
         if isinstance(item, Item):
-            if item.is_bait and not self.penguin.penguin.isModerator:
+            if item.is_bait and not self.penguin['moderator']:
                 raise Exception("Penguin {} using a bait item!".format(self.penguin.getPortableName()))
 
         elif isinstance(item, int):
@@ -283,7 +294,10 @@ class Inventory(list):
         return inv
 
     def __iadd__(self, items):
-        for item in items:
-            self.append(item)
+        if isinstance(items, list):
+            for item in items:
+                self.append(item)
+        else:
+            self.append(items)
 
         return self

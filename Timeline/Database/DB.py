@@ -62,11 +62,8 @@ class PenguinDB(object):
         returnValue(exists)
         
     @inlineCallbacks 
-    def db_getPenguin(self, criteria, values = None):
-        if values is None: 
-            values = list()
-            
-        wh = [criteria] + values
+    def db_getPenguin(self, criteria, *values):
+        wh = [criteria] + list(values)
         
         p = yield Penguin.find(where = wh, limit = 1)
         

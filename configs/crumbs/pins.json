@@ -1,0 +1,2800 @@
+[
+  {
+    "label": "Shamrock",
+    "release_date": "Mar 17 2006",
+    "location": "Coffee Shop",
+    "paper_item_id": 550,
+    "unix": 1142553600
+  },
+  {
+    "label": "Music Note",
+    "release_date": "Mar 31 2006",
+    "location": "Pizza Parlor",
+    "paper_item_id": 551,
+    "unix": 1143763200
+  },
+  {
+    "label": "Plant",
+    "release_date": "Apr 14 2006",
+    "location": "Night Club",
+    "paper_item_id": 552,
+    "unix": 1144972800
+  },
+  {
+    "label": "Pizza Slice",
+    "release_date": "Apr 28 2006",
+    "location": "Plaza",
+    "paper_item_id": 553,
+    "unix": 1146182400
+  },
+  {
+    "label": "Balloon",
+    "release_date": "May 12 2006",
+    "location": "Dock",
+    "paper_item_id": 554,
+    "unix": 1147392000
+  },
+  {
+    "label": "Mining Lantern",
+    "release_date": "May 26 2006",
+    "location": "Night Club",
+    "paper_item_id": 555,
+    "unix": 1148601600
+  },
+  {
+    "label": "Beach Ball",
+    "release_date": "Jun 09 2006",
+    "location": "Lodge Attic",
+    "paper_item_id": 556,
+    "unix": 1149811200
+  },
+  {
+    "label": "Sun",
+    "release_date": "Jun 23 2006",
+    "location": "Book Room",
+    "paper_item_id": 557,
+    "unix": 1151020800
+  },
+  {
+    "label": "Horse Shoe",
+    "release_date": "Jul 07 2006",
+    "location": "Mine Shack",
+    "paper_item_id": 558,
+    "unix": 1152230400
+  },
+  {
+    "label": "Astro-Barrier Ship",
+    "release_date": "Jul 21 2006",
+    "location": "Snow Forts",
+    "paper_item_id": 559,
+    "unix": 1153440000
+  },
+  {
+    "label": "Hockey Stick",
+    "release_date": "Aug 04 2006",
+    "location": "Ski Village",
+    "paper_item_id": 560,
+    "unix": 1154649600
+  },
+  {
+    "label": "Soccer Ball",
+    "release_date": "Aug 18 2006",
+    "location": "Gift Shop",
+    "paper_item_id": 561,
+    "unix": 1155859200
+  },
+  {
+    "label": "Pencil",
+    "release_date": "Sep 01 2006",
+    "location": "Lighthouse",
+    "paper_item_id": 562,
+    "unix": 1157068800
+  },
+  {
+    "label": "Lighthouse",
+    "release_date": "Sep 15 2006",
+    "location": "Plaza",
+    "paper_item_id": 563,
+    "unix": 1158278400
+  },
+  {
+    "label": "Telescope",
+    "release_date": "Sep 29 2006",
+    "location": "Ski Hill",
+    "paper_item_id": 564,
+    "unix": 1159488000
+  },
+  {
+    "label": "Jolly Roger Flag",
+    "release_date": "Oct 13 2006",
+    "location": "Pet Shop",
+    "paper_item_id": 565,
+    "unix": 1160697600
+  },
+  {
+    "label": "Pumpkin",
+    "release_date": "Oct 27 2006",
+    "location": "Dock",
+    "paper_item_id": 566,
+    "unix": 1161907200
+  },
+  {
+    "label": "Jet Pack",
+    "release_date": "Nov 10 2006",
+    "location": "Beach",
+    "paper_item_id": 567,
+    "unix": 1163116800
+  },
+  {
+    "label": "Life Ring",
+    "release_date": "Nov 24 2006",
+    "location": "Lighthouse",
+    "paper_item_id": 568,
+    "unix": 1164326400
+  },
+  {
+    "label": "Bonfire",
+    "release_date": "Dec 08 2006",
+    "location": "Ski Lodge",
+    "paper_item_id": 569,
+    "unix": 1165536000
+  },
+  {
+    "label": "Christmas Tree",
+    "release_date": "Dec 14 2006",
+    "location": "The Penguin Times",
+    "paper_item_id": 570,
+    "unix": 1166054400
+  },
+  {
+    "label": "Candy Cane",
+    "release_date": "Dec 22 2007",
+    "location": "Night Club",
+    "paper_item_id": 571,
+    "unix": 1198281600
+  },
+  {
+    "label": "Apple",
+    "release_date": "Jan 05 2007",
+    "location": "Pizza Parlor",
+    "paper_item_id": 572,
+    "unix": 1167955200
+  },
+  {
+    "label": "Cactus",
+    "release_date": "Jan 19 2007",
+    "location": "Coffee Shop",
+    "paper_item_id": 573,
+    "unix": 1169164800
+  },
+  {
+    "label": "Teddy Bear",
+    "release_date": "Feb 02 2007",
+    "location": "Cave",
+    "paper_item_id": 574,
+    "unix": 1170374400
+  },
+  {
+    "label": "Ice Block",
+    "release_date": "Feb 16 2007",
+    "location": "Iceberg",
+    "paper_item_id": 575,
+    "unix": 1171584000
+  },
+  {
+    "label": "Shrimp",
+    "release_date": "Mar 02 2007",
+    "location": "Dance Lounge",
+    "paper_item_id": 576,
+    "unix": 1172793600
+  },
+  {
+    "label": "Pot O' Gold",
+    "release_date": "Mar 16 2007",
+    "location": "Lodge Attic",
+    "paper_item_id": 577,
+    "unix": 1174003200
+  },
+  {
+    "label": "Cardboard Box",
+    "release_date": "Mar 30 2007",
+    "location": "Dock",
+    "paper_item_id": 578,
+    "unix": 1175212800
+  },
+  {
+    "label": "Microphone",
+    "release_date": "Apr 13 2007",
+    "location": "Beacon",
+    "paper_item_id": 579,
+    "unix": 1176422400
+  },
+  {
+    "label": "Gem",
+    "release_date": "Apr 27 2007",
+    "location": "Ski Village",
+    "paper_item_id": 580,
+    "unix": 1177632000
+  },
+  {
+    "label": "Tulip",
+    "release_date": "May 11 2007",
+    "location": "Sport Shop",
+    "paper_item_id": 581,
+    "unix": 1178841600
+  },
+  {
+    "label": "Starfish",
+    "release_date": "May 25 2007",
+    "location": "Mine",
+    "paper_item_id": 582,
+    "unix": 1180051200
+  },
+  {
+    "label": "Surfboard",
+    "release_date": "Jun 08 2007",
+    "location": "Beacon",
+    "paper_item_id": 583,
+    "unix": 1181260800
+  },
+  {
+    "label": "Picnic Basket",
+    "release_date": "Jun 22 2007",
+    "location": "Ski Lodge",
+    "paper_item_id": 584,
+    "unix": 1182470400
+  },
+  {
+    "label": "Water Droplet",
+    "release_date": "Jul 06 2007",
+    "location": "Dance Lounge",
+    "paper_item_id": 585,
+    "unix": 1183680000
+  },
+  {
+    "label": "Cart",
+    "release_date": "Jul 20 2007",
+    "location": "Pizza Parlor",
+    "paper_item_id": 586,
+    "unix": 1184889600
+  },
+  {
+    "label": "Butterfly",
+    "release_date": "Aug 03 2007",
+    "location": "Forest",
+    "paper_item_id": 587,
+    "unix": 1186099200
+  },
+  {
+    "label": "Tent",
+    "release_date": "Aug 17 2007",
+    "location": "Mine Shack",
+    "paper_item_id": 588,
+    "unix": 1187308800
+  },
+  {
+    "label": "Baseball",
+    "release_date": "Aug 31 2007",
+    "location": "Boiler Room",
+    "paper_item_id": 589,
+    "unix": 1188518400
+  },
+  {
+    "label": "Jellyfish",
+    "release_date": "Sep 14 2007",
+    "location": "Ski Lodge",
+    "paper_item_id": 590,
+    "unix": 1189728000
+  },
+  {
+    "label": "Circus Tent",
+    "release_date": "Sep 21 2007",
+    "location": "Prize Booth",
+    "paper_item_id": 591,
+    "unix": 1190332800
+  },
+  {
+    "label": "Ping Pong Paddle",
+    "release_date": "Sep 28 2007",
+    "location": "Snow Forts",
+    "paper_item_id": 592,
+    "unix": 1190937600
+  },
+  {
+    "label": "Hairbrush",
+    "release_date": "Oct 12 2007",
+    "location": "Pet Shop",
+    "paper_item_id": 593,
+    "unix": 1192147200
+  },
+  {
+    "label": "Spider",
+    "release_date": "Oct 26 2007",
+    "location": "Cave",
+    "paper_item_id": 594,
+    "unix": 1193356800
+  },
+  {
+    "label": "UFO",
+    "release_date": "Nov 09 2007",
+    "location": "Dance Lounge",
+    "paper_item_id": 595,
+    "unix": 1194566400
+  },
+  {
+    "label": "Needle",
+    "release_date": "Nov 23 2007",
+    "location": "Cove",
+    "paper_item_id": 596,
+    "unix": 1195776000
+  },
+  {
+    "label": "Holly",
+    "release_date": "Dec 07 2007",
+    "location": "Coffee Shop",
+    "paper_item_id": 597,
+    "unix": 1196985600
+  },
+  {
+    "label": "Wreath",
+    "release_date": "Dec 21 2008",
+    "location": "Lodge Attic",
+    "paper_item_id": 598,
+    "unix": 1229817600
+  },
+  {
+    "label": "Red Snow Shovel",
+    "release_date": "Jan 04 2008",
+    "location": "Boiler Room",
+    "paper_item_id": 599,
+    "unix": 1199404800
+  },
+  {
+    "label": "Sombrero",
+    "release_date": "Jan 18 2008",
+    "location": "Forest",
+    "paper_item_id": 600,
+    "unix": 1200614400
+  },
+  {
+    "label": "Rowboat",
+    "release_date": "Feb 01 2008",
+    "location": "Lighthouse",
+    "paper_item_id": 601,
+    "unix": 1201824000
+  },
+  {
+    "label": "Anchor",
+    "release_date": "Feb 15 2008",
+    "location": "Cove",
+    "paper_item_id": 602,
+    "unix": 1203033600
+  },
+  {
+    "label": "Golden Wheel",
+    "release_date": "Feb 19 2008",
+    "location": "Aqua Grabber",
+    "paper_item_id": 603,
+    "unix": 1203379200
+  },
+  {
+    "label": "Aqua Grabber Sub",
+    "release_date": "Feb 19 2008",
+    "location": "Cave",
+    "paper_item_id": 604,
+    "unix": 1203379200
+  },
+  {
+    "label": "Book",
+    "release_date": "Mar 14 2008",
+    "location": "Boiler Room",
+    "paper_item_id": 605,
+    "unix": 1205452800
+  },
+  {
+    "label": "Crayon",
+    "release_date": "Mar 28 2008",
+    "location": "Mine Shack",
+    "paper_item_id": 606,
+    "unix": 1206662400
+  },
+  {
+    "label": "Pyramid",
+    "release_date": "Apr 11 2008",
+    "location": "Book Room",
+    "paper_item_id": 607,
+    "unix": 1207872000
+  },
+  {
+    "label": "Treasure Chest",
+    "release_date": "Apr 25 2008",
+    "location": "Ski Village",
+    "paper_item_id": 608,
+    "unix": 1209081600
+  },
+  {
+    "label": "Rockhopper's Key",
+    "release_date": "Apr 28 2008",
+    "location": "The Journal of Captain Rockhopper",
+    "paper_item_id": 609,
+    "unix": 1209340800
+  },
+  {
+    "label": "Goblet",
+    "release_date": "May 09 2008",
+    "location": "Coffee Shop",
+    "paper_item_id": 610,
+    "unix": 1210291200
+  },
+  {
+    "label": "Anvil",
+    "release_date": "May 23 2008",
+    "location": "Boiler Room",
+    "paper_item_id": 611,
+    "unix": 1211500800
+  },
+  {
+    "label": "Icecream Cone",
+    "release_date": "Jun 06 2008",
+    "location": "Forest",
+    "paper_item_id": 612,
+    "unix": 1212710400
+  },
+  {
+    "label": "Basketball",
+    "release_date": "Jun 20 2008",
+    "location": "Pizza Parlor",
+    "paper_item_id": 613,
+    "unix": 1213920000
+  },
+  {
+    "label": "Firework Rocket",
+    "release_date": "Jul 04 2008",
+    "location": "Cove",
+    "paper_item_id": 614,
+    "unix": 1215129600
+  },
+  {
+    "label": "Treble Clef",
+    "release_date": "Jul 18 2008",
+    "location": "Cave",
+    "paper_item_id": 615,
+    "unix": 1216339200
+  },
+  {
+    "label": "Record",
+    "release_date": "Aug 01 2008",
+    "location": "Night Club",
+    "paper_item_id": 616,
+    "unix": 1217548800
+  },
+  {
+    "label": "Dodgeball",
+    "release_date": "Aug 15 2008",
+    "location": "Stage",
+    "paper_item_id": 617,
+    "unix": 1218758400
+  },
+  {
+    "label": "150th Newspaper",
+    "release_date": "Aug 30 2008",
+    "location": "Boiler Room",
+    "paper_item_id": 618,
+    "unix": 1220054400
+  },
+  {
+    "label": "Magnifying Glass",
+    "release_date": "Sep 12 2008",
+    "location": "Dock",
+    "paper_item_id": 619,
+    "unix": 1221177600
+  },
+  {
+    "label": "Ruby",
+    "release_date": "Jul 10 2009",
+    "location": "Stage",
+    "paper_item_id": 620,
+    "release_date_2": "Jul 10 2009",
+    "unix": 1247184000
+  },
+  {
+    "label": "Yellow Balloon",
+    "release_date": "Sep 26 2008",
+    "location": "Forest Prize Booth",
+    "paper_item_id": 621,
+    "unix": 1222387200
+  },
+  {
+    "label": "Lollipop",
+    "release_date": "Sep 26 2008",
+    "location": "Lighthouse",
+    "paper_item_id": 622,
+    "unix": 1222387200
+  },
+  {
+    "label": "Microscope",
+    "release_date": "Oct 10 2008",
+    "location": "Sport Shop",
+    "paper_item_id": 623,
+    "unix": 1223596800
+  },
+  {
+    "label": "3rd Anniversary Cake",
+    "release_date": "Oct 24 2008",
+    "location": "Dance Lounge",
+    "paper_item_id": 624,
+    "unix": 1224806400
+  },
+  {
+    "label": "Blue Snow Shovel",
+    "release_date": "Nov 07 2008",
+    "location": "Forest",
+    "paper_item_id": 625,
+    "unix": 1226016000
+  },
+  {
+    "label": "Snowflake Tile",
+    "release_date": "Nov 21 2008",
+    "location": "Beach",
+    "paper_item_id": 626,
+    "unix": 1227225600
+  },
+  {
+    "label": "Snow Fort",
+    "release_date": "Dec 05 2008",
+    "location": "Pet Shop",
+    "paper_item_id": 627,
+    "unix": 1228435200
+  },
+  {
+    "label": "Present",
+    "release_date": "Dec 19 2009",
+    "location": "Ski Lodge",
+    "paper_item_id": 628,
+    "unix": 1261180800
+  },
+  {
+    "label": "Gingerbread Man",
+    "release_date": "Jan 02 2009",
+    "location": "Lodge Attic",
+    "paper_item_id": 629,
+    "unix": 1230854400
+  },
+  {
+    "label": "Taco",
+    "release_date": "Jan 16 2009",
+    "location": "Snow Forts",
+    "paper_item_id": 630,
+    "unix": 1232064000
+  },
+  {
+    "label": "Lily",
+    "release_date": "Jan 30 2009",
+    "location": "Beacon",
+    "paper_item_id": 631,
+    "unix": 1233273600
+  },
+  {
+    "label": "Puffle O's",
+    "release_date": "Feb 13 2009",
+    "location": "Mine",
+    "paper_item_id": 632,
+    "unix": 1234483200
+  },
+  {
+    "label": "O-Berry",
+    "release_date": "Feb 27 2009",
+    "location": "Iceberg",
+    "paper_item_id": 633,
+    "unix": 1235692800
+  },
+  {
+    "label": "Lucky Coin",
+    "release_date": "Mar 13 2009",
+    "location": "Ski Hill",
+    "paper_item_id": 634,
+    "unix": 1236902400
+  },
+  {
+    "label": "Top Hat",
+    "release_date": "Mar 27 2009",
+    "location": "Lodge Attic",
+    "paper_item_id": 635,
+    "unix": 1238112000
+  },
+  {
+    "label": "Chocolate Bunny",
+    "release_date": "Apr 10 2009",
+    "location": "Forest",
+    "paper_item_id": 636,
+    "unix": 1239321600
+  },
+  {
+    "label": "Tree",
+    "release_date": "Apr 24 2009",
+    "location": "Dojo Courtyard",
+    "paper_item_id": 637,
+    "unix": 1240531200
+  },
+  {
+    "label": "King's Crown",
+    "release_date": "May 08 2009",
+    "location": "Boiler Room",
+    "paper_item_id": 638,
+    "unix": 1241740800
+  },
+  {
+    "label": "Ice Cream Sundae",
+    "release_date": "May 22 2009",
+    "location": "Pizza Parlor",
+    "paper_item_id": 639,
+    "unix": 1242950400
+  },
+  {
+    "label": "Safari Hat",
+    "release_date": "Jun 05 2009",
+    "location": "Book Room",
+    "paper_item_id": 640,
+    "unix": 1244160000
+  },
+  {
+    "label": "Watermelon",
+    "release_date": "Jun 19 2009",
+    "location": "Lighthouse",
+    "paper_item_id": 641,
+    "unix": 1245369600
+  },
+  {
+    "label": "Dojo Lantern",
+    "release_date": "Jul 03 2009",
+    "location": "Cave",
+    "paper_item_id": 642,
+    "unix": 1246579200
+  },
+  {
+    "label": "Beach Umbrella",
+    "release_date": "Jul 17 2009",
+    "location": "Boiler Room",
+    "paper_item_id": 648,
+    "unix": 1247788800
+  },
+  {
+    "label": "Toy Sailboat",
+    "release_date": "Jul 31 2009",
+    "location": "Coffee Shop",
+    "paper_item_id": 644,
+    "unix": 1248998400
+  },
+  {
+    "label": "Sand Castle",
+    "release_date": "Aug 14 2009",
+    "location": "Mine",
+    "paper_item_id": 645,
+    "unix": 1250208000
+  },
+  {
+    "label": "Koi Fish",
+    "release_date": "Aug 28 2009",
+    "location": "Cove",
+    "paper_item_id": 646,
+    "unix": 1251417600
+  },
+  {
+    "label": "Cotton Candy",
+    "release_date": "Sep 04 2009",
+    "location": "Forest Prize Booth",
+    "paper_item_id": 649,
+    "unix": 1252022400
+  },
+  {
+    "label": "101 Days of Fun",
+    "release_date": "Sep 11 2009",
+    "location": "Pizza Parlor",
+    "paper_item_id": 7000,
+    "unix": 1252627200
+  },
+  {
+    "label": "Fire",
+    "release_date": "Sep 14 2009",
+    "location": "Fire Scavenger Hunt",
+    "paper_item_id": 7001,
+    "unix": 1252886400
+  },
+  {
+    "label": "Castle",
+    "release_date": "Sep 22 2009",
+    "location": "Unlockable",
+    "paper_item_id": 7002,
+    "unix": 1253577600
+  },
+  {
+    "label": "Padlock",
+    "release_date": "Sep 25 2009",
+    "location": "Book Room",
+    "paper_item_id": 647,
+    "unix": 1253836800
+  },
+  {
+    "label": "Football",
+    "release_date": "Oct 09 2009",
+    "location": "Lodge Attic",
+    "paper_item_id": 7003,
+    "unix": 1255046400
+  },
+  {
+    "label": "4th Anniversary Cake",
+    "release_date": "Oct 23 2009",
+    "location": "Boiler Room",
+    "paper_item_id": 7004,
+    "unix": 1256256000
+  },
+  {
+    "label": "Toboggan",
+    "release_date": "Nov 06 2009",
+    "location": "Ski Hill",
+    "paper_item_id": 7005,
+    "unix": 1257465600
+  },
+  {
+    "label": "Magic Phial",
+    "release_date": "Nov 13 2009",
+    "location": "Underground",
+    "paper_item_id": 7006,
+    "unix": 1258070400
+  },
+  {
+    "label": "Hot Chocolate",
+    "release_date": "Nov 20 2009",
+    "location": "Coffee Shop",
+    "paper_item_id": 7007,
+    "unix": 1258675200
+  },
+  {
+    "label": "Christmas Bell",
+    "release_date": "Dec 04 2009",
+    "location": "Forest",
+    "paper_item_id": 7008,
+    "unix": 1259884800
+  },
+  {
+    "label": "Snowman",
+    "release_date": "Dec 18 2010",
+    "location": "Lodge Attic",
+    "paper_item_id": 7009,
+    "unix": 1292630400
+  },
+  {
+    "label": "Fireworks",
+    "release_date": "Jan 02 2010",
+    "location": "Lighthouse",
+    "paper_item_id": 7010,
+    "unix": 1262390400
+  },
+  {
+    "label": "Puffer Fish",
+    "release_date": "Jan 15 2010",
+    "location": "Iceberg",
+    "paper_item_id": 7011,
+    "unix": 1263513600
+  },
+  {
+    "label": "Amethyst",
+    "release_date": "Jan 22 2010",
+    "location": "Cave Mine",
+    "paper_item_id": 7012,
+    "unix": 1264118400
+  },
+  {
+    "label": "Speaker",
+    "release_date": "Jan 29 2010",
+    "location": "Pet Shop",
+    "paper_item_id": 7013,
+    "unix": 1264723200
+  },
+  {
+    "label": "Feather",
+    "release_date": "Feb 11 2010",
+    "location": "Beacon",
+    "paper_item_id": 7014,
+    "unix": 1265846400
+  },
+  {
+    "label": "Wagon",
+    "release_date": "Feb 25 2010",
+    "location": "Ski Lodge",
+    "paper_item_id": 7015,
+    "unix": 1267056000
+  },
+  {
+    "label": "Boot",
+    "release_date": "Mar 11 2010",
+    "location": "Dance Lounge",
+    "paper_item_id": 7017,
+    "unix": 1268265600
+  },
+  {
+    "label": "Moss Key",
+    "release_date": "Mar 15 2010",
+    "location": "Underwater",
+    "paper_item_id": 7016,
+    "unix": 1268611200
+  },
+  {
+    "label": "Cupcake",
+    "release_date": "Mar 25 2010",
+    "location": "Sport Shop",
+    "paper_item_id": 7018,
+    "unix": 1269475200
+  },
+  {
+    "label": "Frog",
+    "release_date": "Apr 09 2010",
+    "location": "Dock",
+    "paper_item_id": 7019,
+    "unix": 1270771200
+  },
+  {
+    "label": "Leaf",
+    "release_date": "Apr 22 2010",
+    "location": "Ski Hill",
+    "paper_item_id": 7020,
+    "unix": 1271894400
+  },
+  {
+    "label": "Recycle",
+    "release_date": "Apr 22 2010",
+    "location": "Recycle Hunt",
+    "paper_item_id": 7025,
+    "unix": 1271894400
+  },
+  {
+    "label": "Shield",
+    "release_date": "May 06 2010",
+    "location": "Cove",
+    "paper_item_id": 7021,
+    "unix": 1273104000
+  },
+  {
+    "label": "Toothbrush",
+    "release_date": "May 19 2011",
+    "location": "Treasure Room",
+    "paper_item_id": 7027,
+    "release_date_2": "May 19 2011",
+    "release_date_3": "May 16 2012",
+    "unix": 1305763200
+  },
+  {
+    "label": "Cream Soda Barrel",
+    "release_date": "May 20 2010",
+    "location": "Book Room",
+    "paper_item_id": 7022,
+    "unix": 1274313600
+  },
+  {
+    "label": "Seashell",
+    "release_date": "Jun 03 2010",
+    "location": "Iceberg",
+    "paper_item_id": 7023,
+    "unix": 1275523200
+  },
+  {
+    "label": "Ruby",
+    "release_date": "Jun 10 2010",
+    "location": "Stage",
+    "paper_item_id": 620,
+    "unix": 1276128000
+  },
+  {
+    "label": "Light Bulb",
+    "release_date": "Jun 17 2010",
+    "location": "Pizza Parlor",
+    "paper_item_id": 7026,
+    "unix": 1276732800
+  },
+  {
+    "label": "Candy Apple",
+    "release_date": "Jun 30 2010",
+    "location": "Hidden Lake",
+    "paper_item_id": 7028,
+    "unix": 1277856000
+  },
+  {
+    "label": "Tambourine",
+    "release_date": "Jul 15 2010",
+    "location": "Lodge Attic",
+    "paper_item_id": 7029,
+    "unix": 1279152000
+  },
+  {
+    "label": "Compass",
+    "release_date": "Jul 29 2010",
+    "location": "Boiler Room",
+    "paper_item_id": 7030,
+    "unix": 1280361600
+  },
+  {
+    "label": "Carabiner",
+    "release_date": "Aug 12 2010",
+    "location": "Lighthouse",
+    "paper_item_id": 7031,
+    "unix": 1281571200
+  },
+  {
+    "label": "Igloo",
+    "release_date": "Aug 26 2010",
+    "location": "Cave",
+    "paper_item_id": 7033,
+    "unix": 1282780800
+  },
+  {
+    "label": "Popcorn",
+    "release_date": "Sep 02 2010",
+    "location": "Forest Prize Booth",
+    "paper_item_id": 7032,
+    "unix": 1283385600
+  },
+  {
+    "label": "Fair Ticket",
+    "release_date": "Sep 09 2010",
+    "location": "Book Room",
+    "paper_item_id": 7034,
+    "unix": 1283990400
+  },
+  {
+    "label": "Sandwich",
+    "release_date": "Sep 23 2010",
+    "location": "Cave Mine",
+    "paper_item_id": 7035,
+    "unix": 1285200000
+  },
+  {
+    "label": "Gold Feather",
+    "release_date": "Oct 07 2010",
+    "location": "Mine Shack",
+    "paper_item_id": 7036,
+    "unix": 1286409600
+  },
+  {
+    "label": "Carrot",
+    "release_date": "Oct 07 2010",
+    "location": "Night Club",
+    "paper_item_id": 7037,
+    "unix": 1286409600
+  },
+  {
+    "label": "Bat",
+    "release_date": "Oct 21 2010",
+    "location": "Cove",
+    "paper_item_id": 7038,
+    "unix": 1287619200
+  },
+  {
+    "label": "Water Tap",
+    "release_date": "Nov 04 2010",
+    "location": "Beach",
+    "paper_item_id": 7039,
+    "unix": 1288828800
+  },
+  {
+    "label": "Water",
+    "release_date": "Nov 18 2010",
+    "location": "Iceberg",
+    "paper_item_id": 7040,
+    "unix": 1290038400
+  },
+  {
+    "label": "Snowflakes",
+    "release_date": "Dec 03 2010",
+    "location": "Snow Forts",
+    "paper_item_id": 7041,
+    "unix": 1291334400
+  },
+  {
+    "label": "Snow Globe",
+    "release_date": "Dec 16 2010",
+    "location": "Dock",
+    "paper_item_id": 7042,
+    "unix": 1292457600
+  },
+  {
+    "label": "Ruby Brooch",
+    "release_date": "Dec 28 2011",
+    "location": "Stage",
+    "paper_item_id": 7045,
+    "unix": 1325030400
+  },
+  {
+    "label": "Party Favors",
+    "release_date": "Dec 30 2011",
+    "location": "Ski Hill",
+    "paper_item_id": 7046,
+    "unix": 1325203200
+  },
+  {
+    "label": "Sleeping Bag",
+    "release_date": "Jan 13 2011",
+    "location": "Coffee Shop",
+    "paper_item_id": 7043,
+    "unix": 1294876800
+  },
+  {
+    "label": "Fire Extinguisher",
+    "release_date": "Jan 27 2011",
+    "location": "Dance Lounge",
+    "paper_item_id": 7044,
+    "unix": 1296086400
+  },
+  {
+    "label": "Red Puffle",
+    "release_date": "Feb 10 2011",
+    "location": "Hidden Lake",
+    "paper_item_id": 7047,
+    "unix": 1297296000
+  },
+  {
+    "label": "Blue Puffle",
+    "release_date": "Feb 10 2011",
+    "location": "Lodge Attic",
+    "paper_item_id": 7048,
+    "unix": 1297296000
+  },
+  {
+    "label": "Green Puffle",
+    "release_date": "Feb 24 2011",
+    "location": "Dojo",
+    "paper_item_id": 7049,
+    "unix": 1298505600
+  },
+  {
+    "label": "Black Puffle",
+    "release_date": "Feb 24 2011",
+    "location": "Recycling Plant",
+    "paper_item_id": 7050,
+    "unix": 1298505600
+  },
+  {
+    "label": "Viking Ship",
+    "release_date": "Feb 24 2011",
+    "location": "Stage",
+    "paper_item_id": 7051,
+    "unix": 1298505600
+  },
+  {
+    "label": "Purple Puffle",
+    "release_date": "Mar 10 2011",
+    "location": "Pizza Parlor",
+    "paper_item_id": 7052,
+    "unix": 1299715200
+  },
+  {
+    "label": "Pink Puffle",
+    "release_date": "Mar 10 2011",
+    "location": "Cove",
+    "paper_item_id": 7057,
+    "unix": 1299715200
+  },
+  {
+    "label": "White Puffle",
+    "release_date": "Mar 24 2011",
+    "location": "Book Room",
+    "paper_item_id": 7053,
+    "unix": 1300924800
+  },
+  {
+    "label": "Yellow Puffle",
+    "release_date": "Mar 24 2011",
+    "location": "Mine Shack",
+    "paper_item_id": 7054,
+    "unix": 1300924800
+  },
+  {
+    "label": "Orange Puffle",
+    "release_date": "Apr 07 2011",
+    "location": "Night Club",
+    "paper_item_id": 7055,
+    "unix": 1302134400
+  },
+  {
+    "label": "Brown Puffle",
+    "release_date": "Apr 07 2011",
+    "location": "Ski Village",
+    "paper_item_id": 7056,
+    "unix": 1302134400
+  },
+  {
+    "label": "Quartz",
+    "release_date": "Apr 14 2011",
+    "location": "Underground",
+    "paper_item_id": 7058,
+    "unix": 1302739200
+  },
+  {
+    "label": "Savanna Tree",
+    "release_date": "Apr 20 2011",
+    "location": "Ski Lodge",
+    "paper_item_id": 7059,
+    "unix": 1303257600
+  },
+  {
+    "label": "Medieval Shield",
+    "release_date": "May 06 2011",
+    "location": "Dojo Courtyard",
+    "paper_item_id": 7060,
+    "unix": 1304640000
+  },
+  {
+    "label": "Brazier",
+    "release_date": "May 19 2011",
+    "location": "Boiler Room",
+    "paper_item_id": 7061,
+    "unix": 1305763200
+  },
+  {
+    "label": "Mermaid Shell",
+    "release_date": "Jun 05 2013",
+    "location": "Stage",
+    "paper_item_id": 7062,
+    "release_date_2": "Jun 05 2013",
+    "unix": 1370390400
+  },
+  {
+    "label": "EPF Badge",
+    "release_date": "May 31 2011",
+    "location": "Battle of Doom",
+    "paper_item_id": 7071,
+    "unix": 1306800000
+  },
+  {
+    "label": "Red Electric Guitar",
+    "release_date": "Jun 02 2011",
+    "location": "Hidden Lake",
+    "paper_item_id": 7069,
+    "unix": 1306972800
+  },
+  {
+    "label": "Enchanted Feather",
+    "release_date": "Feb 04 2015",
+    "location": "Beacon",
+    "paper_item_id": 7068,
+    "release_date_2": "Feb 04 2015",
+    "unix": 1423008000
+  },
+  {
+    "label": "Stereo",
+    "release_date": "Jun 16 2011",
+    "location": "Book Room",
+    "paper_item_id": 7070,
+    "unix": 1308182400
+  },
+  {
+    "label": "Tiki Mask",
+    "release_date": "Jul 06 2011",
+    "location": "Dock",
+    "paper_item_id": 7072,
+    "unix": 1309910400
+  },
+  {
+    "label": "Gold Anchor",
+    "release_date": "Jul 13 2011",
+    "location": "Iceberg",
+    "paper_item_id": 7073,
+    "unix": 1310515200
+  },
+  {
+    "label": "Eye Patch",
+    "release_date": "Jul 20 2011",
+    "location": "Ship Hold",
+    "paper_item_id": 7063,
+    "unix": 1311120000
+  },
+  {
+    "label": "Telescope",
+    "release_date": "Jul 20 2011",
+    "location": "Iceberg",
+    "paper_item_id": 564,
+    "unix": 1311120000
+  },
+  {
+    "label": "Tropical Feather",
+    "release_date": "Jul 20 2011",
+    "location": "Dock",
+    "paper_item_id": 7066,
+    "unix": 1311120000
+  },
+  {
+    "label": "Old Key",
+    "release_date": "Jul 20 2011",
+    "location": "Tree Forts",
+    "paper_item_id": 7067,
+    "unix": 1311120000
+  },
+  {
+    "label": "Tropical Bird",
+    "release_date": "Jul 27 2011",
+    "location": "Gift Shop",
+    "paper_item_id": 7074,
+    "unix": 1311724800
+  },
+  {
+    "label": "Checkered Flag",
+    "release_date": "Aug 12 2011",
+    "location": "Cove",
+    "paper_item_id": 7077,
+    "unix": 1313107200
+  },
+  {
+    "label": "Polar Paw Print",
+    "release_date": "Aug 25 2011",
+    "location": "Cave",
+    "paper_item_id": 7078,
+    "unix": 1314230400
+  },
+  {
+    "label": "Expedition Key",
+    "release_date": "Aug 25 2011",
+    "location": "Laser Maze",
+    "paper_item_id": 7075,
+    "unix": 1314230400
+  },
+  {
+    "label": "AC 3000",
+    "release_date": "Aug 25 2011",
+    "location": "Classified Area",
+    "paper_item_id": 7076,
+    "unix": 1314230400
+  },
+  {
+    "label": "Balloon Bunch",
+    "release_date": "Sep 07 2011",
+    "location": "Forest",
+    "paper_item_id": 7080,
+    "unix": 1315353600
+  },
+  {
+    "label": "Milkshake",
+    "release_date": "Sep 21 2011",
+    "location": "Dojo Courtyard",
+    "paper_item_id": 7081,
+    "unix": 1316563200
+  },
+  {
+    "label": "Snow Cone",
+    "release_date": "Sep 21 2011",
+    "location": "Coffee Shop",
+    "paper_item_id": 7083,
+    "unix": 1316563200
+  },
+  {
+    "label": "Purple Balloon",
+    "release_date": "Sep 21 2011",
+    "location": "Forest Prize Booth",
+    "paper_item_id": 7079,
+    "unix": 1316563200
+  },
+  {
+    "label": "Fence",
+    "release_date": "Oct 04 2011",
+    "location": "Beach",
+    "paper_item_id": 7084,
+    "unix": 1317686400
+  },
+  {
+    "label": "Crystal Ball",
+    "release_date": "Oct 19 2011",
+    "location": "Hidden Lake",
+    "paper_item_id": 7085,
+    "unix": 1318982400
+  },
+  {
+    "label": "Hot Sauce",
+    "release_date": "Nov 02 2011",
+    "location": "Cave Mine",
+    "paper_item_id": 7086,
+    "unix": 1320192000
+  },
+  {
+    "label": "Blue Fish",
+    "release_date": "Nov 16 2011",
+    "location": "Snow Forts",
+    "paper_item_id": 7087,
+    "unix": 1321401600
+  },
+  {
+    "label": "Bonsai Tree",
+    "release_date": "Dec 01 2011",
+    "location": "Ski Lodge",
+    "paper_item_id": 7088,
+    "unix": 1322697600
+  },
+  {
+    "label": "Reindeer",
+    "release_date": "Dec 14 2011",
+    "location": "Pizza Parlor",
+    "paper_item_id": 7089,
+    "unix": 1323820800
+  },
+  {
+    "label": "CFC 2011",
+    "release_date": "Dec 14 2011",
+    "location": "Coins for Change",
+    "paper_item_id": 7094,
+    "unix": 1323820800
+  },
+  {
+    "label": "Candy Cane Duo",
+    "release_date": "Dec 16 2011",
+    "location": "Forest",
+    "paper_item_id": 7093,
+    "release_date_2": "Dec 16 2011",
+    "unix": 1323993600
+  },
+  {
+    "label": "Holiday Stocking",
+    "release_date": "Dec 19 2011",
+    "location": "Forest",
+    "paper_item_id": 7092,
+    "release_date_2": "Dec 19 2011",
+    "unix": 1324252800
+  },
+  {
+    "label": "Milk 'N Cookies",
+    "release_date": "Dec 22 2011",
+    "location": "Forest",
+    "paper_item_id": 7091,
+    "release_date_2": "Dec 22 2011",
+    "unix": 1324512000
+  },
+  {
+    "label": "Candy Swirl",
+    "release_date": "Dec 28 2012",
+    "location": "Coffee Shop",
+    "paper_item_id": 7090,
+    "unix": 1356652800
+  },
+  {
+    "label": "Conch Shell",
+    "release_date": "Jan 11 2012",
+    "location": "Iceberg",
+    "paper_item_id": 7097,
+    "unix": 1326240000
+  },
+  {
+    "label": "Beach Chair",
+    "release_date": "Jan 25 2012",
+    "location": "Night Club",
+    "paper_item_id": 7098,
+    "unix": 1327449600
+  },
+  {
+    "label": "Camera",
+    "release_date": "Feb 08 2012",
+    "location": "Dock",
+    "paper_item_id": 7099,
+    "unix": 1328659200
+  },
+  {
+    "label": "Helm",
+    "release_date": "Feb 23 2012",
+    "location": "Ski Hill",
+    "paper_item_id": 7100,
+    "unix": 1329955200
+  },
+  {
+    "label": "Shipwreck Beacon",
+    "release_date": "Feb 23 2012",
+    "location": "Shipwreck Island",
+    "paper_item_id": 7101,
+    "unix": 1329955200
+  },
+  {
+    "label": "Cheese",
+    "release_date": "Mar 07 2012",
+    "location": "Boiler Room",
+    "paper_item_id": 7102,
+    "unix": 1331078400
+  },
+  {
+    "label": "Cake",
+    "release_date": "Mar 22 2012",
+    "location": "Book Room",
+    "paper_item_id": 7103,
+    "unix": 1332374400
+  },
+  {
+    "label": "Easter Basket",
+    "release_date": "Apr 04 2012",
+    "location": "Forest",
+    "paper_item_id": 7104,
+    "unix": 1333497600
+  },
+  {
+    "label": "Forest",
+    "release_date": "Apr 18 2012",
+    "location": "Cave",
+    "paper_item_id": 7105,
+    "unix": 1334707200
+  },
+  {
+    "label": "Round Ruby",
+    "release_date": "Aug 14 2013",
+    "location": "Stage",
+    "paper_item_id": 7106,
+    "release_date_2": "Aug 14 2013",
+    "release_date_3": "Sep 03 2014",
+    "unix": 1376438400
+  },
+  {
+    "label": "Black Helm",
+    "release_date": "May 02 2012",
+    "location": "Cove",
+    "paper_item_id": 7107,
+    "unix": 1335916800
+  },
+  {
+    "label": "Scorn Crest",
+    "release_date": "May 16 2012",
+    "location": "Boiler Room",
+    "paper_item_id": 7108,
+    "unix": 1337126400
+  },
+  {
+    "label": "Crown of the Dragon King",
+    "release_date": "May 16 2012",
+    "location": "Misery Mountain",
+    "paper_item_id": 7110,
+    "unix": 1337126400
+  },
+  {
+    "label": "Bean Bag",
+    "release_date": "May 30 2012",
+    "location": "Coffee Shop",
+    "paper_item_id": 7109,
+    "unix": 1338336000
+  },
+  {
+    "label": "Superhero",
+    "release_date": "Jun 13 2012",
+    "location": "Mine Shack",
+    "paper_item_id": 7111,
+    "unix": 1339545600
+  },
+  {
+    "label": "Supervillain",
+    "release_date": "Jun 28 2012",
+    "location": "Dojo Courtyard",
+    "paper_item_id": 7112,
+    "unix": 1340841600
+  },
+  {
+    "label": "Dub-step Puffle",
+    "release_date": "Jul 11 2012",
+    "location": "Hidden Lake",
+    "paper_item_id": 7114,
+    "unix": 1341964800
+  },
+  {
+    "label": "Sweet Star",
+    "release_date": "Jul 18 2012",
+    "location": "Music Challenge",
+    "paper_item_id": 7116,
+    "unix": 1342569600
+  },
+  {
+    "label": "Mega Star",
+    "release_date": "Jul 19 2012",
+    "location": "Music Challenge",
+    "paper_item_id": 7117,
+    "unix": 1342656000
+  },
+  {
+    "label": "Super Star",
+    "release_date": "Jul 20 2012",
+    "location": "Music Challenge",
+    "paper_item_id": 7118,
+    "unix": 1342742400
+  },
+  {
+    "label": "Gold Star",
+    "release_date": "Jul 21 2012",
+    "location": "Music Challenge",
+    "paper_item_id": 7119,
+    "unix": 1342828800
+  },
+  {
+    "label": "Spotlight",
+    "release_date": "Jul 25 2012",
+    "location": "Lodge Attic",
+    "paper_item_id": 7115,
+    "unix": 1343174400
+  },
+  {
+    "label": "Pink Mystery",
+    "release_date": "Jul 25 2012",
+    "location": "Unlockable",
+    "paper_item_id": 7113,
+    "unix": 1343174400
+  },
+  {
+    "label": "Banana Peel",
+    "release_date": "Aug 08 2012",
+    "location": "Coffee Shop",
+    "paper_item_id": 7120,
+    "unix": 1344384000
+  },
+  {
+    "label": "Fruit Combo",
+    "release_date": "Aug 22 2012",
+    "location": "Iceberg",
+    "paper_item_id": 7121,
+    "unix": 1345593600
+  },
+  {
+    "label": "Windmill",
+    "release_date": "Sep 05 2012",
+    "location": "Dock",
+    "paper_item_id": 7124,
+    "unix": 1346803200
+  },
+  {
+    "label": "Triple Scoop",
+    "release_date": "Sep 19 2012",
+    "location": "Ski Lodge",
+    "paper_item_id": 7125,
+    "unix": 1348012800
+  },
+  {
+    "label": "Puffle Bat Key",
+    "release_date": "Oct 03 2012",
+    "location": "Beach",
+    "paper_item_id": 7126,
+    "unix": 1349222400
+  },
+  {
+    "label": "7th Anniversary Hat",
+    "release_date": "Oct 17 2012",
+    "location": "Cave Mine",
+    "paper_item_id": 7128,
+    "unix": 1350432000
+  },
+  {
+    "label": "Gariwald Family Crest",
+    "release_date": "Oct 31 2012",
+    "location": "Recycling Plant",
+    "paper_item_id": 7127,
+    "unix": 1351641600
+  },
+  {
+    "label": "Square Ruby",
+    "release_date": "Oct 31 2012",
+    "location": "Stage",
+    "paper_item_id": 7131,
+    "unix": 1351641600
+  },
+  {
+    "label": "Heavy Weights",
+    "release_date": "Nov 14 2012",
+    "location": "Boiler Room",
+    "paper_item_id": 7129,
+    "unix": 1352851200
+  },
+  {
+    "label": "Herbert Security Clearance 1",
+    "release_date": "Nov 14 2012",
+    "location": "EPF Briefing",
+    "paper_item_id": 7132,
+    "unix": 1352851200
+  },
+  {
+    "label": "Herbert Security Clearance 2",
+    "release_date": "Nov 15 2012",
+    "location": "EPF Briefing",
+    "paper_item_id": 7133,
+    "unix": 1352937600
+  },
+  {
+    "label": "Herbert Security Clearance 3",
+    "release_date": "Nov 17 2012",
+    "location": "EPF Briefing",
+    "paper_item_id": 7134,
+    "unix": 1353110400
+  },
+  {
+    "label": "Herbert Security Clearance 4",
+    "release_date": "Nov 19 2012",
+    "location": "EPF Briefing",
+    "paper_item_id": 7135,
+    "unix": 1353283200
+  },
+  {
+    "label": "Herbert Security Clearance 5",
+    "release_date": "Nov 22 2012",
+    "location": "EPF Briefing",
+    "paper_item_id": 7136,
+    "unix": 1353542400
+  },
+  {
+    "label": "Herbert Security Clearance 6",
+    "release_date": "Nov 24 2012",
+    "location": "EPF Briefing",
+    "paper_item_id": 7137,
+    "unix": 1353715200
+  },
+  {
+    "label": "First Aid",
+    "release_date": "Nov 19 2012",
+    "location": "Mine",
+    "paper_item_id": 7130,
+    "unix": 1353283200
+  },
+  {
+    "label": "Snowflake",
+    "release_date": "Dec 12 2012",
+    "location": "Cave Mine",
+    "paper_item_id": 7139,
+    "unix": 1355270400
+  },
+  {
+    "label": "CFC 2012",
+    "release_date": "Dec 19 2013",
+    "location": "Coins for Change",
+    "paper_item_id": 7140,
+    "unix": 1387411200
+  },
+  {
+    "label": "Holiday Cookies",
+    "release_date": "Dec 26 2013",
+    "location": "Cave",
+    "paper_item_id": 7138,
+    "unix": 1388016000
+  },
+  {
+    "label": "Dino Footprint",
+    "release_date": "Jan 09 2013",
+    "location": "Forest",
+    "paper_item_id": 7141,
+    "unix": 1357689600
+  },
+  {
+    "label": "Stone Hammer",
+    "release_date": "Jan 23 2013",
+    "location": "Dock",
+    "paper_item_id": 7142,
+    "unix": 1358899200
+  },
+  {
+    "label": "Shooting Star",
+    "release_date": "Feb 06 2013",
+    "location": "Cave",
+    "paper_item_id": 7143,
+    "unix": 1360108800
+  },
+  {
+    "label": "Golden Award",
+    "release_date": "Feb 20 2013",
+    "location": "Ski Hill",
+    "paper_item_id": 7144,
+    "unix": 1361318400
+  },
+  {
+    "label": "Red Nose Comedy",
+    "release_date": "Mar 06 2013",
+    "location": "Coffee Shop",
+    "paper_item_id": 7146,
+    "unix": 1362528000
+  },
+  {
+    "label": "Rainbow Puffle",
+    "release_date": "Mar 20 2013",
+    "location": "Beach",
+    "paper_item_id": 7147,
+    "unix": 1363737600
+  },
+  {
+    "label": "Bunny Rabbit",
+    "release_date": "Apr 04 2013",
+    "location": "Dojo",
+    "paper_item_id": 7149,
+    "unix": 1365033600
+  },
+  {
+    "label": "Robot Villain",
+    "release_date": "Apr 17 2013",
+    "location": "Lodge Attic",
+    "paper_item_id": 7150,
+    "unix": 1366156800
+  },
+  {
+    "label": "Paper Lantern",
+    "release_date": "May 02 2013",
+    "location": "Recycling Plant",
+    "paper_item_id": 7151,
+    "unix": 1367452800
+  },
+  {
+    "label": "Elemental",
+    "release_date": "May 15 2013",
+    "location": "Hidden Lake",
+    "paper_item_id": 7152,
+    "unix": 1368576000
+  },
+  {
+    "label": "Snow Gem",
+    "release_date": "May 22 2013",
+    "location": "Card-Jitsu Snow",
+    "paper_item_id": 7159,
+    "unix": 1369180800
+  },
+  {
+    "label": "Snow Shuriken",
+    "release_date": "May 29 2013",
+    "location": "Ski Village",
+    "paper_item_id": 7153,
+    "unix": 1369785600
+  },
+  {
+    "label": "Neon Flamingo",
+    "release_date": "Jun 12 2013",
+    "location": "Coffee Shop",
+    "paper_item_id": 7154,
+    "unix": 1370995200
+  },
+  {
+    "label": "One Eyed Puffle",
+    "release_date": "Jun 26 2013",
+    "location": "Iceberg",
+    "paper_item_id": 7155,
+    "unix": 1372204800
+  },
+  {
+    "label": "Text Book",
+    "release_date": "Jul 11 2013",
+    "location": "Night Club",
+    "paper_item_id": 7156,
+    "unix": 1373500800
+  },
+  {
+    "label": "R2-D2",
+    "release_date": "Jul 24 2013",
+    "location": "Pizza Parlor",
+    "paper_item_id": 7157,
+    "unix": 1374624000
+  },
+  {
+    "label": "Rebel Reward",
+    "release_date": "Aug 01 2013",
+    "location": "Infiltrate the Death Star",
+    "paper_item_id": 7158,
+    "unix": 1375315200
+  },
+  {
+    "label": "Calculator",
+    "release_date": "Aug 07 2013",
+    "location": "Beacon",
+    "paper_item_id": 7160,
+    "unix": 1375833600
+  },
+  {
+    "label": "Friends Forever",
+    "release_date": "Aug 21 2013",
+    "location": "Night Club",
+    "paper_item_id": 7161,
+    "unix": 1377043200
+  },
+  {
+    "label": "Coconut Smoothie",
+    "release_date": "Sep 04 2013",
+    "location": "Hidden Lake",
+    "paper_item_id": 7162,
+    "unix": 1378252800
+  },
+  {
+    "label": "Fluffy Crest",
+    "release_date": "Sep 18 2013",
+    "location": "Book Room",
+    "paper_item_id": 7163,
+    "unix": 1379462400
+  },
+  {
+    "label": "Prank Fangs",
+    "release_date": "Oct 02 2013",
+    "location": "Cave Mine",
+    "paper_item_id": 7164,
+    "unix": 1380672000
+  },
+  {
+    "label": "Tombstone",
+    "release_date": "Oct 16 2013",
+    "location": "Boiler Room",
+    "paper_item_id": 7165,
+    "unix": 1381881600
+  },
+  {
+    "label": "Scissors",
+    "release_date": "Nov 01 2013",
+    "location": "Forest",
+    "paper_item_id": 7166,
+    "unix": 1383264000
+  },
+  {
+    "label": "Herbertech Logo",
+    "release_date": "Nov 13 2013",
+    "location": "Lighthouse",
+    "paper_item_id": 7167,
+    "unix": 1384300800
+  },
+  {
+    "label": "Puffle Medic",
+    "release_date": "Nov 27 2013",
+    "location": "Dance Lounge",
+    "paper_item_id": 7168,
+    "unix": 1385510400
+  },
+  {
+    "label": "Ornament",
+    "release_date": "Dec 11 2013",
+    "location": "Night Club",
+    "paper_item_id": 7169,
+    "unix": 1386720000
+  },
+  {
+    "label": "2013 CFC donation",
+    "release_date": "Dec 18 2013",
+    "location": "Coins for Change",
+    "paper_item_id": 7173,
+    "unix": 1387324800
+  },
+  {
+    "label": "Penguin Nests",
+    "release_date": "Dec 19 2013",
+    "location": "Coins for Change",
+    "paper_item_id": 7170,
+    "unix": 1387411200
+  },
+  {
+    "label": "Clean Water",
+    "release_date": "Dec 20 2013",
+    "location": "Coins for Change",
+    "paper_item_id": 7171,
+    "unix": 1387497600
+  },
+  {
+    "label": "Holiday Gift",
+    "release_date": "Dec 26 2013",
+    "location": "Boiler Room",
+    "paper_item_id": 7172,
+    "unix": 1388016000
+  },
+  {
+    "label": "Stone Scissors",
+    "release_date": "Jan 08 2014",
+    "location": "Forest",
+    "paper_item_id": 7174,
+    "unix": 1389139200
+  },
+  {
+    "label": "Dino Snack",
+    "release_date": "Jan 22 2014",
+    "location": "Beach",
+    "paper_item_id": 7175,
+    "unix": 1390348800
+  },
+  {
+    "label": "Pixel Puffle",
+    "release_date": "Feb 05 2014",
+    "location": "Hidden Lake",
+    "paper_item_id": 7176,
+    "unix": 1391558400
+  },
+  {
+    "label": "Space Cart",
+    "release_date": "Feb 19 2014",
+    "location": "Cave",
+    "paper_item_id": 7177,
+    "unix": 1392768000
+  },
+  {
+    "label": "Pirate Skull",
+    "release_date": "Feb 19 2014",
+    "location": "Daily Spin",
+    "paper_item_id": 7178,
+    "unix": 1392768000
+  },
+  {
+    "label": "Desert Cactus",
+    "release_date": "Feb 19 2014",
+    "location": "Daily Spin",
+    "paper_item_id": 7179,
+    "unix": 1392768000
+  },
+  {
+    "label": "Lion Statue",
+    "release_date": "Mar 05 2014",
+    "location": "Mine Shack",
+    "paper_item_id": 7180,
+    "unix": 1393977600
+  },
+  {
+    "label": "Pinata",
+    "release_date": "Mar 19 2014",
+    "location": "Coffee Shop",
+    "paper_item_id": 7181,
+    "unix": 1395187200
+  },
+  {
+    "label": "Cream Pie",
+    "release_date": "Apr 02 2014",
+    "location": "Mine Shack",
+    "paper_item_id": 7193,
+    "unix": 1396396800
+  },
+  {
+    "label": "Puffle Park",
+    "release_date": "Apr 16 2014",
+    "location": "School",
+    "paper_item_id": 7191,
+    "unix": 1397606400
+  },
+  {
+    "label": "Neon O'Berry",
+    "release_date": "Apr 30 2014",
+    "location": "Lodge Attic",
+    "paper_item_id": 7192,
+    "unix": 1398816000
+  },
+  {
+    "label": "Picnic Bundle",
+    "release_date": "May 14 2014",
+    "location": "Lighthouse",
+    "paper_item_id": 7190,
+    "unix": 1400025600
+  },
+  {
+    "label": "Space Academy Crest",
+    "release_date": "May 28 2014",
+    "location": "Lounge",
+    "paper_item_id": 7194,
+    "unix": 1401235200
+  },
+  {
+    "label": "Orange Slice",
+    "release_date": "Jun 11 2014",
+    "location": "Hidden Lake",
+    "paper_item_id": 7195,
+    "unix": 1402444800
+  },
+  {
+    "label": "Penguin Cup 2014",
+    "release_date": "Jun 18 2014",
+    "location": "Shootouts",
+    "paper_item_id": 7197,
+    "unix": 1403049600
+  },
+  {
+    "label": "MVP",
+    "release_date": "Jun 25 2014",
+    "location": "Gold Mine",
+    "paper_item_id": 7196,
+    "unix": 1403654400
+  },
+  {
+    "label": "Life Preserver",
+    "release_date": "Jul 09 2014",
+    "location": "Forest",
+    "paper_item_id": 7198,
+    "unix": 1404864000
+  },
+  {
+    "label": "Cruise Ship",
+    "release_date": "Jul 23 2014",
+    "location": "Cove",
+    "paper_item_id": 7199,
+    "unix": 1406073600
+  },
+  {
+    "label": "Arendell Crest",
+    "release_date": "Aug 06 2014",
+    "location": "School",
+    "paper_item_id": 7200,
+    "unix": 1407283200
+  },
+  {
+    "label": "Snowman Puffle",
+    "release_date": "Aug 20 2014",
+    "location": "Beacon",
+    "paper_item_id": 7201,
+    "unix": 1408492800
+  },
+  {
+    "label": "Fruit Smoothie",
+    "release_date": "Sep 03 2014",
+    "location": "Dock",
+    "paper_item_id": 7202,
+    "unix": 1409702400
+  },
+  {
+    "label": "Lemon",
+    "release_date": "Sep 17 2014",
+    "location": "Ski Hill",
+    "paper_item_id": 7203,
+    "unix": 1410912000
+  },
+  {
+    "label": "Scout Scarf",
+    "release_date": "Oct 01 2014",
+    "location": "Book Room",
+    "paper_item_id": 7206,
+    "unix": 1412121600
+  },
+  {
+    "label": "Anniversary Balloons",
+    "release_date": "Oct 15 2014",
+    "location": "Mine",
+    "paper_item_id": 7204,
+    "unix": 1413331200
+  },
+  {
+    "label": "Ghost",
+    "release_date": "Oct 29 2014",
+    "location": "Boiler Room",
+    "paper_item_id": 7205,
+    "unix": 1414540800
+  },
+  {
+    "label": "Wooden Sword",
+    "release_date": "Nov 12 2014",
+    "location": "Pizza Parlor",
+    "paper_item_id": 7207,
+    "unix": 1415750400
+  },
+  {
+    "label": "Crab Lock",
+    "release_date": "Nov 26 2014",
+    "location": "Coffee Shop",
+    "paper_item_id": 7208,
+    "unix": 1416960000
+  },
+  {
+    "label": "Merry Walrus",
+    "release_date": "Dec 10 2014",
+    "location": "Ski Hill",
+    "paper_item_id": 7210,
+    "unix": 1418169600
+  },
+  {
+    "label": "CFC 2014",
+    "release_date": "Dec 17 2014",
+    "location": "Coins for Change",
+    "paper_item_id": 7209,
+    "unix": 1418774400
+  },
+  {
+    "label": "Blue Crystal Puffle",
+    "release_date": "Dec 22 2014",
+    "location": "Puffle Hotel Lobby",
+    "paper_item_id": 7211,
+    "unix": 1419206400
+  },
+  {
+    "label": "Rebels",
+    "release_date": "Jan 07 2015",
+    "location": "School",
+    "paper_item_id": 7212,
+    "unix": 1420588800
+  },
+  {
+    "label": "Imperial",
+    "release_date": "Jan 21 2015",
+    "location": "Clothes Shop",
+    "paper_item_id": 7213,
+    "unix": 1421798400
+  },
+  {
+    "label": "Headphones",
+    "release_date": "Feb 04 2015",
+    "location": "Night Club",
+    "paper_item_id": 7214,
+    "unix": 1423008000
+  },
+  {
+    "label": "DJ K-Dance",
+    "release_date": "Feb 18 2015",
+    "location": "Beach",
+    "paper_item_id": 7215,
+    "unix": 1424217600
+  },
+  {
+    "label": "Pop Star",
+    "release_date": "",
+    "paper_item_id": 7216,
+    "unix": 0
+  },
+  {
+    "label": "Rock Star",
+    "release_date": "",
+    "paper_item_id": 7217,
+    "unix": 0
+  },
+  {
+    "label": "Dance",
+    "release_date": "",
+    "paper_item_id": 7218,
+    "unix": 0
+  },
+  {
+    "label": "Dubstep DJ",
+    "release_date": "",
+    "paper_item_id": 7219,
+    "unix": 0
+  },
+  {
+    "label": "Glitterpants",
+    "release_date": "Mar 12 2015",
+    "location": "Cove",
+    "paper_item_id": 7220,
+    "release_date_2": "Mar 12 2015",
+    "unix": 1426118400
+  },
+  {
+    "label": "Puffle Guide Badge",
+    "release_date": "Mar 18 2015",
+    "location": "Ski Lodge",
+    "paper_item_id": 7222,
+    "unix": 1426636800
+  },
+  {
+    "label": "Pi Pie",
+    "release_date": "Mar 18 2015",
+    "location": "Book Room",
+    "paper_item_id": 7223,
+    "unix": 1426636800
+  },
+  {
+    "label": "Fishing Rod",
+    "release_date": "Apr 01 2015",
+    "location": "Hidden Lake",
+    "paper_item_id": 7221,
+    "unix": 1427846400
+  },
+  {
+    "label": "?????? Footprint",
+    "release_date": "Apr 15 2015",
+    "location": "Beacon",
+    "paper_item_id": 7225,
+    "unix": 1429056000
+  },
+  {
+    "label": "Clocktower",
+    "release_date": "Apr 23 2015",
+    "location": "Royal Chambers",
+    "paper_item_id": 7226,
+    "unix": 1429747200
+  },
+  {
+    "label": "Bracelet",
+    "release_date": "Apr 23 2015",
+    "location": "Royal Chambers",
+    "paper_item_id": 7227,
+    "unix": 1429747200
+  },
+  {
+    "label": "Flower Bouquet",
+    "release_date": "Apr 23 2015",
+    "location": "Royal Chambers",
+    "paper_item_id": 7228,
+    "unix": 1429747200
+  },
+  {
+    "label": "Deluxe Sandwich",
+    "release_date": "Apr 23 2015",
+    "location": "Royal Chambers",
+    "paper_item_id": 7229,
+    "unix": 1429747200
+  },
+  {
+    "label": "Portrait",
+    "release_date": "Apr 23 2015",
+    "location": "Royal Chambers",
+    "paper_item_id": 7230,
+    "unix": 1429747200
+  },
+  {
+    "label": "Anna and Elsa",
+    "release_date": "Apr 23 2015",
+    "location": "Dock",
+    "paper_item_id": 7231,
+    "unix": 1429747200
+  },
+  {
+    "label": "Arendelle Globe",
+    "release_date": "Apr 23 2015",
+    "location": "Dock",
+    "paper_item_id": 7232,
+    "unix": 1429747200
+  },
+  {
+    "label": "Old Fishing Rod",
+    "release_date": "Apr 23 2015",
+    "location": "Dock",
+    "paper_item_id": 7233,
+    "unix": 1429747200
+  },
+  {
+    "label": "Sparkling Headdress",
+    "release_date": "Apr 23 2015",
+    "location": "Dock",
+    "paper_item_id": 7234,
+    "unix": 1429747200
+  },
+  {
+    "label": "Birthday Cake",
+    "release_date": "Apr 23 2015",
+    "location": "Dock",
+    "paper_item_id": 7235,
+    "unix": 1429747200
+  },
+  {
+    "label": "Spring Flower",
+    "release_date": "Apr 29 2015",
+    "location": "Mine Shack",
+    "paper_item_id": 7224,
+    "unix": 1430265600
+  },
+  {
+    "label": "Pixel Penguin",
+    "release_date": "May 13 2015",
+    "location": "Night Club",
+    "paper_item_id": 7236,
+    "unix": 1431475200
+  },
+  {
+    "label": "Issue 500",
+    "release_date": "May 20 2015",
+    "location": "Book Room",
+    "paper_item_id": 7240,
+    "unix": 1432080000
+  },
+  {
+    "label": "Medieval Monster",
+    "release_date": "May 27 2015",
+    "location": "Coffee Shop",
+    "paper_item_id": 7237,
+    "unix": 1432684800
+  },
+  {
+    "label": "Beach Day",
+    "release_date": "Jun 11 2015",
+    "location": "Puffle Berry Mall",
+    "paper_item_id": 7238,
+    "unix": 1433980800
+  },
+  {
+    "label": "Sunglasses",
+    "release_date": "Jun 24 2015",
+    "location": "Plaza",
+    "paper_item_id": 7239,
+    "unix": 1435104000
+  },
+  {
+    "label": "Memory Orb",
+    "release_date": "Jul 08 2015",
+    "location": "Cove",
+    "paper_item_id": 7242,
+    "unix": 1436313600
+  },
+  {
+    "label": "Inside Out",
+    "release_date": "Jul 22 2015",
+    "location": "Dock",
+    "paper_item_id": 7241,
+    "unix": 1437523200
+  },
+  {
+    "label": "Glam Cam",
+    "release_date": "Aug 05 2015",
+    "location": "Lodge Attic",
+    "paper_item_id": 7243,
+    "unix": 1438732800
+  },
+  {
+    "label": "Golden Hanger",
+    "release_date": "Aug 19 2015",
+    "location": "Puffle Hotel Lobby",
+    "paper_item_id": 7244,
+    "unix": 1439942400
+  },
+  {
+    "label": "Royal Scepter",
+    "release_date": "Sep 02 2015",
+    "location": "Snow Forts",
+    "paper_item_id": 7245,
+    "unix": 1441152000
+  },
+  {
+    "label": "Royal Crown",
+    "release_date": "Sep 16 2015",
+    "location": "Ski Lodge",
+    "paper_item_id": 7246,
+    "unix": 1442361600
+  },
+  {
+    "label": "Descendants",
+    "release_date": "Sep 30 2015",
+    "location": "School",
+    "paper_item_id": 7247,
+    "unix": 1443571200
+  },
+  {
+    "label": "Anniversary Balloons",
+    "release_date": "Oct 14 2015",
+    "location": "Town",
+    "paper_item_id": 7204,
+    "unix": 1444780800
+  },
+  {
+    "label": "Happy Halloween",
+    "release_date": "Oct 28 2015",
+    "location": "Snow Forts",
+    "paper_item_id": 7249,
+    "unix": 1445990400
+  },
+  {
+    "label": "Mustache",
+    "release_date": "Nov 10 2015",
+    "location": "Forest",
+    "paper_item_id": 7250,
+    "unix": 1447113600
+  },
+  {
+    "label": "Area 501",
+    "release_date": "Nov 25 2015",
+    "location": "Area 501",
+    "paper_item_id": 7251,
+    "unix": 1448409600
+  },
+  {
+    "label": "Holiday Happiness",
+    "release_date": "Dec 09 2015",
+    "location": "Beach",
+    "paper_item_id": 7252,
+    "unix": 1449619200
+  },
+  {
+    "label": "CFC",
+    "release_date": "Dec 16 2015",
+    "location": "Coins for Change",
+    "paper_item_id": 7253,
+    "unix": 1450224000
+  },
+  {
+    "label": "Crystal Puffle",
+    "release_date": "Dec 23 2015",
+    "location": "Mine Shack",
+    "paper_item_id": 7254,
+    "unix": 1450828800
+  },
+  {
+    "label": "The Good Dinosaur",
+    "release_date": "Jan 06 2016",
+    "location": "Dock",
+    "paper_item_id": 7255,
+    "unix": 1452038400
+  },
+  {
+    "label": "Fluffy",
+    "release_date": "Jan 20 2016",
+    "location": "Tyranno Town",
+    "paper_item_id": 7258,
+    "unix": 1453248000
+  },
+  {
+    "label": "Stinky Cheese",
+    "release_date": "Feb 03 2016",
+    "location": "Snow Forts",
+    "paper_item_id": 7257,
+    "unix": 1454457600
+  },
+  {
+    "label": "Herbertech",
+    "release_date": "Feb 17 2016",
+    "location": "Town",
+    "paper_item_id": 7259,
+    "unix": 1455667200
+  },
+  {
+    "label": "Power Fragment",
+    "release_date": "Feb 24 2016",
+    "paper_item_id": 7256,
+    "unix": 1456272000
+  },
+  {
+    "label": "Puffle Balloon",
+    "release_date": "Mar 02 2016",
+    "location": "Cove",
+    "paper_item_id": 7260,
+    "unix": 1456876800
+  },
+  {
+    "label": "Puffle Medal",
+    "release_date": "Mar 16 2016",
+    "location": "Dock",
+    "paper_item_id": 7261,
+    "unix": 1458086400
+  },
+  {
+    "label": "Red O'berry",
+    "release_date": "Mar 16 2016",
+    "location": "Snow Forts",
+    "paper_item_id": 7271,
+    "unix": 1458086400
+  },
+  {
+    "label": "Blue O'berry",
+    "release_date": "Mar 17 2016",
+    "location": "Stadium",
+    "paper_item_id": 7264,
+    "unix": 1458172800
+  },
+  {
+    "label": "Green O'berry",
+    "release_date": "Mar 18 2016",
+    "location": "Coffee Shop",
+    "paper_item_id": 7266,
+    "unix": 1458259200
+  },
+  {
+    "label": "Rainbow O'berry",
+    "release_date": "Mar 19 2016",
+    "location": "Beach",
+    "paper_item_id": 7270,
+    "unix": 1458345600
+  },
+  {
+    "label": "Yellow O'berry",
+    "release_date": "Mar 20 2016",
+    "location": "Clothes Shop",
+    "paper_item_id": 7273,
+    "unix": 1458432000
+  },
+  {
+    "label": "Pink O'berry",
+    "release_date": "Mar 21 2016",
+    "location": "Cove",
+    "paper_item_id": 7268,
+    "unix": 1458518400
+  },
+  {
+    "label": "Brown O'berry",
+    "release_date": "Mar 22 2016",
+    "location": "Dock",
+    "paper_item_id": 7265,
+    "unix": 1458604800
+  },
+  {
+    "label": "Orange O'berry",
+    "release_date": "Mar 23 2016",
+    "location": "Pizza Parlor",
+    "paper_item_id": 7267,
+    "unix": 1458691200
+  },
+  {
+    "label": "Purple O'berry",
+    "release_date": "Mar 24 2016",
+    "location": "Dance Club",
+    "paper_item_id": 7269,
+    "unix": 1458777600
+  },
+  {
+    "label": "Black O'berry",
+    "release_date": "Mar 25 2016",
+    "location": "Forest",
+    "paper_item_id": 7263,
+    "unix": 1458864000
+  },
+  {
+    "label": "Gold O'berry",
+    "release_date": "Mar 26 2016",
+    "location": "Mall",
+    "paper_item_id": 7274,
+    "unix": 1458950400
+  },
+  {
+    "label": "White O'berry",
+    "release_date": "Mar 27 2016",
+    "location": "Lighthouse",
+    "paper_item_id": 7272,
+    "unix": 1459036800
+  },
+  {
+    "label": "Wild Puffle Treehouse",
+    "release_date": "Mar 30 2016",
+    "location": "Snow Forts",
+    "paper_item_id": 7262,
+    "unix": 1459296000
+  },
+  {
+    "label": "Globe",
+    "release_date": "Apr 13 2016",
+    "location": "Ski Village",
+    "paper_item_id": 7275,
+    "unix": 1460505600
+  },
+  {
+    "label": "Sasquatch",
+    "release_date": "May 04 2016",
+    "location": "Ice Rink",
+    "paper_item_id": 7276,
+    "unix": 1462320000
+  },
+  {
+    "label": "Pawpsicle",
+    "release_date": "May 19 2016",
+    "location": "Forest",
+    "paper_item_id": 7278,
+    "unix": 1463616000
+  },
+  {
+    "label": "Zootopia",
+    "release_date": "Jun 08 2016",
+    "location": "Coffee Shop",
+    "paper_item_id": 7277,
+    "unix": 1465344000
+  },
+  {
+    "label": "Little Rodentia",
+    "release_date": "Jun 23 2016",
+    "location": "Plaza",
+    "paper_item_id": 7279,
+    "unix": 1466640000
+  },
+  {
+    "label": "Coffee Pot",
+    "release_date": "Jul 06 2016",
+    "location": "Beach",
+    "paper_item_id": 7281,
+    "unix": 1467763200
+  },
+  {
+    "label": "Finding Dory",
+    "release_date": "Jul 13 2016",
+    "location": "Beach",
+    "paper_item_id": 7280,
+    "unix": 1468368000
+  },
+  {
+    "label": "Tire Home",
+    "release_date": "Jul 20 2016",
+    "location": "Iceberg",
+    "paper_item_id": 7282,
+    "unix": 1468972800
+  },
+  {
+    "label": "Mancala",
+    "release_date": "Aug 04 2016",
+    "location": "Lounge",
+    "paper_item_id": 7283,
+    "unix": 1470268800
+  },
+  {
+    "label": "Breakfast Bun",
+    "release_date": "Aug 17 2016",
+    "location": "Lodge Attic",
+    "paper_item_id": 7284,
+    "unix": 1471392000
+  },
+  {
+    "label": "Pizza Blueprint",
+    "release_date": "Aug 31 2016",
+    "location": "Ski Hill",
+    "paper_item_id": 7285,
+    "unix": 1472601600
+  },
+  {
+    "label": "Argyle Pattern",
+    "release_date": "Sep 14 2016",
+    "location": "Clothes Shop",
+    "paper_item_id": 7286,
+    "unix": 1473811200
+  },
+  {
+    "label": "CP Decal",
+    "release_date": "Sep 28 2016",
+    "location": "Book Room",
+    "paper_item_id": 7287,
+    "unix": 1475020800
+  },
+  {
+    "label": "Rubber Ducky",
+    "release_date": "Oct 19 2016",
+    "location": "School",
+    "paper_item_id": 7288,
+    "unix": 1476835200
+  },
+  {
+    "label": "Find Four",
+    "release_date": "Nov 02 2016",
+    "location": "Ski Lodge",
+    "paper_item_id": 7289,
+    "unix": 1478044800
+  },
+  {
+    "label": "Petey K's",
+    "release_date": "Nov 02 2016",
+    "location": "Casa Fiesta",
+    "paper_item_id": 7293,
+    "unix": 1478044800
+  },
+  {
+    "label": "DJ Cadence's",
+    "release_date": "Nov 05 2016",
+    "location": "Night Club Rooftop",
+    "paper_item_id": 7294,
+    "unix": 1478304000
+  },
+  {
+    "label": "Dub Step's",
+    "release_date": "Nov 08 2016",
+    "location": "Night Club Rooftop",
+    "paper_item_id": 7296,
+    "unix": 1478563200
+  },
+  {
+    "label": "Franky's",
+    "release_date": "Nov 11 2016",
+    "location": "Main Stage",
+    "paper_item_id": 7290,
+    "unix": 1478822400
+  },
+  {
+    "label": "Stompin' Bob's",
+    "release_date": "Nov 13 2016",
+    "location": "Lighthouse",
+    "paper_item_id": 7291,
+    "unix": 1478995200
+  },
+  {
+    "label": "Klutzy's",
+    "release_date": "Nov 16 2016",
+    "location": "Pizza Parlor",
+    "paper_item_id": 7295,
+    "unix": 1479254400
+  },
+  {
+    "label": "Jam",
+    "release_date": "Nov 16 2016",
+    "location": "Skatepark",
+    "paper_item_id": 7298,
+    "unix": 1479254400
+  },
+  {
+    "label": "G Billy's",
+    "release_date": "Nov 19 2016",
+    "location": "Beach",
+    "paper_item_id": 7292,
+    "unix": 1479513600
+  },
+  {
+    "label": "Keeper's",
+    "release_date": "Nov 22 2016",
+    "location": "Forest",
+    "paper_item_id": 7297,
+    "unix": 1479772800
+  },
+  {
+    "label": "Jam",
+    "release_date": "Nov 30 2016",
+    "location": "Plaza",
+    "paper_item_id": 7298,
+    "unix": 1480464000
+  },
+  {
+    "label": "CFC 2016",
+    "release_date": "Nov 30 2016",
+    "location": "Coins for Change",
+    "paper_item_id": 7303,
+    "unix": 1480464000
+  },
+  {
+    "label": "Reunion",
+    "release_date": "Dec 04 2016",
+    "location": "Advent Calendar",
+    "paper_item_id": 7299,
+    "unix": 1480809600
+  },
+  {
+    "label": "Gingerbread House",
+    "release_date": "Dec 08 2016",
+    "location": "Advent Calendar",
+    "paper_item_id": 7300,
+    "unix": 1481155200
+  },
+  {
+    "label": "Nutcracker",
+    "release_date": "Dec 11 2016",
+    "location": "Advent Calendar",
+    "paper_item_id": 7301,
+    "unix": 1481414400
+  },
+  {
+    "label": "Candle",
+    "release_date": "Dec 15 2016",
+    "location": "Puffle Hotel Lobby",
+    "paper_item_id": 7305,
+    "unix": 1481760000
+  },
+  {
+    "label": "Beard",
+    "release_date": "Dec 18 2016",
+    "location": "Advent Calendar",
+    "paper_item_id": 7302,
+    "unix": 1482019200
+  },
+  {
+    "label": "Passport",
+    "release_date": "Jan 04 2017",
+    "location": "Mall",
+    "paper_item_id": 7307,
+    "unix": 1483488000
+  },
+  {
+    "label": "Wink Emoji",
+    "release_date": "Jan 04 2017",
+    "paper_item_id": 7306,
+    "unix": 1483488000
+  },
+  {
+    "label": "Community",
+    "release_date": "Jan 31 2017",
+    "location": "Coffee Shop",
+    "paper_item_id": 7308,
+    "unix": 1485820800
+  },
+  {
+    "label": "Puffle Trivia",
+    "release_date": "Jan 31 2017",
+    "location": "Forest",
+    "paper_item_id": 739,
+    "unix": 1485820800
+  },
+  {
+    "label": "Spy Trivia",
+    "release_date": "Feb 03 2017",
+    "location": "Everyday Phoning Facility",
+    "paper_item_id": 7310,
+    "unix": 1486080000
+  },
+  {
+    "label": "Party Trivia",
+    "release_date": "Feb 04 2017",
+    "location": "Cove",
+    "paper_item_id": 7311,
+    "unix": 1486166400
+  },
+  {
+    "label": "Items Trivia",
+    "release_date": "Feb 06 2017",
+    "location": "Dock",
+    "paper_item_id": 7312,
+    "unix": 1486339200
+  },
+  {
+    "label": "Ninja Trivia",
+    "release_date": "Feb 08 2017",
+    "location": "Dojo Courtyard",
+    "paper_item_id": 7313,
+    "unix": 1486512000
+  },
+  {
+    "label": "Games Trivia",
+    "release_date": "Feb 10 2017",
+    "location": "Ice Rink",
+    "paper_item_id": 7314,
+    "unix": 1486684800
+  },
+  {
+    "label": "History Trivia",
+    "release_date": "Feb 11 2017",
+    "location": "Plaza",
+    "paper_item_id": 7315,
+    "unix": 1486771200
+  }
+]

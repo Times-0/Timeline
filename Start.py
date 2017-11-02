@@ -17,6 +17,7 @@ from Timeline.Utils.Modules import ModuleHandler
 from Timeline import Handlers
 from Timeline import PacketHandler
 from twisted.internet import reactor
+from twisted.python import log
 import logging
 import os, sys
 
@@ -78,6 +79,10 @@ PHandler.startLoadingModules()
 DBMS = DBM(user = "root", passd = "", db = "times-cp")
 if not DBMS.conn:
 	sys.exit()
+
+# Catch unhandled deferred errors
+TEObserver = log.PythonLoggingObserver(loggerName=Constants.TIMELINE_LOGGER)
+TEObserver.start()
 
 # Example of initiating server to listen to given endpoint.
 '''

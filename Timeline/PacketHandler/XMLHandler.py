@@ -78,7 +78,7 @@ def XMLWorldLiteralsRule(data):
 		raise Exception("[TE015] Invalid SWID : {}".format(swid))
 
 	username_length = len(user)
-	if username_length < 4 or username_length > 12:
+	if username_length < 4 or username_length > 20:
 		raise Exception("[TE011] Invalid username length - {0}".format(len(user)))
 
 	username_w_space = user.replace(" ", '')
