@@ -174,29 +174,25 @@ class Coins(object):
 class Inventory(list):
 
     def __init__(self, penguin, *items):
-        super(Inventory, self).__init__([])
+        super(Inventory, self).__init__()
 
-        self.penguin = None
-        self += list(items)
         self.penguin = penguin
+        for item in items:
+            self.append(item, False)
 
     def parseFromString(self, string, delimiter = '%'):
         if string == None or string == '':
             return
 
-        penguin = self.penguin
-        self.penguin = None
-
         items = str(string).split(delimiter)
-        self += items
-
-        self.penguin = penguin
+        for i in items:
+            self.append(i, False)
 
     def __str__(self):
         return '%'.join(map(str, self))
 
-    def __addItem(self, item):
-        if self.penguin is None:
+    def __addItem(self, item, u = True):
+        if self.penguin is None or not u:
             return
 
         self.penguin.dbpenguin.inventory = str(self.penguin.dbpenguin.inventory) + '%{}'.format(item)
@@ -207,6 +203,7 @@ class Inventory(list):
             _type = _type.type
 
         items = list()
+        
         for item in self:
             if item.type == _type:
                 items.append(item)
@@ -251,37 +248,37 @@ class Inventory(list):
 
         return False
 
-    def append(self, item):
+    def append(self, item, u=True):
         if self.penguin is None:
             return super(Inventory, self).append(item)
-            
-        if isinstance(item, Item):
-            if item.is_bait and not self.penguin['moderator']:
-                raise Exception("Penguin {} using a bait item!".format(self.penguin.getPortableName()))
 
-        elif isinstance(item, int):
-            item = self.penguin.engine.itemCrumbs[item]
-            if not item:
-                return
-        elif isinstance(item, str):
-            try:
-                item = int(item)
-                self.append(item)
-            except:
-                item = str(item)
+        if not isinstance(item, Item):
+            if isinstance(item, int):
                 item = self.penguin.engine.itemCrumbs[item]
-                if item == False:
+                if item is False:
                     return
 
-                self += item
-            finally:
+            elif isinstance(item, str):
+                try:
+                    item = int(item)
+                    self.append(item, u)
+                except Exception, e:
+                    items = self.penguin.engine.itemCrumbs[item]
+                    if items is False:
+                        return
+
+                    for i in items:
+                        self.append(i, u)
+
                 return
+        else:
+            return
 
         if item in self:
             return
 
         super(Inventory, self).append(item)
-        self.__addItem(item)
+        self.__addItem(item, u)
 
     def insert(self, index, item):
         if isinstance(item, Item):

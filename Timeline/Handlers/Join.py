@@ -28,6 +28,9 @@ def handleJoinServer(client, _id, passd, lang):
 
 	client.send('lp', client, client['coins'], 0, 1024, int(time() * 1000), client['age'], 0, client['age'], client['member'], '', client['cache'].playerWidget, client['cache'].mapCategory, client['cache'].igloo)
 
+	#TODO
+	client.send('gps', client['id'])
+
 	client.engine.roomHandler.joinRoom(client, 100, 'ext') # TODO Check for max-users limit
 
 @PacketEventHandler.onXT('s', 'j#jr', WORLD_SERVER)

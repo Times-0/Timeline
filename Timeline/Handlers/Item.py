@@ -13,7 +13,7 @@ logger = logging.getLogger(TIMELINE_LOGGER)
 
 @PacketEventHandler.onXT('s', 'i#gi', WORLD_SERVER, p_r = False)
 def handleGetInventory(client, data):
-	client.send('gi', *client['inventory'])
+	client.send('gi', *map(int, client['inventory']))
 
 @PacketEventHandler.onXT('s', 'i#ai', WORLD_SERVER)
 def handleAddItem(client, item):
@@ -49,8 +49,9 @@ def handleGetPins(client, _id):
 	if penguin == None:
 		returnValue(None)
 
-	inventory = Inventory(None)
+	inventory = Inventory(client)
 	inventory.parseFromString(penguin.inventory)
+	inventory.penguin = None
 
 	pins = map(lambda x: map(int, [x.id, x.release, x.is_member]), inventory.itemsByType(Pin))
 	
@@ -64,8 +65,9 @@ def handleGetAwards(client, _id):
 	if penguin is None:
 		return
 
-	inventory = Inventory(None)
+	inventory = Inventory(client)
 	inventory.parseFromString(penguin.inventory)
+	inventory.penguin = None
 
 	awards = inventory.itemsByType(Award)
 

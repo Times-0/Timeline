@@ -14,6 +14,15 @@ import logging
 @PacketEventHandler.XTPacketRule('s', 'u#ss', WORLD_SERVER)
 @PacketEventHandler.XTPacketRule('s', 'u#gp', WORLD_SERVER)
 @PacketEventHandler.XTPacketRule('s', 'u#bf', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule('s', 's#upc', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule('s', 's#uph', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule('s', 's#upf', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule('s', 's#upn', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule('s', 's#upb', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule('s', 's#upa', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule('s', 's#upe', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule('s', 's#upp', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule('s', 's#upl', WORLD_SERVER)
 def UserRules(data):
 
 	return [[int(data[2][0])], {}]
