@@ -21,5 +21,14 @@ Download **Timeline**, put it in an accessable and readable directory. Navigate 
 
 You can edit `Start.py` to change `Handlers` module scope, `TCP` IP/Port endpoints, Logger etc. You can also add new methods!
 
+Make sure you run **MySQL** and **Redis** server before starting the server.
+
+You can query/run **database.sql** to build tables in your db.
+
+# Default
+* Default **database**          : **times-cp**
+* Default **user**              : *username:* **test**, *password:* **password**
+* Default **crumbs** directory  : **./configs/crumbs/**
+
 # Support
 If you have any issue, found any bug or error or issue, or want to suggest some improvemnt, you are free to open an issue or request a pull request.
