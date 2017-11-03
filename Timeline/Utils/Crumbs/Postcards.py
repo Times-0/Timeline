@@ -14,7 +14,7 @@ class Postcard(object):
 		self.category = categ
 
 	def __repr__(self):
-		return "Postcard<{}#{}>".format(self.id, self.subject)
+		return "Postcard<{1}#{0}>".format(self.id, self.subject)
 
 	def __int__(self):
 		return self.id

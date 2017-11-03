@@ -127,6 +127,27 @@ class Multiplayer(Room):
 	def onAdd(self, client):
 		client.penguin.waddling = True #MUST WADDLE!
 
+class Igloo(Place):
+	# Igloo room...
+
+	opened = False
+	type = 0
+	owner = 0
+	_id = 0
+
+	def append(self, client):
+		if not self.opened:
+			return
+
+		super(Igloo, self).append(client)
+
+	def onAdd(self, client):
+		client.send('jp', client['id'], self.ext_id, self.type)
+		super(Igloo, self).onAdd(client)
+
+	def __repr__(self):
+		return "Igloo<{}#{}>".format(self.name, self.ext_id)
+
 '''
 "110": {
 	"room_id": 110,

@@ -30,7 +30,7 @@ def handleSendFrame(client, frame):
 def handleSendAction(client, action):
 	client['room'].send('sf', client['id'], action)
 
-@PacketEventHandler.onXT('s', 'u#u#se', WORLD_SERVER)
+@PacketEventHandler.onXT('s', 'u#se', WORLD_SERVER)
 def handleSendEmote(client, emote):
 	client['room'].send('se', client['id'], emote)
 
@@ -47,6 +47,15 @@ def handleGetPlayer(client, _id):
 
 	client.send('gp', _id, penguin.nickname, penguin.color, penguin.head, penguin.face, penguin.neck, penguin.body, penguin.hand, penguin.feet, penguin.pin, penguin.photo)
 
+@PacketEventHandler.onXT('s', 'u#sp', WORLD_SERVER)
+def handleSendCoordinates(client, x, y):
+	client['x'], client['y'] = x, y
+	client['room'].send('sp', client['id'], x, y)
+
+@PacketEventHandler.onXT('s', 'u#sb', WORLD_SERVER)
+def handleSnowBall(client, x, y):
+	client['room'].send('sb', client['id'], x, y)
+
 @PacketEventHandler.onXT('s', 'u#bf', WORLD_SERVER)
 def handle(client, _id):
 	# check if id is friend
@@ -57,7 +66,7 @@ def handle(client, _id):
 
 @PacketEventHandler.onXT('s', 'u#h', WORLD_SERVER, p_r = False)
 def handleHeartBeat(client, data):
-	client.send('u#h', 'pong')
+	client.send('h', 'pong')
 
 @PacketEventHandler.onXT('s', 's#upc', WORLD_SERVER)
 def handleUpdateColor(client, _id):

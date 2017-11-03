@@ -101,7 +101,7 @@ class MailHandler(list):
 			yield mail.save()
 
 	@inlineCallbacks
-	def deleteAllMail(self, _id):
+	def deleteAllMail(self):
 		for mail in list(self):
 			yield self.deleteMail(mail, False)
 

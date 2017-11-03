@@ -116,7 +116,7 @@ class Cache(object):
 
 class Age(object):
     def __init__(self, a, c):
-        self.age = time.mktime(a.timetuple())
+        self.age = int(time.mktime(a.timetuple()))
         self.c = c
 
     def __repr__(self):

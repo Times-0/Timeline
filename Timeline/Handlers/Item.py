@@ -15,6 +15,10 @@ logger = logging.getLogger(TIMELINE_LOGGER)
 def handleGetInventory(client, data):
 	client.send('gi', *map(int, client['inventory']))
 
+@PacketEventHandler.onXT('s', 'g#gii', WORLD_SERVER, p_r = False)
+def handleGetIglooInventory(client, data):
+	client.send('gii', client.dbpenguin.floors, client.dbpenguin.igloos, client.dbpenguin.furnitures, client.dbpenguin.locations)
+
 @PacketEventHandler.onXT('s', 'i#ai', WORLD_SERVER)
 def handleAddItem(client, item):
 	item = client.engine.itemCrumbs[item]

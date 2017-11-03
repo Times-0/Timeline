@@ -39,5 +39,20 @@ def handleJoinRoom(client, _id, x, y):
 
 	client.engine.roomHandler.joinRoom(client, _id, 'ext')
 
+@PacketEventHandler.onXT('s', 'j#jp', WORLD_SERVER)
+@inlineCallbacks
+def handleJoinIgloo(client, _id, _type):
+	room = yield client['iglooHandler'].createPenguinIgloo(_id)
+	if room is None:
+		return
+
+	if client['room'] is not None:
+		client['room'].remove(client)
+
+	if client['waddling'] or client['playing']:
+		client.send('e', 200)
+
+	room.append(client)
+
 def init():
 	logger.debug('Join(j#j_) Packet handlers initiated!')

@@ -5,7 +5,7 @@ Engine is the main reactor, based on Twisted which starts the server and listens
 from Timeline.Server.Constants import TIMELINE_LOGGER, WORLD_SERVER
 from Timeline.Server.Redis import Redis
 from Timeline.Utils.Events import Event
-from Timeline.Utils.Crumbs import Items, Postcards
+from Timeline.Utils.Crumbs import Items, Postcards, Igloo
 from Timeline.Server.Room import RoomHandler
 
 from twisted.internet.protocol import Factory
@@ -53,6 +53,8 @@ class Engine(Factory):
 		self.roomHandler = RoomHandler(self)
 		# Postcards
 		self.postcardHandler = Postcards.PostcardHandler(self)
+		# igloo crumbs
+		self.iglooCrumbs = Igloo.IglooHandler(self)
 
 	def getPenguinById(self, _id):
 		_id = int(_id)

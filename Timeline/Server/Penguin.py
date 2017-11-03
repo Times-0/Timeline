@@ -10,6 +10,7 @@ from Timeline.Server.Packets import PacketHandler
 from Timeline.Database.DB import PenguinDB
 from Timeline import Username, Password, Nickname, Inventory, Membership, Coins, Age, Cache
 from Timeline.Utils.Mails import MailHandler
+from Timeline.Utils.Igloo import PenguinIglooHandler
 from Timeline.Utils.Crumbs.Items import Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo, Award
 
 from twisted.protocols.basic import LineReceiver
@@ -76,6 +77,8 @@ class Penguin(LineReceiver, PenguinDB):
 		for cloth in clothing:
 			name = cloth.__name__.lower()
 			self.penguin[name] = cloth(0, 0, name + " item", False, False, False)
+
+		self.penguin.iglooHandler = PenguinIglooHandler(self)
 
 	def checkPassword(self, password):
 		return self.CryptoHandler.loginHash() == password
@@ -217,6 +220,11 @@ class Penguin(LineReceiver, PenguinDB):
 		if self.engine.type == WORLD_SERVER and self.penguin.id != None:
 			yield self.engine.redis.server.delete("online:{}".format(self.penguin.id))
 			yield self.engine.redis.server.hincrby('server:{}'.format(self.engine.id), 'population', -1)
+
+			if self['igloo'] is not None:
+				self['igloo'].opened = False
+				self['iglooHandler'].currentIgloo.locked = True
+				yield self['iglooHandler'].currentIgloo.save()
 
 
 		self.engine.disconnect(self)
