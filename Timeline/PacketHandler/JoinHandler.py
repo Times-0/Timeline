@@ -39,4 +39,4 @@ def JoinRoomRule(data):
 @PacketEventHandler.XTPacketRule('s', 'j#jp', WORLD_SERVER)
 def JoinPlayerRule(data):
 
-	return [[int(data[2][0]), int(data[2][1])], {}]
+	return [[int(data[2][0]), str(data[2][1])], {}]

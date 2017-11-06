@@ -136,7 +136,6 @@ class PenguinIglooHandler(list):
 
 		iglooRoom = IglooRoom(self.penguin.engine.roomHandler, (1000 + exists.id), '{} igloo'.format(exists.id), "{}'s Igloo".format(exists.nickname), 100, False, False, None)
 		iglooRoom.owner = int(exists.id)
-		iglooRoom.type = int(igloo.type)
 		iglooRoom.opened = not bool(igloo.locked)
 		iglooRoom._id = int(igloo.id)
 
@@ -168,7 +167,7 @@ class PenguinIglooHandler(list):
 		if iglooRoom == None:
 			iglooRoom = IglooRoom(self.penguin, (1000 + self.penguin['id']), '{} igloo'.format(self.penguin['id']), "{}'s Igloo".format(self.penguin['nickname']), 100, False, False, None)
 			iglooRoom.owner = int(self.penguin['id'])
-			iglooRoom.type = int(self.currentIgloo.type)
+			
 			iglooRoom.opened = not bool(self.currentIgloo.locked)
 			iglooRoom._id = int(self.currentIgloo.id)
 
@@ -239,7 +238,7 @@ class PenguinIglooHandler(list):
 			if location is None:
 				continue
 
-			location = PenguinLocationItem(location.id, location.name, location.cost)
+			location = PenguinLocationItem(location.id, location.name, location.igloo, location.cost)
 			location.date = date
 
 			self.floors.append(location)
@@ -252,5 +251,6 @@ class PenguinIglooHandler(list):
 
 			furniture = PenguinFurnitureItem(furniture.id, furniture.type, furniture.cost, furniture.name, furniture.is_member, furniture.max)
 			furniture.date = date
+			furniture.quantity = quantity
 
 			self.furnitures.append(furniture)

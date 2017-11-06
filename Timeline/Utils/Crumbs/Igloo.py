@@ -196,7 +196,7 @@ class IglooHandler(object):
 			try:
 				crumbs = json.loads(file.read())
 				for location in crumbs:
-					self.floors.append(FloorItem(location['igloo_location_id'], location['name'], location['cost']))
+					self.locations.append(LocationItem(location['igloo_location_id'], location['name'], location['igloo_id'], location['cost']))
 
 			except Exception, e:
 				self.log('error', 'Error parsing JSON. E :', e)

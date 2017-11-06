@@ -1,6 +1,7 @@
 from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER
 from Timeline import Username, Password
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
+from Timeline.Server.Room import Igloo
 
 from twisted.internet.defer import inlineCallbacks, returnValue
 
@@ -44,15 +45,34 @@ def handleJoinRoom(client, _id, x, y):
 def handleJoinIgloo(client, _id, _type):
 	room = yield client['iglooHandler'].createPenguinIgloo(_id)
 	if room is None:
-		return
+		returnValue(None)
 
 	if client['room'] is not None:
 		client['room'].remove(client)
 
 	if client['waddling'] or client['playing']:
 		client.send('e', 200)
+	
+	puffles = yield client['puffleHandler'].getPenguinPuffles(_id, _type == 'backyard')
 
-	room.append(client)
+	if _type == 'igloo':
+		room.append(client)
+		returnValue(None)
+
+	if _type == 'backyard':
+		if client['prevRooms'][-1] == room:
+			if room.backyard is None:
+				room.backyard = Igloo(client, room.ext_id, room.keyName, "{}'s Backyard".format(room.name), 150, False, False, None)
+				room.backyard.type = 'backyard'
+				room.backyard.opened = True
+				room.backyard.owner = room.owner
+				room.backyard._id = room._id
+
+			if room.owner == client['id']:
+				room.backyard.append(client)
+				returnValue(None)
+
+	client['prevRooms'][-1].append(client)
 
 def init():
 	logger.debug('Join(j#j_) Packet handlers initiated!')

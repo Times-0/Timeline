@@ -16,10 +16,13 @@ class Mail(DBObject):
 	def str(self, db):
 		peng = yield db.db_getPenguin('ID = ?', self.from_user)
 		if peng is None:
-			peng = 'sys'
+			peng = 'Club Penguin Team'
 
 		data = [peng, self.from_user, int(self.type), self.description, int(time.mktime(self.sent_on.timetuple())), int(self.id), int(self.opened)]
 		returnValue('|'.join(map(str, data)))
+
+	def __int__(self):
+		return int(self.id)
 
 class MailHandler(list):
 
@@ -125,7 +128,7 @@ class MailHandler(list):
 		for mail in mails:
 			peng = yield self.penguin.db_getPenguin('ID = ?', mail.from_user)
 			if peng is None:
-				peng = 'sys'
+				peng = 'Club Penguin Team'
 
 			sent_on = int(time.mktime(mail.sent_on.timetuple()))
 			self.penguin.send('mr', peng, int(mail.from_user), int(mail.type), mail.description, sent_on, int(mail.id), mail.opened)

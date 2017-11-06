@@ -125,6 +125,24 @@ class PacketEvent(Event):
 		self.function_w_rules = list() # Functions
 		self.logger = logging.getLogger(TIMELINE_LOGGER)
 
+	def unsetEventInModule(self, module):
+		events = self.packet_rules.copy()
+		for event in events:
+			handler = events[event]
+			if handler.__module__ == module:
+				del self.packet_rules[event]
+
+		return super(PacketEvent, self).unsetEventInModule(module)
+
+	def unsetEventsInModulesAndSubModules(self, module):
+		events = self.packet_rules.copy()
+		for event in events:
+			handler = events[event]
+			if handler.__module__.startswith(module):
+				del self.packet_rules[event]
+
+		return super(PacketEvent, self).unsetEventsInModulesAndSubModules(module)
+
     #                   xml   action data engin  
 	def FetchRule(self, type, c, h_t, s_t):
 		type = str(type).lower()

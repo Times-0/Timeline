@@ -22,16 +22,16 @@ def handleGetIglooInventory(client, data):
 @PacketEventHandler.onXT('s', 'i#ai', WORLD_SERVER)
 def handleAddItem(client, item):
 	item = client.engine.itemCrumbs[item]
-
+	
 	if item is None:
 		return client.send('e', 402)
 
 	if item.is_bait and not client['moderator']:
 		# Ban the player?
-		client.log('error', '[Exploit detected] Player trying to add a bait item :', item.id)
+		client.log('warn', '[Exploit detected] Player trying to add a bait item :', item.id)
 		return client.send('e', 410)
 
-	if item in client['moderator']:
+	if item in client['inventory']:
 		return client.send('e', 400)
 
 	if item.is_member and not client['member']:

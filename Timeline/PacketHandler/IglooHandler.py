@@ -13,7 +13,8 @@ import logging
 @PacketEventHandler.XTPacketRule('s', 'g#ag', WORLD_SERVER)
 @PacketEventHandler.XTPacketRule('s', 'g#au', WORLD_SERVER)
 @PacketEventHandler.XTPacketRule('s', 'g#pio', WORLD_SERVER)
-@PacketEventHandler.XTPacketRule('s', 'g#cli', WORLD_SERVER)
+#@PacketEventHandler.XTPacketRule('s', 'g#cli', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule('s', 'g#gail', WORLD_SERVER)
 def getIglooRule(data):
 	return [[int(data[2][0])], {}]
 
@@ -22,7 +23,7 @@ def SlotSummaryRule(data):
 	param = data[2]
 	_id = int(param[0])
 
-	slots = param[3].split(',')
+	slots = param[1].split(',')
 	summary = map(lambda x: map(int, x.split('|')), slots)
 
 	return [[_id, summary], {}]
@@ -37,6 +38,10 @@ def IglooConfigurationRule(data):
 	location = int(param[3])
 	music = int(param[4])
 
-	furnitures = map(lambda x: map(int, x.split('|')), param[5].split(','))
+	furnitures = map(lambda x: map(int, x.split('|')), param[5].split(',')) if param[5] is not '' else []
 
 	return [[_id, _type, floor, location, music, furnitures], {}]
+
+@PacketEventHandler.XTPacketRule('s', 'g#gili', WORLD_SERVER)
+def IglooLikesRule(data):
+	return [[int(data[2][0]), int(data[2][1])], {}]

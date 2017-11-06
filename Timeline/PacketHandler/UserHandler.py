@@ -41,3 +41,7 @@ def UsernameRule(data):
 		raise Exception("[TE012] Invalid characters found in username : {}".format(username))
 
 	return [[username], {}]
+
+@PacketEventHandler.XTPacketRule('s', 'u#pbsu', WORLD_SERVER)
+def SWIDListRule(data):
+	return [[map(str, data[2][0].split(','))], {}]

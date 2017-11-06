@@ -83,7 +83,7 @@ class Nickname(str):
         if self.c.db_nicknameUpdate(n):
             self.n = n
 
-class Membership(int):
+class Membership(object):
 
     def __new__(self, d, c):
         x = time.time() < time.mktime(d.timetuple())
@@ -96,14 +96,22 @@ class Membership(int):
     def __repr__(self):
         if time.time() > self.d:
             return 0
-
-        return ceil((self.d - time.time())/(60*24.0))
+            
+        return int(ceil((self.d - time.time())/(60*60*24.0)))
 
     def __str__(self):
         return str(self.__repr__())
 
     def __int__(self):
         return self.__repr__()
+
+    def __int__(self):
+        return self.__repr__()
+
+    def __bool__(self):
+        return self.__repr__() > 0
+
+    __nonzero__ = __bool__
 
 # TODO : Attach this to redis server and implement cache
 class Cache(object):
@@ -120,7 +128,7 @@ class Age(object):
         self.c = c
 
     def __repr__(self):
-        return int(ceil((time.time() - self.age)/(60*24.0)))
+        return int(ceil((time.time() - self.age)/(60*60*24.0)))
 
     def __str__(self):
         return str(self.__repr__())
@@ -140,7 +148,7 @@ class Coins(object):
         return self.coins
 
     def __add__(self, c):
-        a = Coins(self.coins)
+        a = Coins(self.coins, None)
         a += c
         return a
 
@@ -195,7 +203,8 @@ class Inventory(list):
         if self.penguin is None or not u:
             return
 
-        self.penguin.dbpenguin.inventory = str(self.penguin.dbpenguin.inventory) + '%{}'.format(item)
+        self.penguin.dbpenguin.inventory = '%'.join(map(str, self))
+
         self.penguin.dbpenguin.save()
 
     def itemsByType(self, _type):
@@ -249,6 +258,7 @@ class Inventory(list):
         return False
 
     def append(self, item, u=True):
+
         if self.penguin is None:
             return super(Inventory, self).append(item)
 
@@ -257,7 +267,7 @@ class Inventory(list):
                 item = self.penguin.engine.itemCrumbs[item]
                 if item is False:
                     return
-
+                return self.append(item)
             elif isinstance(item, str):
                 try:
                     item = int(item)
@@ -271,8 +281,8 @@ class Inventory(list):
                         self.append(i, u)
 
                 return
-        else:
-            return
+            else:
+                return
 
         if item in self:
             return

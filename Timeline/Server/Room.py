@@ -28,6 +28,9 @@ class Room (list):
 		self.jumpable = jump
 		self.requiredItem = item # Must be a list of items
 
+	def onInit(self):
+		pass
+
 	def append(self, client):
 		if not isinstance(client, self.roomHandler.engine.protocol):
 			return
@@ -66,12 +69,17 @@ class Room (list):
 		client.penguin.room = None
 
 		super(Room, self).remove(client)
-		client.penguin.prevRooms.append(self)
+		client.penguin['prevRooms'].append(self)
 		self.onRemove(client)
 
 	def send(self, *a):
 		for c in self:
 			c.send(*a)
+
+	def sendExcept(self, e, *a):
+		for c in self:
+			if not c['id'] == e:
+				c.send(*a)
 
 	def __repr__(self):
 		return "Room<{}#{}>".format(self.id, self.keyName)
@@ -127,17 +135,19 @@ class Multiplayer(Room):
 	def onAdd(self, client):
 		client.penguin.waddling = True #MUST WADDLE!
 
+
 class Igloo(Place):
 	# Igloo room...
 
 	opened = False
-	type = 0
+	type = 'igloo'
 	owner = 0
 	_id = 0
+	backyard = None
 
 	def append(self, client):
-		if not self.opened:
-			return
+		if not self.opened and not client['id'] is self.owner:
+			return client['prevRooms'][-1].append(client)
 
 		super(Igloo, self).append(client)
 

@@ -11,6 +11,7 @@ from Timeline.Database.DB import PenguinDB
 from Timeline import Username, Password, Nickname, Inventory, Membership, Coins, Age, Cache
 from Timeline.Utils.Mails import MailHandler
 from Timeline.Utils.Igloo import PenguinIglooHandler
+from Timeline.Utils.Puffle import PuffleHandler
 from Timeline.Utils.Crumbs.Items import Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo, Award
 
 from twisted.protocols.basic import LineReceiver
@@ -79,6 +80,19 @@ class Penguin(LineReceiver, PenguinDB):
 			self.penguin[name] = cloth(0, 0, name + " item", False, False, False)
 
 		self.penguin.iglooHandler = PenguinIglooHandler(self)
+		self.penguin.puffleHandler = PuffleHandler(self)
+
+		self.loadClothing()
+
+	def loadClothing(self):
+		clothing = [Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo]
+		for c in clothing:
+			name = c.__name__.lower()
+
+			db_c = getattr(self.dbpenguin, name)
+			if self.engine.itemCrumbs.itemByIdIsType(db_c, c):
+				self.penguin[name] = self.engine.itemCrumbs[db_c]
+
 
 	def checkPassword(self, password):
 		return self.CryptoHandler.loginHash() == password
@@ -115,17 +129,28 @@ class Penguin(LineReceiver, PenguinDB):
 			return False
 
 		cost = item.cost
-		if self.coins < cost:
+		if int(self.penguin.coins) < cost:
 			self.send('e', 401)
 			return False
 
 		if item in self.penguin.inventory:
 			return False
 
-		self.penguin.inventory += item
+		self.penguin.inventory.append(item)
+		self.penguin.coins -= cost
 		return True
 
 	def __str__(self):
+		walking_id = walking_item = walking_type = walking_subtype = ''
+		
+		if self['puffleHandler'].walkingPuffle is not None:
+			puffle = self['puffleHandler'].walkingPuffle
+
+			walking_id = int(puffle.id)
+			walking_item = int(puffle.hat)
+			walking_type = int(puffle.type)
+			walking_subtype = int(puffle.subtype)
+
 		data = [
 			self['id'],			
 			self['nickname'],
@@ -146,14 +171,18 @@ class Penguin(LineReceiver, PenguinDB):
 			self['y'],				#Cached coordinates
 			self['frame'],
 
-			int(self['member'] > 0),#Is member
-			self['member'],			#Membership days remaining
+			int(int(self['member']) > 0),#Is member
+			int(self['member']),			#Membership days remaining
 
 			self['avatar'],			#wtf?
 			None,
 			None,					#Party Info
 
-			'', '' #Walking puffle's id and item. TODO
+			walking_id, 
+			walking_item, 
+			walking_type,
+			walking_subtype,
+			0 # DEFAULT_STATE #TODO Add golden state
 		]
 
 		return '|'.join(map(str, data))
@@ -224,7 +253,13 @@ class Penguin(LineReceiver, PenguinDB):
 			if self['igloo'] is not None:
 				self['igloo'].opened = False
 				self['iglooHandler'].currentIgloo.locked = True
+
 				yield self['iglooHandler'].currentIgloo.save()
+
+			if self['puffleHandler'] is not None:
+				for puffle in self['puffleHandler']:
+					puffle.walking = 0
+					puffle.save()
 
 
 		self.engine.disconnect(self)

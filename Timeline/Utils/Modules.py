@@ -14,7 +14,7 @@ from collections import deque
 import logging
 import pkgutil
 import importlib
-import os
+import os, sys
 
 class ModulesEventHandler(FileSystemEventHandler):
 	def __init__(self):
@@ -220,6 +220,7 @@ class ModuleHandler(ModulesEventHandler):
 
 	def loadingException(self, err):
 		self.logger.error("[Error loading module] : {}".format(err.getErrorMessage()))
+		sys.exit()
 
 	def startLoadingModules(self):
 		self.modules.clear()

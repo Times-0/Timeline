@@ -2,6 +2,7 @@ from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVE
 from Timeline import Username, Password, Inventory
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
 from Timeline.Utils.Crumbs.Items import Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo, Award
+from Timeline.Database.DB import Penguin
 
 from twisted.internet.defer import inlineCallbacks, returnValue
 
@@ -63,6 +64,19 @@ def handle(client, _id):
 	# check if id is moderator
 	# and more...
 	pass
+
+@PacketEventHandler.onXT('s', 'u#pbsu', WORLD_SERVER)
+@inlineCallbacks
+def handleGetUsernames(client, swid):
+	usernames = list()
+	for s in swid:
+		user = yield Penguin.find(where = ['swid = ?', s], limit = 1)
+		if user is None:
+			usernames.append('')
+		else:
+			usernames.append(str(user.nickname))
+
+	client.send('pbsu', ','.join(usernames))
 
 @PacketEventHandler.onXT('s', 'u#h', WORLD_SERVER, p_r = False)
 def handleHeartBeat(client, data):
@@ -274,7 +288,7 @@ def handleUpdateFlag(client, _id):
 	if not _id in client['inventory'] or item == False:
 		return
 
-	if item.type is not Flag.type:
+	if item.type is not Pin.type:
 		return # suspecius? Log it, probably?
 
 	if item.is_member and not client['member']:
@@ -286,8 +300,8 @@ def handleUpdateFlag(client, _id):
 	if item.is_epf and not client['epf']:
 		return # shit on him!
 
-	client.penguin.flag = item
-	client.dbpenguin.flag = int(item)
+	client.penguin.pin = item
+	client.dbpenguin.pin = int(item)
 
 	client['room'].send('upl', int(client['id']), int(item))
 
