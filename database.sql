@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 03, 2017 at 02:41 PM
+-- Generation Time: Nov 06, 2017 at 02:18 PM
 -- Server version: 10.1.28-MariaDB
 -- PHP Version: 7.1.10
 
@@ -57,13 +57,6 @@ CREATE TABLE `mails` (
   `junk` tinyint(4) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `mails`
---
-
-INSERT INTO `mails` (`id`, `to_user`, `from_user`, `type`, `description`, `sent_on`, `opened`, `junk`) VALUES
-(1, 3, 0, 1, 'Test Description', '2017-11-02 11:18:49', 1, 1),
-(2, 3, 0, 27, 'Test Description', '2017-11-02 11:18:49', 1, 0);
 -- --------------------------------------------------------
 
 --
@@ -87,7 +80,7 @@ CREATE TABLE `penguins` (
   `face` int(11) NOT NULL DEFAULT '0',
   `neck` int(11) NOT NULL DEFAULT '0',
   `feet` int(11) NOT NULL DEFAULT '0',
-  `hands` int(11) NOT NULL DEFAULT '0',
+  `hand` int(11) NOT NULL DEFAULT '0',
   `body` int(11) NOT NULL DEFAULT '0',
   `photo` int(11) NOT NULL DEFAULT '0',
   `pin` int(11) NOT NULL DEFAULT '0',
@@ -96,15 +89,17 @@ CREATE TABLE `penguins` (
   `igloos` text NOT NULL,
   `furnitures` text NOT NULL,
   `floors` text NOT NULL,
-  `locations` text NOT NULL
+  `locations` text NOT NULL,
+  `care` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `penguins`
 --
 
-INSERT INTO `penguins` (`id`, `username`, `swid`, `nickname`, `password`, `email`, `hash`, `create`, `last_update`, `membership`, `inventory`, `coins`, `head`, `face`, `neck`, `feet`, `hands`, `body`, `photo`, `pin`, `color`, `igloo`, `igloos`, `furnitures`, `floors`, `locations`) VALUES
-(120, 'test', '{882977da-bf7d-11e7-ac97-a02bb82e593b}', 'Peanut', '5f4dcc3b5aa765d61d8327deb882cf99', 'peanutlabs@bill.com', NULL, '2017-11-02 03:25:53', '2017-11-03 13:20:25', '2017-11-02 18:30:00', '1%2%3%1%2%3%1%2%1%2%3%1%2%1%2%3%1%2%3', 500, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, '0|1509593153,1|1509593153', '793|1509593153|1', '0|1509593153', '1|1509593153');
+INSERT INTO `penguins` (`id`, `username`, `swid`, `nickname`, `password`, `email`, `hash`, `create`, `last_update`, `membership`, `inventory`, `coins`, `head`, `face`, `neck`, `feet`, `hand`, `body`, `photo`, `pin`, `color`, `igloo`, `igloos`, `furnitures`, `floors`, `locations`, `care`) VALUES
+(3, 'test', '{882977da-bf7d-11e7-ac97-a02bb82e593b}', 'Peanut', '5f4dcc3b5aa765d61d8327deb882cf99', 'peanutlabs@bill.com', NULL, '2017-11-02 03:25:53', '2017-11-06 08:41:23', '2017-11-06 18:30:00', '1%2%3', 14695, 0, 2075, 0, 0, 0, 0, 0, 501, 16, 2, '0|1509593153,1|1509593153,73|1509865708', '793|1509593153|1,2208|1509865415|1,2046|1509865436|2,2058|1509865439|2,2054|1509865442|2,2059|1509865444|2,2062|1509865449|2,749|1509865720|1,810|1509865735|1', '0|1509593153,21|1509865462,11|1509865467', '4|1509872170', ''),
+(4, 'test2', '{24aee21f-c2ce-11e7-a02a-a02bb82e593b}', 'Roulette', '5f4dcc3b5aa765d61d8327deb882cf99', 'peanutlabs@bill.com', NULL, '2017-11-06 08:40:29', '2017-11-06 08:40:29', '2017-11-29 18:30:00', '1', 200, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7, '0|1509593153,1|1509593153', '793|1509957629|1', '0|1509593153', '1|1509957629', '');
 
 --
 -- Triggers `penguins`
@@ -115,9 +110,28 @@ NEW.`swid` = CONCAT('{', uuid(), '}')
 $$
 DELIMITER ;
 
+-- --------------------------------------------------------
+
 --
--- Indexes for dumped tables
+-- Table structure for table `puffles`
 --
+
+CREATE TABLE `puffles` (
+  `id` int(11) NOT NULL,
+  `owner` int(11) NOT NULL,
+  `name` varchar(20) NOT NULL,
+  `type` int(11) NOT NULL,
+  `subtype` int(11) NOT NULL DEFAULT '0',
+  `adopted` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `food` int(11) NOT NULL DEFAULT '100',
+  `play` int(11) NOT NULL DEFAULT '100',
+  `rest` int(11) NOT NULL DEFAULT '100',
+  `clean` int(11) NOT NULL DEFAULT '100',
+  `hat` int(11) NOT NULL DEFAULT '0',
+  `backyard` int(11) NOT NULL DEFAULT '0',
+  `walking` int(11) NOT NULL DEFAULT '0',
+  `lastcare` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Indexes for table `igloos`
@@ -140,6 +154,12 @@ ALTER TABLE `penguins`
   ADD UNIQUE KEY `igloo` (`igloo`);
 
 --
+-- Indexes for table `puffles`
+--
+ALTER TABLE `puffles`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -147,19 +167,25 @@ ALTER TABLE `penguins`
 -- AUTO_INCREMENT for table `igloos`
 --
 ALTER TABLE `igloos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `mails`
 --
 ALTER TABLE `mails`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `penguins`
 --
 ALTER TABLE `penguins`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `puffles`
+--
+ALTER TABLE `puffles`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
