@@ -1,0 +1,285 @@
+{
+	"default": [{"puffle_id": "0", "type": "Blue", "color": "0x33ccff", "max_health": "100", "max_hunger": "100", "max_rest": "100"}, {"puffle_id": "1", "type": "Pink", "color": "0xffccff", "max_health": "100", "max_hunger": "120", "max_rest": "80"}, {"puffle_id": "2", "type": "Black", "color": "0x666666", "max_health": "120", "max_hunger": "80", "max_rest": "100"}, {"puffle_id": "3", "type": "Green", "color": "0x33cc00", "max_health": "80", "max_hunger": "100", "max_rest": "120"}, {"puffle_id": "4", "type": "Purple", "color": "0xad5fc6", "max_health": "80", "max_hunger": "120", "max_rest": "80"}, {"puffle_id": "5", "type": "Red", "color": "0xee4444", "max_health": "100", "max_hunger": "80", "max_rest": "120"}, {"puffle_id": "6", "type": "Yellow", "color": "0xffff00", "max_health": "100", "max_hunger": "100", "max_rest": "100"}, {"puffle_id": "7", "type": "White", "color": "0xffffee", "max_health": "120", "max_hunger": "80", "max_rest": "100"}, {"puffle_id": "8", "type": "Orange", "color": "0xff9900", "max_health": "100", "max_hunger": "80", "max_rest": "120"}, {"puffle_id": "9", "type": "Brown", "color": "0xff9900", "max_health": "100", "max_hunger": "80", "max_rest": "120"} ],
+  	"all": [
+    {
+      "puffle_id": 0,
+      "parent_puffle_id": 0,
+      "description": "Blue",
+      "color": "0x33ccff",
+      "is_member_only": false
+    },
+    {
+      "puffle_id": 1,
+      "parent_puffle_id": 1,
+      "description": "Pink",
+      "color": "0xffccff",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 2,
+      "parent_puffle_id": 2,
+      "description": "Black",
+      "color": "0x666666",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 3,
+      "parent_puffle_id": 3,
+      "description": "Green",
+      "color": "0x33cc00",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 4,
+      "parent_puffle_id": 4,
+      "description": "Purple",
+      "color": "0xad5fc6",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 5,
+      "parent_puffle_id": 5,
+      "description": "Red",
+      "color": "0xee4444",
+      "is_member_only": false
+    },
+    {
+      "puffle_id": 6,
+      "parent_puffle_id": 6,
+      "description": "Yellow",
+      "color": "0xffff00",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 7,
+      "parent_puffle_id": 7,
+      "description": "White",
+      "color": "0xffffee",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 8,
+      "parent_puffle_id": 8,
+      "description": "Orange",
+      "color": "0xff9900",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 9,
+      "parent_puffle_id": 9,
+      "description": "Brown",
+      "color": "0x72491d",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 10,
+      "parent_puffle_id": 10,
+      "description": "Rainbow",
+      "color": "0x000000",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 11,
+      "parent_puffle_id": 11,
+      "description": "Gold",
+      "color": "0x000000",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1000,
+      "parent_puffle_id": 2,
+      "description": "Black T-Rex",
+      "color": "0x666666",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1001,
+      "parent_puffle_id": 4,
+      "description": "Purple T-Rex",
+      "color": "0xad5fc6",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1002,
+      "parent_puffle_id": 5,
+      "description": "Red Triceratops",
+      "color": "0xee4444",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1003,
+      "parent_puffle_id": 0,
+      "description": "Blue Triceratops",
+      "color": "0x33ccff",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1004,
+      "parent_puffle_id": 6,
+      "description": "Yellow Stegasaurus",
+      "color": "0xffff00",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1005,
+      "parent_puffle_id": 1,
+      "description": "Pink Stegasaurus",
+      "color": "0xffccff",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1006,
+      "parent_puffle_id": 0,
+      "description": "Blue Dog",
+      "color": "0x33ccff",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1007,
+      "parent_puffle_id": 8,
+      "description": "Orange Cat",
+      "color": "0xff9900",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1008,
+      "parent_puffle_id": 3,
+      "description": "Green Raccoon",
+      "color": "0x33cc00",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1009,
+      "parent_puffle_id": 8,
+      "description": "Orange Raccoon",
+      "color": "0xff9900",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1010,
+      "parent_puffle_id": 1,
+      "description": "Pink Raccoon",
+      "color": "0xffccff",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1011,
+      "parent_puffle_id": 0,
+      "description": "Blue Raccoon",
+      "color": "0x33ccff",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1012,
+      "parent_puffle_id": 3,
+      "description": "Green Rabbit",
+      "color": "0x33cc00",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1013,
+      "parent_puffle_id": 1,
+      "description": "Pink Rabbit",
+      "color": "0xffccff",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1014,
+      "parent_puffle_id": 7,
+      "description": "White Rabbit",
+      "color": "0xffffee",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1015,
+      "parent_puffle_id": 5,
+      "description": "Red Rabbit",
+      "color": "0xee4444",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1016,
+      "parent_puffle_id": 0,
+      "description": "Blue Deer",
+      "color": "0x33ccff",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1017,
+      "parent_puffle_id": 2,
+      "description": "Black Deer",
+      "color": "0x666666",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1018,
+      "parent_puffle_id": 5,
+      "description": "Red Deer",
+      "color": "0xee4444",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1019,
+      "parent_puffle_id": 4,
+      "description": "Purple Deer",
+      "color": "0xad5fc6",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1020,
+      "parent_puffle_id": 6,
+      "description": "Yellow Unicorn",
+      "color": "0xffff00",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1021,
+      "parent_puffle_id": 7,
+      "description": "Snowman",
+      "color": "0xffffee",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1022,
+      "parent_puffle_id": 4,
+      "description": "Ghost",
+      "color": "0xad5fc6",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1023,
+      "parent_puffle_id": 0,
+      "description": "Crystal",
+      "color": "0x33ccff",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1024,
+      "parent_puffle_id": 3,
+      "description": "Green Alien",
+      "color": "0x33cc00",
+      "is_member_only": false
+    },
+    {
+      "puffle_id": 1025,
+      "parent_puffle_id": 8,
+      "description": "Orange Alien",
+      "color": "0xff9900",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1026,
+      "parent_puffle_id": 6,
+      "description": "Yellow Alien",
+      "color": "0xffff00",
+      "is_member_only": true
+    },
+    {
+      "puffle_id": 1027,
+      "parent_puffle_id": 4,
+      "description": "Purple Alien",
+      "color": "0xad5fc6",
+      "is_member_only": true
+    }
+  ]
+}
