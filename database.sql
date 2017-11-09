@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 06, 2017 at 02:18 PM
+-- Generation Time: Nov 09, 2017 at 03:16 PM
 -- Server version: 10.1.28-MariaDB
 -- PHP Version: 7.1.10
 
@@ -25,6 +25,22 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `bans`
+--
+
+CREATE TABLE `bans` (
+  `id` int(11) NOT NULL,
+  `player` int(11) NOT NULL,
+  `moderator` int(11) NOT NULL,
+  `comment` text NOT NULL,
+  `expire` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `type` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `igloos`
 --
 
@@ -40,7 +56,6 @@ CREATE TABLE `igloos` (
   `locked` tinyint(4) NOT NULL DEFAULT '1'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
--- --------------------------------------------------------
 
 --
 -- Table structure for table `mails`
@@ -90,16 +105,17 @@ CREATE TABLE `penguins` (
   `furnitures` text NOT NULL,
   `floors` text NOT NULL,
   `locations` text NOT NULL,
-  `care` text NOT NULL
+  `care` text NOT NULL,
+  `stamps` text NOT NULL,
+  `cover` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `penguins`
 --
 
-INSERT INTO `penguins` (`id`, `username`, `swid`, `nickname`, `password`, `email`, `hash`, `create`, `last_update`, `membership`, `inventory`, `coins`, `head`, `face`, `neck`, `feet`, `hand`, `body`, `photo`, `pin`, `color`, `igloo`, `igloos`, `furnitures`, `floors`, `locations`, `care`) VALUES
-(3, 'test', '{882977da-bf7d-11e7-ac97-a02bb82e593b}', 'Peanut', '5f4dcc3b5aa765d61d8327deb882cf99', 'peanutlabs@bill.com', NULL, '2017-11-02 03:25:53', '2017-11-06 08:41:23', '2017-11-06 18:30:00', '1%2%3', 14695, 0, 2075, 0, 0, 0, 0, 0, 501, 16, 2, '0|1509593153,1|1509593153,73|1509865708', '793|1509593153|1,2208|1509865415|1,2046|1509865436|2,2058|1509865439|2,2054|1509865442|2,2059|1509865444|2,2062|1509865449|2,749|1509865720|1,810|1509865735|1', '0|1509593153,21|1509865462,11|1509865467', '4|1509872170', ''),
-(4, 'test2', '{24aee21f-c2ce-11e7-a02a-a02bb82e593b}', 'Roulette', '5f4dcc3b5aa765d61d8327deb882cf99', 'peanutlabs@bill.com', NULL, '2017-11-06 08:40:29', '2017-11-06 08:40:29', '2017-11-29 18:30:00', '1', 200, 0, 0, 0, 0, 0, 0, 0, 0, 1, 7, '0|1509593153,1|1509593153', '793|1509957629|1', '0|1509593153', '1|1509957629', '');
+INSERT INTO `penguins` (`id`, `username`, `swid`, `nickname`, `password`, `email`, `hash`, `create`, `last_update`, `membership`, `inventory`, `coins`, `head`, `face`, `neck`, `feet`, `hand`, `body`, `photo`, `pin`, `color`, `igloo`, `igloos`, `furnitures`, `floors`, `locations`, `care`, `stamps`, `cover`) VALUES
+(203, 'test', '{882977da-bf7d-11e7-ac97-a02bb82e593b}', 'Peanut', '5f4dcc3b5aa765d61d8327deb882cf99', 'peanutlabs@bill.com', NULL, '2017-02-21 18:30:00', '2017-11-09 13:26:55', '2017-11-08 18:30:00', '1%2%606%607%608', 14696, 0, 0, 0, 0, 0, 0, 0, 606, 2, 2, '0|1509593153,1|1509593153,73|1509865708', '793|1509593153|1,2208|1509865415|1,2046|1509865436|2,2058|1509865439|2,2054|1509865442|2,2059|1509865444|2,2062|1509865449|2,749|1509865720|1,810|1509865735|1', '0|1509593153,21|1509865462,11|1509865467', '4|1509872170', '', '|14,1510234314', '2|4|4|2%1|606|372|240|225|17%1|608|368|134|0|16%1|607|378|338|0|15'),
 
 --
 -- Triggers `penguins`
@@ -134,6 +150,16 @@ CREATE TABLE `puffles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `bans`
+--
+ALTER TABLE `bans`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `igloos`
 --
 ALTER TABLE `igloos`
@@ -162,6 +188,12 @@ ALTER TABLE `puffles`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `bans`
+--
+ALTER TABLE `bans`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `igloos`
