@@ -253,7 +253,8 @@ def handleCanLike(client, data):
 
 		last_like = int(i['time'])
 		span = int((now - last_like)/(24*60*60))
-		if not span > 1:
+		
+		if not span > 0:
 			like_str['canLike'] = False
 			like_str['nextLike_msecs'] = span * 1000
 

@@ -220,7 +220,7 @@ class ModuleHandler(ModulesEventHandler):
 
 	def loadingException(self, err):
 		self.logger.error("[Error loading module] : {}".format(err.getErrorMessage()))
-		sys.exit()
+		sys.exit(0)
 
 	def startLoadingModules(self):
 		self.modules.clear()

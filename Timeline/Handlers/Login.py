@@ -48,7 +48,10 @@ def HandlePrimaryPenguinLogin(client, user, passd):
 		client.send('e', 101)
 		returnValue(client.disconnect())
 
-	if client.banned():
+	client.penguin.id = client.dbpenguin.id
+
+	banned = yield client.banned()
+	if banned:
 		returnValue(0)
 		
 	client.penguin.swid = client.dbpenguin.swid
@@ -95,6 +98,10 @@ def HandleWorldPenguinLogin(client, _id, nickname, swid, password, confirmHash, 
 	if not client.dbpenguin.swid == swid or not client.dbpenguin.nickname == nickname:
 		client.send('e', 101)
 		returnValue(client.disconnect())
+
+	banned = yield client.banned()
+	if banned:
+		returnValue(0)
 
 	isLoggedIn = yield client.engine.redis.isPenguinLoggedIn(client.penguin.id)
 	if isLoggedIn:

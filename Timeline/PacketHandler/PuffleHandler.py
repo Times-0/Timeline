@@ -22,12 +22,22 @@ def PuffleWalkRule(data):
 @PacketEventHandler.XTPacketRule('s', 'p#pufflewalkswap', WORLD_SERVER)
 @PacketEventHandler.XTPacketRule('s', 'p#puffletrick', WORLD_SERVER)
 @PacketEventHandler.XTPacketRule('s', 'p#papi', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule('s', 'p#pb', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule('s', 'p#pp', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule('s', 'p#pr', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule('s', 'p#pf', WORLD_SERVER)
 def PuffleSwapRule(data):
 	return[[int(data[2][0])], {}]
 
+@PacketEventHandler.XTPacketRule('s', 'p#pm', WORLD_SERVER)
+def PuffleMoveRule(data):
+	return [[int(data[2][0]), int(data[2][1]), int(data[2][2])], {}]
+
 @PacketEventHandler.XTPacketRule('s', 'p#puphi', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule('s', 'p#ps', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule('s', 'p#pcid', WORLD_SERVER)
 def PuffleUpdateRule(data):
-	return [[int(param[0]), int(param[1])], {}]
+	return [[int(data[2][0]), int(data[2][1])], {}]
 
 @PacketEventHandler.XTPacketRule('s', 'p#puffleswap', WORLD_SERVER)
 def PuffleRule(data):

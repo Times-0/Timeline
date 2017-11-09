@@ -7,20 +7,23 @@ from Timeline.Server.Constants import TIMELINE_LOGGER, PACKET_TYPE, PACKET_DELIM
 from Timeline.Utils.Events import Event
 from Timeline.Utils.Cryptography import Crypto
 from Timeline.Server.Packets import PacketHandler
-from Timeline.Database.DB import PenguinDB
+from Timeline.Database.DB import PenguinDB, Ban
 from Timeline import Username, Password, Nickname, Inventory, Membership, Coins, Age, Cache
 from Timeline.Utils.Mails import MailHandler
 from Timeline.Utils.Igloo import PenguinIglooHandler
 from Timeline.Utils.Puffle import PuffleHandler
+from Timeline.Utils.Stamps import StampHandler
 from Timeline.Utils.Crumbs.Items import Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo, Award
 
 from twisted.protocols.basic import LineReceiver
 from twisted.internet import threads
-from twisted.internet.defer import Deferred, inlineCallbacks
+from twisted.internet.defer import Deferred, inlineCallbacks, returnValue
 
 from repr import Repr
 from collections import deque
 import logging
+import time
+from math import ceil
 
 class Penguin(LineReceiver, PenguinDB):
 
@@ -73,6 +76,7 @@ class Penguin(LineReceiver, PenguinDB):
 		self.penguin.age = Age(self.dbpenguin.create, self)
 
 		self.penguin.cache = Cache(self)
+		self.penguin.muted = False
 		
 		clothing = [Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo]
 		for cloth in clothing:
@@ -81,6 +85,7 @@ class Penguin(LineReceiver, PenguinDB):
 
 		self.penguin.iglooHandler = PenguinIglooHandler(self)
 		self.penguin.puffleHandler = PuffleHandler(self)
+		self.penguin.stampHandler = StampHandler(self)
 
 		self.loadClothing()
 
@@ -97,8 +102,29 @@ class Penguin(LineReceiver, PenguinDB):
 	def checkPassword(self, password):
 		return self.CryptoHandler.loginHash() == password
 		
+	@inlineCallbacks
 	def banned(self):
-		return False #TODO
+		bans = yield Ban.find(where = ['player = ? AND expire > CURRENT_TIMESTAMP', self['id']], limit = 1)
+		if bans is None:
+			returnValue(False)
+
+		now = int(time.time())
+		expire = int(time.mktime(bans.expire.timetuple()))
+		hours = (expire - now)/(60*60.0)
+
+		if 0 < hours < 1:
+			# only minutes left
+			minutes = int(hours * 60)
+			self.send('e', 602, minutes)
+			returnValue(True)
+
+		if hours <= 0:
+			returnValue(False) # who knows, a millisencond counts too! LOL
+
+		self.send('e', 601, int(hours))
+		self.disconnect()
+
+		returnValue(True)
 
 	def handleCrossDomainPolicy(self):
 		self.send("<cross-domain-policy><allow-access-from domain='*' to-ports='{0}' /></cross-domain-policy>".format(self.engine.port))

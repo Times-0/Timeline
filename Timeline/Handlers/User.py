@@ -83,7 +83,7 @@ def handleHeartBeat(client, data):
 	client.send('h', 'pong')
 
 @PacketEventHandler.onXT('s', 's#upc', WORLD_SERVER)
-def handleUpdateColor(client, _id):
+def handleUpdateColor(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
 	item = client.engine.itemCrumbs[_id]
 	if not _id in client['inventory'] or item == False:
 		return
@@ -108,7 +108,15 @@ def handleUpdateColor(client, _id):
 	client.dbpenguin.save()
 
 @PacketEventHandler.onXT('s', 's#uph', WORLD_SERVER)
-def handleUpdateHead(client, _id):
+def handleUpdateHead(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
+	if _id == 0:
+		client.dbpenguin.head = _id
+		name = Head.__name__.lower()
+		client.penguin.head = Head(0, 0, name + " item", False, False, False)
+		client.dbpenguin.save()
+
+		return client['room'].send('uph', int(client['id']), _id)
+
 	item = client.engine.itemCrumbs[_id]
 	if not _id in client['inventory'] or item == False:
 		return
@@ -133,7 +141,15 @@ def handleUpdateHead(client, _id):
 	client.dbpenguin.save()
 
 @PacketEventHandler.onXT('s', 's#upf', WORLD_SERVER)
-def handleUpdateFace(client, _id):
+def handleUpdateFace(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
+	if _id == 0:
+		client.dbpenguin.face = _id
+		name = Face.__name__.lower()
+		client.penguin.face = Face(0, 0, name + " item", False, False, False)
+		client.dbpenguin.save()
+
+		return client['room'].send('upf', int(client['id']), _id)
+
 	item = client.engine.itemCrumbs[_id]
 	if not _id in client['inventory'] or item == False:
 		return
@@ -158,7 +174,15 @@ def handleUpdateFace(client, _id):
 	client.dbpenguin.save()
 
 @PacketEventHandler.onXT('s', 's#upn', WORLD_SERVER)
-def handleUpdateNeck(client, _id):
+def handleUpdateNeck(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
+	if _id == 0:
+		client.dbpenguin.neck = _id
+		name = Neck.__name__.lower()
+		client.penguin.neck = Neck(0, 0, name + " item", False, False, False)
+		client.dbpenguin.save()
+
+		return client['room'].send('upn', int(client['id']), _id)
+
 	item = client.engine.itemCrumbs[_id]
 	if not _id in client['inventory'] or item == False:
 		return
@@ -183,7 +207,15 @@ def handleUpdateNeck(client, _id):
 	client.dbpenguin.save()
 
 @PacketEventHandler.onXT('s', 's#upb', WORLD_SERVER)
-def handleUpdateBody(client, _id):
+def handleUpdateBody(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
+	if _id == 0:
+		client.dbpenguin.body = _id
+		name = Body.__name__.lower()
+		client.penguin.body = Body(0, 0, name + " item", False, False, False)
+		client.dbpenguin.save()
+
+		return client['room'].send('upb', int(client['id']), _id)
+
 	item = client.engine.itemCrumbs[_id]
 	if not _id in client['inventory'] or item == False:
 		return
@@ -208,7 +240,15 @@ def handleUpdateBody(client, _id):
 	client.dbpenguin.save()
 
 @PacketEventHandler.onXT('s', 's#upa', WORLD_SERVER)
-def handleUpdateHand(client, _id):
+def handleUpdateHand(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
+	if _id == 0:
+		client.dbpenguin.hand = _id
+		name = Hand.__name__.lower()
+		client.penguin.hand = Hand(0, 0, name + " item", False, False, False)
+		client.dbpenguin.save()
+
+		return client['room'].send('upa', int(client['id']), _id)
+
 	item = client.engine.itemCrumbs[_id]
 	if not _id in client['inventory'] or item == False:
 		return
@@ -233,7 +273,15 @@ def handleUpdateHand(client, _id):
 	client.dbpenguin.save()
 
 @PacketEventHandler.onXT('s', 's#upe', WORLD_SERVER)
-def handleUpdateFeet(client, _id):
+def handleUpdateFeet(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
+	if _id == 0:
+		client.dbpenguin.feet = _id
+		name = Feet.__name__.lower()
+		client.penguin.feet = Feet(0, 0, name + " item", False, False, False)
+		client.dbpenguin.save()
+
+		return client['room'].send('upe', int(client['id']), _id)
+
 	item = client.engine.itemCrumbs[_id]
 	if not _id in client['inventory'] or item == False:
 		return
@@ -258,7 +306,15 @@ def handleUpdateFeet(client, _id):
 	client.dbpenguin.save()
 
 @PacketEventHandler.onXT('s', 's#upp', WORLD_SERVER)
-def handleUpdatePhoto(client, _id):
+def handleUpdatePhoto(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
+	if _id == 0:
+		client.dbpenguin.photo = _id
+		name = Photo.__name__.lower()
+		client.penguin.photo = Photo(0, 0, name + " item", False, False, False)
+		client.dbpenguin.save()
+
+		return client['room'].send('upp', int(client['id']), _id)
+
 	item = client.engine.itemCrumbs[_id]
 	if not _id in client['inventory'] or item == False:
 		return
@@ -283,7 +339,15 @@ def handleUpdatePhoto(client, _id):
 	client.dbpenguin.save()
 
 @PacketEventHandler.onXT('s', 's#upl', WORLD_SERVER)
-def handleUpdateFlag(client, _id):
+def handleUpdateFlag(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
+	if _id == 0:
+		client.dbpenguin.pin = _id
+		name = Pin.__name__.lower()
+		client.penguin.pin = Pin(0, 0, name + " item", False, False, False)
+		client.dbpenguin.save()
+
+		return client['room'].send('upl', int(client['id']), _id)
+
 	item = client.engine.itemCrumbs[_id]
 	if not _id in client['inventory'] or item == False:
 		return

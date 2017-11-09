@@ -53,13 +53,14 @@ def handleGetPins(client, _id):
 	if penguin == None:
 		returnValue(None)
 
-	inventory = Inventory(client)
+	inventory = Inventory(type('TempInvPeng', (object, ), {'engine' : client.engine}))
 	inventory.parseFromString(penguin.inventory)
 	inventory.penguin = None
 
 	pins = map(lambda x: map(int, [x.id, x.release, x.is_member]), inventory.itemsByType(Pin))
-	
-	client.send('qpp', _id, *(map(lambda x: '|'.join(map(str, x)), pins)))
+	if len(pins) < 1:
+		pins . append([''])
+	client.send('qpp', *(map(lambda x: '|'.join(map(str, x)), pins)))
 
 @PacketEventHandler.onXT('s', 'i#qpa', WORLD_SERVER)
 @inlineCallbacks
@@ -69,10 +70,9 @@ def handleGetAwards(client, _id):
 	if penguin is None:
 		return
 
-	inventory = Inventory(client)
+	inventory = Inventory(type('TempInvPeng', (object, ), {'engine' : client.engine}))
 	inventory.parseFromString(penguin.inventory)
 	inventory.penguin = None
 
 	awards = inventory.itemsByType(Award)
-
 	client.send('qpa', _id, *awards)

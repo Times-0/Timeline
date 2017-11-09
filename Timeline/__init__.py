@@ -258,7 +258,6 @@ class Inventory(list):
         return False
 
     def append(self, item, u=True):
-
         if self.penguin is None:
             return super(Inventory, self).append(item)
 
@@ -267,7 +266,7 @@ class Inventory(list):
                 item = self.penguin.engine.itemCrumbs[item]
                 if item is False:
                     return
-                return self.append(item)
+                return self.append(item, u)
             elif isinstance(item, str):
                 try:
                     item = int(item)

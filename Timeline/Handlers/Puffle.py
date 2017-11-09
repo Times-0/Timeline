@@ -8,6 +8,7 @@ from twisted.internet.defer import inlineCallbacks, returnValue
 from collections import deque
 import logging, json
 from time import time
+from random import choice
 
 @PacketEventHandler.onXT('s', 'p#pg', WORLD_SERVER)
 @inlineCallbacks
@@ -208,3 +209,147 @@ def handleAdopt(client, _type, name, sub_type):
 	client['puffleHandler'].append(puffle)
 
 	client.send('pn', client['coins'], puffle_db)
+
+@PacketEventHandler.onXT('s', 'p#ps', WORLD_SERVER)
+def handlePuffleFrame(client, puffle, frame):
+	peng = client['room'].owner #Check player in igloo
+
+	# Maybe check for puffle in igloo too?
+	client['room'].send('ps', puffle, frame)
+
+@PacketEventHandler.onXT('s', 'p#pm', WORLD_SERVER)
+@inlineCallbacks
+def handlePuffleMove(client, puffle, x, y):
+	peng = client['room'].owner
+	peng = client.engine.getPenguinById(peng)
+
+	if peng is not None:
+		if peng['puffleHandler'] is not None:
+			puffle_db = peng['puffleHandler'].getPuffleById(puffle)
+			if puffle_db is None:
+				returnValue(None)
+
+			puffle_db.x, puffle_db.y = x, y
+			client.engine.redis.server.hmset("puffle:{}".format(puffle), {'x' : x, 'y' : y})
+			client['room'].send('pm', puffle, x, y)
+
+	else:
+		# Check if puffle in igloo
+		puffle_db = yield Puffle.find(where = ['id = ? AND owner = ? AND walking = 0', puffle, client['room'].owner], limit = 1)
+		if puffle_db is None:
+			returnValue(None)
+
+		client['room'].send('pm', puffle, x, y)
+		client.engine.redis.server.hmset("puffle:{}".format(puffle), {'x' : x, 'y' : y})
+
+@PacketEventHandler.onXT('s', 'p#pb', WORLD_SERVER)
+def handlePuffleBath(client, puffle):
+	puffle = client['puffleHandler'].getPuffleById(puffle)
+	if puffle is None:
+		return
+
+	max_rest = int(client.engine.puffleCrumbs.defautPuffles[int(puffle.type)][2])
+
+	puffle.rest = (puffle.rest * max_rest + 5)/max_rest * 100
+	if puffle.rest > 100:
+		puffle.rest = max_rest
+
+	puffle.clean = int(client.engine.puffleCrumbs.defautPuffles[int(puffle.type)][0])
+	puffle.save()
+
+	client['room'].send('pb', client['id'], client['coins'], puffle, 100)
+
+@PacketEventHandler.onXT('s', 'p#pp', WORLD_SERVER)
+def handlePufflePlay(client, puffle):
+	puffle = client['puffleHandler'].getPuffleById(puffle)
+	if puffle is None:
+		return
+
+	health, hunger, rest = map(int, client.engine.puffleCrumbs.defautPuffles[int(puffle.type)])
+
+	if puffle.rest < 10 or puffle.clean < 10 or puffle.food < 10:
+		return
+
+	rx = choice(range(10, rest-10))
+	cx = choice(range(0, health - 10))
+	fx = choice(range(10, hunger))
+
+	PX = chocie(range(10, 100))
+
+	puffle.rest = max(0, int(puffle.rest)*rest - rx)/rest * 100
+	puffle.clean = max(0, int(puffle.clean)*health - cx)/health * 100
+	puffle.food = max(0, int(puffle.food)*hunger - fx)/hunger * 100
+	puffle.play = min(100, int(puffle.play) + PX)
+
+	puffle.save()
+
+	client['room'].send('pp', client['id'], puffle, 27) #TODO: Play type
+
+@PacketEventHandler.onXT('s', 'p#pr', WORLD_SERVER)
+def handlePuffleRest(client, puffle):
+	puffle = client['puffleHandler'].getPuffleById(puffle)
+	if puffle is None:
+		return
+
+	health, hunger, rest = map(int, client.engine.puffleCrumbs.defautPuffles[int(puffle.type)])
+
+	if puffle.rest < 10 or puffle.clean < 10 or puffle.food < 10:
+		return
+
+	cx = choice(range(0, health - 10))
+	fx = choice(range(10, 30))
+
+
+	puffle.rest = rest
+	puffle.clean = max(0, int(puffle.clean)*health - cx) / health * 100
+	puffle.food = max(0, int(puffle.food)*hunger - fx) / hunger * 100
+	puffle.play = min(0, int(puffle.play) - 10)
+
+	puffle.save()
+
+	client['room'].send('pr', client['id'], puffle)
+
+@PacketEventHandler.onXT('s', 'p#pf', WORLD_SERVER)
+def handlePuffleFeed(client, puffle):
+	pass
+
+@PacketEventHandler.onXT('s', 'p#pcid', WORLD_SERVER)
+def handlePuffleCareItemDelivered(client, puffle, cid):
+	puffle = client['puffleHandler'].getPuffleById(puffle)
+	if puffle is None:
+		return
+
+	health, hunger, rest = map(int, client.engine.puffleCrumbs.defautPuffles[int(puffle.type)])
+	if cid not in client.engine.puffleCrumbs.puffleItems:
+		return client.send('e', 402)
+
+	item_details = client.engine.puffleCrumbs.puffleItems[cid]
+	only_purchase = bool(item_details['only_purchase'])
+	is_member = bool(int(item_details['is_member_only']))
+
+	if is_member and not client['member']:
+		return
+
+	if only_purchase:
+		item = client['puffleHandler'].getPuffleItem(cid)
+		if item is None:
+			return
+
+		available_quantity = client['puffleHandler'].inventory[item][1]
+
+		if available_quantity < 1:
+			return
+
+	is_food = item_details['consumption'] != 'none'
+	if is_food:
+		return
+
+	fx, rx, px, cx = map(int, [item_details['effect'][k] for k in ['food', 'rest', 'play', 'clean'] ])
+	puffle.food = min(hunger, puffle.food*hunger + fx)/hunger * 100
+	puffle.clean = min(health, puffle.clean*health + cx)/health * 100
+	puffle.rest = min(rest, puffle.rest*rest + rx)/rest * 100
+	puffle.play = min(100, puffle.play + px)
+
+	puffle.save()
+
+	client['room'].send('pcid', client['id'], '|'.join(map(str, [puffle.id, puffle.food, puffle.play, puffle.rest, puffle.clean, int(all(x == 100 for x in [puffle.food, puffle.clean, puffle.rest, puffle.play]))])))

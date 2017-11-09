@@ -87,6 +87,15 @@ class PuffleHandler(list):
 
 	@inlineCallbacks
 	def setupPuffle(self, puffle):
+		#check for puffle indices...
+		exists = yield self.penguin.engine.redis.server.exists("puffle:{}".format(puffle.id))
+		if not exists:
+			yield self.penguin.engine.redis.server.hmset("puffle:{}".format(puffle.id), {'x' : 0, 'y' : 0})
+
+		coordinates = yield self.penguin.engine.redis.server.hgetall("puffle:{}".format(puffle.id))
+		puffle.x = int(coordinates['x'])
+		puffle.y = int(coordinates['y'])
+
 		care_history = json.loads(puffle.lastcare)
 		if care_history is None or len(care_history) < 1 or bool(int(puffle.backyard)):
 			return # ULTIMATE PUFFLE <indefinite health and energy>
@@ -102,21 +111,23 @@ class PuffleHandler(list):
 		puffleCrumb = self.penguin.engine.puffleCrumbs[puffle.subtype]
 		max_food, max_play, max_clean = puffleCrumb.hunger, 100, puffleCrumb.health
 
-		puffle.rest = puffleCrumb.rest # It's in the igloo all this time?
+		puffle.rest = 100 # It's in the igloo all this time?
 		puffle.member = puffleCrumb.member
 		puffle.save()
 
+		''' It afterall is a poor creature to be taken care of.
 		if not int(puffle.id) in self.penguin.engine.puffleCrumbs.defautPuffles:
 			return # They aren't to be taken care of
+		'''
 
 		'''
 		if remaining % < 10 : send a postcard blaming (hungry, dirty, or unhappy)
 		if remaining % < 2 : move puffle to pet store, delete puffle, send a postcard, sue 1000 coins as penalty
 		'''
 
-		fed_percent = int((max_food - ((now - last_fed) * 0.05 * max_food / (24 * 60 * 60))) * 100 / max_food)
-		play_percent = int((max_play - ((now - last_played) * 0.05 * max_play / (24 * 60 * 60))) * 100 / max_play)
-		clean_percent = int((max_clean - ((now - last_bathed) * 0.05 * max_clean / (24 * 60 * 60))) * 100 / max_clean)
+		fed_percent = int((food*max_food/100 - ((now - last_fed) * 0.05 * max_food / (24 * 60 * 60))) * 100 / max_food)
+		play_percent = int((play*max_play/100- ((now - last_played) * 0.05 * max_play / (24 * 60 * 60))) * 100 / max_play)
+		clean_percent = int((clean*max_clean/100 - ((now - last_bathed) * 0.05 * max_clean / (24 * 60 * 60))) * 100 / max_clean)
 
 		total_percent = (fed_percent + play_percent + clean_percent)/3
 
@@ -129,9 +140,9 @@ class PuffleHandler(list):
 			yield Mail(to_user = self.penguin['id'], from_user = 0, type = 110, description = str(puffle.name)).save()
 			self.penguin['mail'].refresh()
 
-		puffle.food = fed_percent * max_food / 100
-		puffle.play = play_percent * max_play / 100
-		puffle.clean = clean_percent * max_clean / 100
+		puffle.food = fed_percent
+		puffle.play = play_percent
+		puffle.clean = clean_percent
 
 		care_history['food'] = care_history['play'] = care_history['bath'] = now
 		puffle.lastcare = json.dumps(care_history)
@@ -166,10 +177,16 @@ class PuffleHandler(list):
 			returnValue(None)
 
 		if _id is self.penguin['id']:
+			yield self.refreshValues()
 			returnValue(self.puffleStr(backyard))
 
 		puffles = yield Puffle.find(where = ['owner = ?', _id])
 		returnValue('%'.join(map(str, [k for k in puffles if bool(k.backyard) is backyard])))
+
+	@inlineCallbacks
+	def refreshValues(self):
+		for puffle in self:
+			yield puffle.refresh()
 
 	def __contains__(self, key):
 		if isinstance(key, Puffle):

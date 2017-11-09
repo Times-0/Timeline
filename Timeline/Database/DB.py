@@ -9,6 +9,9 @@ import logging
 class Penguin (DBObject):
     pass 
 
+class Ban(DBObject):
+    pass
+
 class PenguinDB(object):
     """
     <Server.Penguin> will extend this to get db operations
