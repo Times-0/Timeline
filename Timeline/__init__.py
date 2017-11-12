@@ -83,6 +83,26 @@ class Nickname(str):
         if self.c.db_nicknameUpdate(n):
             self.n = n
 
+class EPFAgent(object):
+    def __init__(self, epf, point, client):
+        self.e = bool(epf)
+        self.p, self.t = map(int, point.split('%'))
+        self.c = client
+
+    def __repr__(self):
+        return "EPF:{}<{},{}>".format(self.e, self.p, self.t)
+
+    def __int__(self):
+        return self.p
+
+    def __bool__(self):
+        return self.e
+
+    def __str__(self):
+        return "%".join(map(str, [self.e, self.p, self.t]))
+
+    __nonzero__ = __bool__
+
 class Membership(object):
 
     def __new__(self, d, c):

@@ -4,13 +4,22 @@ from twisted.internet.defer import Deferred, inlineCallbacks, returnValue
 from twistar.dbobject import DBObject
 
 from collections import deque
-import logging
+import logging, time
 
 class Penguin (DBObject):
     pass 
 
 class Ban(DBObject):
     pass
+
+class EPFCom(DBObject):
+    TABLENAME = 'epfcoms'
+    
+    def getTime(self):
+        return int(time.mktime(self.time.timetuple()))
+
+    def __str__(self):
+        return '|'.join(map(str, [self.message, self.getTime(), self.mascot]))
 
 class PenguinDB(object):
     """

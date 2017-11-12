@@ -139,6 +139,16 @@ class PaperItems(object):
 				self.log('error', "Error parsing JSON. E:", e)
 				sys.exit()
 
+	def getEPFItems(self):
+		return [k for k in self.items if k.is_epf]
+
+	def itemIsEPF(self, item):
+		item = self.getItemById(item)
+		if item is None:
+			return False
+
+		return item in self.getEPFItems()
+
 	def getItemsByType(self, _type):
 		if issubclass(_type, Item):
 			_type = _type.type

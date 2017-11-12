@@ -55,12 +55,10 @@ print \
 ----------------------------------------------
 > AS3 CPPS Emulator. Written in Python
 > Developer : Dote
-> Version   : 3.01
-> Updates   : [+] Puffles
-              [+] Igloos
-              [+] Postcards
-              [+] Igloo Likes
-              [+] Module handler and Events
+> Version   : 3.2
+> Updates   : [+] EPF
+			  [+] DB Tables
+			  [+] Handlers
               [-] Bugs fixed and errors fixed
 _______________________________________________
 """

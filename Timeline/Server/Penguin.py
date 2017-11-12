@@ -8,7 +8,7 @@ from Timeline.Utils.Events import Event
 from Timeline.Utils.Cryptography import Crypto
 from Timeline.Server.Packets import PacketHandler
 from Timeline.Database.DB import PenguinDB, Ban
-from Timeline import Username, Password, Nickname, Inventory, Membership, Coins, Age, Cache
+from Timeline import Username, Password, Nickname, Inventory, Membership, Coins, Age, Cache, EPFAgent
 from Timeline.Utils.Mails import MailHandler
 from Timeline.Utils.Igloo import PenguinIglooHandler
 from Timeline.Utils.Puffle import PuffleHandler
@@ -49,7 +49,7 @@ class Penguin(LineReceiver, PenguinDB):
 		# ('category', 'handler', 0 or 1 : execute : don't execute)
 		self.ignorableXTPackets = [('s', 'j#js', 1), ('s', 'p#getdigcooldown', 0), ('s', 'u#h', 0)] 
 
-		self.penguin = PenguinObject() # POvalue should be penguin name. Sooner.
+		self.penguin = PenguinObject()
 		self.penguin.name = None
 		self.penguin.id = None
 
@@ -64,13 +64,12 @@ class Penguin(LineReceiver, PenguinDB):
 		self.penguin.nickname = Nickname(self.dbpenguin.nickname, self)
 		self.penguin.inventory = Inventory(self)
 		self.penguin.inventory.parseFromString(self.dbpenguin.inventory)
-		self.penguin.mail = MailHandler(self)
 
 		self.penguin.member = Membership(self.dbpenguin.membership, self)
 		self.penguin.moderator = False #:P
 		self.penguin.epf = False #TODO
 
-		self.penguin.x = self.penguin.y = self.penguin.frame = self.penguin.avatar = 0 #TODO
+		self.penguin.x = self.penguin.y = self.penguin.frame = self.penguin.avatar = 0
 
 		self.penguin.coins = Coins(self.dbpenguin.coins, self)
 		self.penguin.age = Age(self.dbpenguin.create, self)
@@ -78,11 +77,14 @@ class Penguin(LineReceiver, PenguinDB):
 		self.penguin.cache = Cache(self)
 		self.penguin.muted = False
 		
+		self.penguin.epf = EPFAgent(client.dbpenguin.agent, str(client.dbpenguin.epf), self)
+		
 		clothing = [Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo]
 		for cloth in clothing:
 			name = cloth.__name__.lower()
 			self.penguin[name] = cloth(0, 0, name + " item", False, False, False)
 
+		self.penguin.mail = MailHandler(self)
 		self.penguin.iglooHandler = PenguinIglooHandler(self)
 		self.penguin.puffleHandler = PuffleHandler(self)
 		self.penguin.stampHandler = StampHandler(self)
