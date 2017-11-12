@@ -77,7 +77,7 @@ class Penguin(LineReceiver, PenguinDB):
 		self.penguin.cache = Cache(self)
 		self.penguin.muted = False
 		
-		self.penguin.epf = EPFAgent(client.dbpenguin.agent, str(client.dbpenguin.epf), self)
+		self.penguin.epf = EPFAgent(self.dbpenguin.agent, str(self.dbpenguin.epf), self)
 		
 		clothing = [Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo]
 		for cloth in clothing:
