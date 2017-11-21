@@ -49,6 +49,9 @@ def handleGetRecentStamps(client, data):
 def handleSBCoverUpdate(client, color, highlight, pattern, icon, stamps):
 	coverCrumb = client.engine.stampCrumbs.cover
 
+	if not client['member']:
+		return client.send('e', 999)
+
 	if not color in coverCrumb['colors'] or not highlight in coverCrumb['highlights'] or not pattern in coverCrumb['patterns'] or not icon in coverCrumb['icons']:
 		return
 

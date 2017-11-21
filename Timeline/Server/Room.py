@@ -103,6 +103,7 @@ class Game(Room):
 	# Single Player (mostly?)
 
 	game = True
+	stamp_id = None
 
 	def onAdd(self, client):
 		client.send('jg', self.ext_id)
@@ -117,6 +118,7 @@ class Arcade(Room):
 	# Non black-hole stuff
 
 	game = True
+	stamp_id = None
 
 	def onAdd(self, client):
 		client.send('jnbhg', self.ext_id)
@@ -239,9 +241,37 @@ class RoomHandler (object):
 						self.details[Place] += 1
 						continue
 
-					if _id in NON_BLACK_HOLE_GAMES:
+			except Exception, e:
+				self.log("error", "Error parsing JSON. E:", e)
+				sys.exit()
+
+
+			self.log('info', 'Loaded a total of', len(self.rooms), 'Room(s)')
+
+		if not os.path.exists("configs/crumbs/games.json"):
+			self.log('error', 'games.json not found in path : ', 'configs/crumbs/games.json')
+			sys.exit() # meow!!
+
+		with open('configs/crumbs/games.json', 'r') as file:
+			try:
+				crumbs = json.loads(file.read())
+				for game_detail in crumbs:
+					key = game_detail
+					room = crumbs[key]
+
+					_id = int(room['room_id'])
+					name = room['name']
+					maxu = 800
+					jump = False
+					item = None
+					member = False 
+
+					is_non_black_hole = bool(room['show_player_in_room'])
+
+					if is_non_black_hole:
 						self.rooms.append(Arcade(self, _id, key, name, maxu, member, jump, item))
 						self.details[Arcade] += 1
+
 					elif _id > 990 or _id in MULTIPLAYER_GAMES:
 						self.rooms.append(Multiplayer(self, _id, key, name, maxu, member, jump, item))
 						self.details[Multiplayer] += 1
@@ -250,12 +280,10 @@ class RoomHandler (object):
 						self.details[Game] += 1
 
 			except Exception, e:
-				self.log("error", "Error parsing JSON. E:", e)
-				sys.exit()
+					self.log('error', 'Error parsing JSON. E:', e)
+					sys.exit()
 
-
-			self.log('info', 'Loaded a total of', len(self.rooms), 'Room(s)')
-			for r in self.details:
+		for r in self.details:
 				self.log('info', 'Loaded', self.details[r], '{}(s)'.format(r.__name__))
 
 	def log(self, l, *a):

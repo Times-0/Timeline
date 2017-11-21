@@ -195,15 +195,18 @@ class PacketEvent(Event):
 		if not e in self.events:
 			return defer
 
-		for l in self.events[e]:
-			defer.addCallback(l)
-
 		EventDetails = {'e' : e, 'a' : args, 'kw' : kwargs, 'ra' : rules_a, 'rkw' : rules_kwarg}
+		events = self.events[e]
+		def callMethods(i):
+			for k in events:
+			    k(EventDetails)
 
-		defer.callback(EventDetails)
+		defer.addCallback(callMethods)
+
+		defer.callback(1)
 		return defer
 
-	def on_packet(self, event, isruled):
+	def on_packet(self, event, isruled, _f = None):
 		event = str(event)
 		
 		def func(function):
@@ -214,15 +217,18 @@ class PacketEvent(Event):
 
 			return function
 
+		if _f != None:
+		    return func(_f)
+
 		return func
 
-	def onXML(self, action, server_type, type = 'sys', p_r = True):
+	def onXML(self, action, server_type, type = 'sys', p_r = True, function = None):
 		event = "{2}-></{1}-{0}>".format(str(action), type, str(server_type))
-		return self.on_packet(event, p_r) #super(PacketEvent, self).on(event)
+		return self.on_packet(event, p_r, function) #super(PacketEvent, self).on(event)
 
-	def onXT(self, c, h, s_t, p_r = True):
+	def onXT(self, c, h, s_t, p_r = True, function = None):
 		event = "{2}->%{0}%{1}%".format(str(c), str(h), str(s_t))
-		return self.on_packet(event, p_r) #super(PacketEvent, self).on(event)
+		return self.on_packet(event, p_r, function) #super(PacketEvent, self).on(event)
 
 class GeneralEvent(Event):
 

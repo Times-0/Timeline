@@ -41,12 +41,23 @@ def handleSendSafeMsg(client, safe):
 	client['room'].send('ss', client['id'], safe)
 
 @PacketEventHandler.onXT('s', 'u#gp', WORLD_SERVER)
+@inlineCallbacks
 def handleGetPlayer(client, _id):
 	penguin = yield client.db_getPenguin('ID = ?', _id)
 	if penguin is None:
 		returnValue(0)
 
-	client.send('gp', _id, penguin.nickname, penguin.color, penguin.head, penguin.face, penguin.neck, penguin.body, penguin.hand, penguin.feet, penguin.pin, penguin.photo)
+	client.send('gp', '|'.join(map(str, [_id, penguin.nickname, 45, penguin.color, penguin.head, penguin.face, penguin.neck, penguin.body, penguin.hand, penguin.feet, penguin.pin, penguin.photo])))
+
+@PacketEventHandler.onXT('s', 'u#pbs', WORLD_SERVER, p_r = False)
+@inlineCallbacks
+def handleGetPlayerBySWID(client, data):
+	swid = str(data[2][0])
+	penguin = yield client.db_getPenguin('swid = ?', swid)
+	if penguin is None:
+		returnValue(0)
+
+	client.send('pbs', penguin.username, penguin.id)
 
 @PacketEventHandler.onXT('s', 'u#sp', WORLD_SERVER)
 def handleSendCoordinates(client, x, y):

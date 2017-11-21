@@ -14,8 +14,12 @@ from Timeline.Server.Engine import Engine
 from Timeline.Server.Penguin import Penguin
 from Timeline.Utils.Events import GeneralEvent
 from Timeline.Utils.Modules import ModuleHandler
+from Timeline.Utils.Plugins import loadPlugins, loadPluginObjects, getPlugins, PLUGINS_LOADED
+
 from Timeline import Handlers
 from Timeline import PacketHandler
+from Timeline import Plugins
+
 from twisted.internet import reactor
 from twisted.python import log
 import logging
@@ -44,6 +48,8 @@ def InitiateLogger(name="Timeline"):
 
 	Timeline_logger.debug("Timeline Logger::Initiated")
 
+	return Timeline_logger
+
 print \
 """
  _______
@@ -56,15 +62,13 @@ print \
 > AS3 CPPS Emulator. Written in Python
 > Developer : Dote
 > Version   : 3.2
-> Updates   : [+] EPF
-			  [+] DB Tables
-			  [+] Handlers
+> Updates   : [+] Plugin System
               [-] Bugs fixed and errors fixed
 _______________________________________________
 """
 
 # Example of starting the logger!
-InitiateLogger()
+TimelineLogger = InitiateLogger()
 
 # Example of initiating the ModuleHandler which deals extensively with Modifications of modules at runtime.
 MHandler = ModuleHandler(Handlers)
@@ -73,6 +77,13 @@ MHandler.startLoadingModules()
 # Initiating PacketHandler which deals with modification  of Packet Rule handlers
 PHandler = ModuleHandler(PacketHandler)
 PHandler.startLoadingModules()
+
+# Importing all plugins
+loadPlugins(Plugins)
+plugins_loaded = [str(k) for k in PLUGINS_LOADED]
+TimelineLogger.info("Loaded %s Plugin(s) : %s", len(plugins_loaded), ', '.join(map(lambda x: x.name, getPlugins())))
+
+loadPluginObjects()
 
 #Checking database, databas details once set cannot be change during runtime
 DBMS = DBM(user = "root", passd = "", db = "times-cp")

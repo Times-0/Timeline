@@ -11,14 +11,14 @@ from time import time
 
 @PacketEventHandler.onXT('s', 'f#epfga', WORLD_SERVER, p_r = False)
 def handleGetEPFStatus(client, data):
-	client.send('epfga', int(bool(client.epf)))
+	client.send('epfga', int(bool(client['epf'])))
 
 @PacketEventHandler.onXT('s', 'f#epfsa', WORLD_SERVER, p_r = False)
 def handlePromoteAgent(client, data):
-	if client.epf:
+	if client['epf']:
 		return
 
-	client.epf.e = True
+	client['epf'].e = True
 	client.dbpenguin.agent = 1
 	client.dbpenguin.save()
 
@@ -26,7 +26,7 @@ def handlePromoteAgent(client, data):
 
 @PacketEventHandler.onXT('s', 'epfgr', WORLD_SERVER, p_r = False)
 def handleGetEPFP(client, data):
-	client.send('epfgr', client.epf.p, client.epf.t)
+	client.send('epfgr', client['epf'].p, client['epf'].t)
 
 @PacketEventHandler.XTPacketRule('s', 'f#epfai', WORLD_SERVER)
 def EPFAIRule(data):
@@ -44,11 +44,11 @@ def handleAddEPFItem(client, _id):
 	if item in client['inventory']:
 		return client.send('e', 400)
 
-	if client.epf.p < item.cost:
+	if client['epf'].p < item.cost:
 		return client.send('e', 405)
 
-	client.epf.p -= item.cost
-	client.dbpenguin.epf = '{}%{}'.format(client.epf.p, client.epf.t)
+	client['epf'].p -= item.cost
+	client.dbpenguin['epf'] = '{}%{}'.format(client['epf'].p, client['epf'].t)
 
 	client['inventory'].append(item)
 
