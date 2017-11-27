@@ -115,7 +115,7 @@ class IPlugin(Abstract):
     int : Version of the current plugin. Default 0, 0 specifies the plugin is version(less or) independent
     '''
 
-    def __new__ (cls):
+    def __new__ (cls, *a, **kw):
         #check for requirements first!
         requirements = list(cls.requirements)
 
@@ -129,9 +129,9 @@ class IPlugin(Abstract):
         
         RequirementsManager.checkForRequirements(requirements)
 
-        return super(IPlugin, cls).__new__(cls)
+        return super(IPlugin, cls).__new__(cls, *a, **kw)
 
-    def __init__(self):
+    def __init__(self, *a, **kw):
         self.dependencies = list()
         """
         List of plugin instances current plugin depends upon
@@ -144,7 +144,7 @@ class IPlugin(Abstract):
 
         self.loadDependencies()
 
-        super(IPlugin, self).__init__(self)
+        super(IPlugin, self).__init__(*a, **kw)
 
     def loadDependencies(self):
         self.dependencies = RequirementsManager.getAllRequirements(self.requirements)

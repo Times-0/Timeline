@@ -81,7 +81,7 @@ def HandlePrimaryPenguinLogin(client, user, passd):
 	
 @PacketEventHandler.onXML('login', WORLD_SERVER)
 @inlineCallbacks
-def HandleWorldPenguinLogin(client, _id, nickname, swid, password, confirmHash, loginkey):
+def HandleWorldPenguinLogin(client, nickname, _id, swid, password, confirmHash, loginkey):
 	exist = yield client.db_penguinExists(value = _id)
 	
 	if not exist:

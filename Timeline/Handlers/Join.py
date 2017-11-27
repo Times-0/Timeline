@@ -21,6 +21,7 @@ def handleJoinServer(client, _id, passd, lang):
 	# User logged in!
 	GeneralEvent.call("penguin-logged", client)
 	yield client.engine.redis.server.hincrby('server:{}'.format(client.engine.id), 'population', 1)
+	yield client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'joined' : 1})
 
 	client.initialize()
 	client.send('js', *(map(int, [client['member'] > 0, client['moderator'], client['epf']])))

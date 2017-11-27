@@ -23,6 +23,7 @@ class LoginNotification(IPlugin):
         self.logger.info("Login Notification activated!")
 
         PacketEventHandler.onXML('login', LOGIN_SERVER, function = self.loginNotice)
+        PacketEventHandler.onXML('login', WORLD_SERVER, function = self.loginNotice)
 
-    def loginNotice(self, client, user, passd):
+    def loginNotice(self, client, user, *a):
         self.logger.info("%s is attempting to login", user)

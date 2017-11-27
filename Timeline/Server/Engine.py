@@ -8,8 +8,7 @@ from Timeline.Utils.Events import Event
 from Timeline.Utils.Crumbs import Items, Postcards, Igloo, Puffle, Stamps
 from Timeline.Server.Room import RoomHandler
 from Timeline.Utils.Plugins import getPlugins
-from Timeline.Utils.Plugins.AbstractManager import Abstraction
-from Timeline.Utils.Plugins.IPlugin import RequirementsManager
+from Timeline.Utils.Plugins.Abstract import ExtensibleObject
 
 from twisted.internet.protocol import Factory
 from twisted.internet.protocol import Protocol
@@ -24,7 +23,7 @@ class AClient(Protocol):
 		t.pauseProducing()
 		t.loseConnection()
 
-class Engine(Factory):
+class Engine(Factory, ExtensibleObject):
 	
 	"""
 	Implements the base class for reactor. Here is where things get sorted up!

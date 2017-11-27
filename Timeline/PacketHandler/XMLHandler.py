@@ -89,4 +89,4 @@ def XMLWorldLiteralsRule(data):
 	if loginKey == '' or confirmHash == '' or loginKey == None or confirmHash == None:
 		raise Exception("[TE016] Invalid LoginKey or ConfirmationHash : {}, {}".format(loginKey, confirmHash))
 
-	return [[_id, user, swid, pwd, confirmHash, loginKey], {}]
+	return [[user, _id, swid, pwd, confirmHash, loginKey], {}]

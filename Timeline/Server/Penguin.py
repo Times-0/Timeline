@@ -14,6 +14,7 @@ from Timeline.Utils.Igloo import PenguinIglooHandler
 from Timeline.Utils.Puffle import PuffleHandler
 from Timeline.Utils.Stamps import StampHandler
 from Timeline.Utils.Crumbs.Items import Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo, Award
+from Timeline.Utils.Plugins.Abstract import ExtensibleObject
 
 from twisted.protocols.basic import LineReceiver
 from twisted.internet import threads
@@ -25,7 +26,22 @@ import logging
 import time
 from math import ceil
 
-class Penguin(LineReceiver, PenguinDB):
+class LR(LineReceiver):
+    def makeConnection(self, transport):
+        pass
+
+    def connectionLost(self, reason):
+        pass
+
+    def lineReceived(self, line):
+        pass
+    
+    def send(*a):
+        pass
+
+
+
+class Penguin(PenguinDB, ExtensibleObject, LR):
 
 	delimiter = chr(0)
 
@@ -228,14 +244,23 @@ class Penguin(LineReceiver, PenguinDB):
 		self.engine.log("error", self.getPortableName(), self.errored.getErrorMessage())
 
 	def lineReceived(self, line):
-		me = self.getPortableName()
-		self.engine.log("debug", "[RECV]", me, line)
+		'''
+		Extended plugins can overload this function.
+        If you want to override this function, raise NotImplementedError
+		'''
+
+		try:
+		    super(Penguin, self).lineReceived(line)
+		except NotImplementedError:
+		    return
 
 		receivedPacketDefer = self.PacketHandler.handlePacketReceived(line)
 		receivedPacketDefer.addErrback(self.checkForExceptions)
 		# Defer some other stuff? Probably?
 
 	def send(self, *args):
+		super(Penguin, self).send(*args)
+
 		buffers = list(args)
 		if len(buffers) < 1:
 			return
@@ -269,7 +294,7 @@ class Penguin(LineReceiver, PenguinDB):
 
 	@inlineCallbacks
 	def connectionLost(self, reason):
-		self.engine.log("info", self.getPortableName(), "Disconnected!")
+		super(Penguin, self).connectionLost(reason)
 
 		if not self.penguin.room is None:
 			self.penguin.room.remove(self)
@@ -293,10 +318,12 @@ class Penguin(LineReceiver, PenguinDB):
 		self.engine.disconnect(self)
 
 	def makeConnection(self, transport):
-		self.transport = self.client = transport
+		self.transport = transport
+		self.client = self.transport
 		self.connectionMade = True
 
-		self.engine.log("info", "New client connection:", self.client)
+		super(Penguin, self).makeConnection(transport)
+
 
 class PenguinObject(dict):
 

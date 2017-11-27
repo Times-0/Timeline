@@ -16,6 +16,11 @@ class Stamp(object):
 		self.group = int(group)
 		self.parent = type('StampParent', (object, ), {'id' : int(parent), 'name' : str(parent_name)})
 
+		self.game = None
+		if self.parent.name.startswith("Games : "):
+		    self.game = self.parent.name.replace("Games : ", '')
+
+
 	def __repr__(self):
 		return "Stamp<{}#{}>".format(self.name, self.id)
 

@@ -51,6 +51,7 @@ class Room (list):
 		super(Room, self).append(client)
 		client.penguin.room = self
 
+		client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'place' : self.ext_id})
 		GeneralEvent.call('joined-room', client, self.id)
 
 		self.onAdd(client)
@@ -67,6 +68,7 @@ class Room (list):
 
 		self.send('rp', client['id'])
 		client.penguin.room = None
+		client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'place' : 0})
 
 		super(Room, self).remove(client)
 		client.penguin['prevRooms'].append(self)
@@ -111,10 +113,14 @@ class Game(Room):
 		client.penguin.playing = True
 		client.penguin.previousGame = self
 
+		client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'playing' : 1})
+
 	def onRemove(self, client):
 		client.penguin.playing = False
 
-class Arcade(Room):
+		client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'playing' : 0})
+
+class Arcade(Game):
 	# Non black-hole stuff
 
 	game = True
@@ -126,16 +132,22 @@ class Arcade(Room):
 		client.penguin.playing = True
 		client.penguin.previousGame = self
 
+		client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'playing' : 1})
+
 	def onRemove(self, client):
 		client.penguin.playing = False
 
-class Multiplayer(Room):
+		client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'playing' : 0})
+
+class Multiplayer(Game):
 	# Multiplayer? Know this is crazy, still :P
 
 	game = True
 
 	def onAdd(self, client):
 		client.penguin.waddling = True #MUST WADDLE!
+		
+		client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'playing' : 1, 'waddling' : 1})
 
 
 class Igloo(Place):
@@ -307,9 +319,18 @@ class RoomHandler (object):
 		name = name.lower().strip()
 		for room in self.rooms:
 			if room.keyName.lower() == name:
-				return rooms
+				return room
 
 		return None
+	
+	def getRoomByDisplayName(self, name):
+	    name = name.lower().strip()
+	    for room in self.rooms:
+	        if room.name.lower() == name:
+	            return room
+	
+	    return None
+
 
 	def __call__(self, key):
 		return self.getRoomById(key)

@@ -1,5 +1,6 @@
 from Timeline.Utils.Plugins.IPlugin import IPlugin, RequirementsManager
 from Timeline.Utils.Plugins.AbstractManager import Abstraction
+from Timeline.Utils.Plugins.IPlugin import IPluginAbstractMeta
 from pkgutil import iter_modules
 from importlib import import_module
 
@@ -22,7 +23,7 @@ def extend(base, plugin):
 
     bases = tuple(base.__bases__)
     if not plugin in bases:
-        bases += (plugin,)
+        bases = (plugin,) + bases
 
     base.__bases__ = bases
 
@@ -65,6 +66,9 @@ def loadPluginObjects():
     plugins = getPlugins()
 
     for plugin in plugins:
+        if type(plugin) is IPluginAbstractMeta:
+            continue
+
         satisfyPluginDependency(plugin.requirements)
 
         exists = sum(k.name == plugin.name and k.developer == plugin.developer and (k.version == plugin.version or k.version == 0 or plugin.version == 0) for k in Abstraction.getAllPlugins()) > 0
