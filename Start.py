@@ -63,6 +63,7 @@ print \
 > Developer : Dote
 > Version   : 3.2
 > Updates   : [+] Plugin System
+              [+] Game Handlers
               [-] Bugs fixed and errors fixed
 _______________________________________________
 """
