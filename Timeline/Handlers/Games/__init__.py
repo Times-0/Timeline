@@ -26,10 +26,13 @@ def handleGameOver(client, data):
         return
 
     stamps = client['recentStamps']
-    stamps = [k for k in stamps if k.game is not None and client.engine.roomHandler.getRoomByDisplayName(k.game) is not None]
-    print [k.game for k in client['recentStamps'] if k.game is not None]
-    earned = len([k for k in client['stampHandler'] if k.game is not None and client.engine.roomHandler.getRoomByDisplayName(k.game) is client.room])
-    total = len([k for k in client.engine.stampCrumbs.stamps if k.game is not None and client.engine.roomHandler.getRoomByDisplayName(k.game) is client['room']])
+    g_stamps = client.engine.stampCrumbs.getStampsByGroup(current_game.stamp_id)
+    e_stamps = list(set(client['stampHandler']).intersection(g_stamps))
+    
+    stamps = list(set(stamps).intersection(g_stamps))
+
+    earned = len(e_stamps)
+    total = len(g_stamps)
 
     if total == earned:
         coins *= 2
