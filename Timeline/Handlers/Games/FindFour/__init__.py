@@ -177,8 +177,8 @@ class FindFour(TableGame):
 
 		for i in [player, opponent]:
 			iWon = self.won(i + 1)
-			iSign = -1 if player < 1 else 1
-			iOrder = sign * 10
+			iSign = -1 if i < 1 else 1
+			iOrder = iSign * 10
 
 			if iWon:
 				if iWon < 0:
