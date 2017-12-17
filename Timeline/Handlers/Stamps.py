@@ -44,6 +44,7 @@ def handleGetPlayerStamps(client, _id):
 @PacketEventHandler.onXT('s', 'st#gmres', WORLD_SERVER, p_r = False)
 def handleGetRecentStamps(client, data):
 	client.send('gmres', '|'.join(map(str, client['recentStamps'])))
+	client.penguin.recentStamps = list()
 
 @PacketEventHandler.onXT('s', 'st#ssbcd', WORLD_SERVER)
 def handleSBCoverUpdate(client, color, highlight, pattern, icon, stamps):

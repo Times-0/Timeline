@@ -44,7 +44,6 @@ class Event(object):
 
 	def call(self, e, *a, **kw):
 		defer = Deferred()
-
 		if not e in self.events:
 			return defer
 

@@ -16,10 +16,6 @@ class Stamp(object):
 		self.group = int(group)
 		self.parent = type('StampParent', (object, ), {'id' : int(parent), 'name' : str(parent_name)})
 
-		self.game = None
-		if self.parent.name.startswith("Games : "):
-		    self.game = self.parent.name.replace("Games : ", '')
-
 
 	def __repr__(self):
 		return "Stamp<{}#{}>".format(self.name, self.id)
@@ -39,6 +35,16 @@ class StampHandler(object):
 		self.stamps = deque()
 		self.cover = dict({})
 		self.setup()
+
+	def getStampsByGroup(self, gp):
+		gp = int(gp)
+
+		stamps = list()
+		for k in self.stamps:
+			if k.group == gp:
+				stamps.append(k)
+
+		return stamps
 
 	def setup(self):
 		self.stamps.clear()

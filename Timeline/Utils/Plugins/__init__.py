@@ -52,6 +52,7 @@ def satisfyPluginDependency(plugin):
         for k in plugin:
             satisfyPluginDependency(k)
         return
+
     p = RequirementsManager.getRequirement(plugin)
     if p is None:
         # try loading plugin
@@ -59,17 +60,18 @@ def satisfyPluginDependency(plugin):
         if _plugin is None:
             return # plugin doesn't exists!
 
-        satisfyPluginDependency(_plugin)
+        satisfyPluginDependency(_plugin.requirements)
         _plugin()
 
 def loadPluginObjects():
     plugins = getPlugins()
 
     for plugin in plugins:
-        if type(plugin) is IPluginAbstractMeta:
-            continue
-
         satisfyPluginDependency(plugin.requirements)
+
+        if type(plugin) is IPluginAbstractMeta:
+
+            continue
 
         exists = sum(k.name == plugin.name and k.developer == plugin.developer and (k.version == plugin.version or k.version == 0 or plugin.version == 0) for k in Abstraction.getAllPlugins()) > 0
         if not exists:

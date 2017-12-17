@@ -35,6 +35,32 @@ InitiateLogger : This is function initiates the logger accessed all along Timeli
 @dependencies : logging
 @param[name]->optional : Defines the name of the logger you are going to use all along, default - Timeline
 '''
+
+def InitiateColorLogger(name='Timeline'):
+	from colorlog import ColoredFormatter
+
+	Constants.TIMELINE_LOGGER = name
+	Timeline_logger = logging.getLogger(name)
+	
+	Timeline_stream = logging.StreamHandler()
+
+	LogFormat = "  %(reset)s%(log_color)s%(levelname)-8s%(reset)s | %(log_color)s%(message)s"
+	Timeline_stream.setFormatter(ColoredFormatter(LogFormat, log_colors={
+		'DEBUG':    'white',
+		'INFO':     'cyan',
+		'WARNING':  'yellow',
+		'ERROR':    'red',
+		'CRITICAL': 'red,bg_white',
+	}))
+
+	Timeline_logger.addHandler(Timeline_stream)
+
+	Timeline_logger.setLevel(logging.DEBUG)
+
+	Timeline_logger.debug("Timeline Logger::Initiated")
+
+	return Timeline_logger
+
 def InitiateLogger(name="Timeline"):
 	Constants.TIMELINE_LOGGER = name
 	Timeline_logger = logging.getLogger(name)
@@ -50,6 +76,17 @@ def InitiateLogger(name="Timeline"):
 
 	return Timeline_logger
 
+def HotLoadModule(module):
+	Handler = ModuleHandler(module)
+	return Handler.startLoadingModules()
+
+def LoadPlugins(module):
+	loadPlugins(module)
+	plugins_loaded = map(str, PLUGINS_LOADED)
+	TimelineLogger.info("Loaded %s Plugin(s) : %s", len(plugins_loaded), ', '.join(map(lambda x: x.name, getPlugins())))
+
+	loadPluginObjects()
+
 print \
 """
  _______
@@ -61,30 +98,18 @@ print \
 ----------------------------------------------
 > AS3 CPPS Emulator. Written in Python
 > Developer : Dote
-> Version   : 3.2
-> Updates   : [+] Plugin System
-              [+] Game Handlers
+> Version   : 4 stable
+> Updates   : [+] Game Handlers
+              [+] General Table Games handlers
+              [+] Find Four
+              [+] Fixed player rank (or level)
+              [+] Colored logging system
               [-] Bugs fixed and errors fixed
 _______________________________________________
 """
 
 # Example of starting the logger!
-TimelineLogger = InitiateLogger()
-
-# Example of initiating the ModuleHandler which deals extensively with Modifications of modules at runtime.
-MHandler = ModuleHandler(Handlers)
-MHandler.startLoadingModules()
-
-# Initiating PacketHandler which deals with modification  of Packet Rule handlers
-PHandler = ModuleHandler(PacketHandler)
-PHandler.startLoadingModules()
-
-# Importing all plugins
-loadPlugins(Plugins)
-plugins_loaded = [str(k) for k in PLUGINS_LOADED]
-TimelineLogger.info("Loaded %s Plugin(s) : %s", len(plugins_loaded), ', '.join(map(lambda x: x.name, getPlugins())))
-
-loadPluginObjects()
+TimelineLogger = InitiateColorLogger() #InitiateLogger()
 
 #Checking database, databas details once set cannot be change during runtime
 DBMS = DBM(user = "root", passd = "", db = "times-cp")
@@ -95,17 +120,24 @@ if not DBMS.conn:
 TEObserver = log.PythonLoggingObserver(loggerName=Constants.TIMELINE_LOGGER)
 TEObserver.start()
 
-# Example of initiating server to listen to given endpoint.
-'''
-LOGIN_SERVER => Initiates Engine to be a Login server
-WORLD_SERVER => Initiates Engine to be a World Server
+def main():
 
-The type of server *must* be sent to Engine as a parameter!
-'''
-LoginServer = Engine(Penguin, Constants.LOGIN_SERVER, 1, "Login")
-LoginServer.run('127.0.0.1', 6112)
+	LoadPlugins(Plugins)
 
-Gravity = Engine(Penguin, Constants.WORLD_SERVER, 100, "Gravity")
-Gravity.run('127.0.0.1', 9875)
+	# Example of initiating server to listen to given endpoint.
+	'''
+	LOGIN_SERVER => Initiates Engine to be a Login server
+	WORLD_SERVER => Initiates Engine to be a World Server
+
+	The type of server *must* be sent to Engine as a parameter!
+	'''
+	LoginServer = Engine(Penguin, Constants.LOGIN_SERVER, 1, "Login")
+	LoginServer.run('127.0.0.1', 6112)
+
+	Gravity = Engine(Penguin, Constants.WORLD_SERVER, 100, "Gravity")
+	Gravity.run('127.0.0.1', 9875)
+
+
+HotLoadModule(Handlers).addCallback(lambda x: HotLoadModule(PacketHandler).addCallback(lambda x: main()))
 
 reactor.run()

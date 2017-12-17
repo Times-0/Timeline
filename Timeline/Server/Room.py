@@ -36,7 +36,7 @@ class Room (list):
 			return
 
 		if client in self:
-			return client.send('e', 200)
+			return #client.send('e', 200)
 
 		if len(self) + 1 > self.max:
 			return client.send('e', 210)
@@ -53,14 +53,21 @@ class Room (list):
 
 		client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'place' : self.ext_id})
 		GeneralEvent.call('joined-room', client, self.id)
+		GeneralEvent.call('joined-room-{}'.format(self.ext_id), client, self.ext_id)
 
 		self.onAdd(client)
 
 	def onAdd(self, client):
-		pass
+		try:
+			super(Room, self).onAdd(client)
+		except:
+			pass
 
 	def onRemove(self, client):
-		pass
+		try:
+			super(Room, self).onRemove(client)
+		except:
+			pass
 
 	def remove(self, client):
 		if not client in self:
@@ -95,6 +102,8 @@ class Room (list):
 class Place(Room):
 
 	def onAdd(self, client):
+		super(Place, self).onAdd(client)
+
 		client.send('jr', self.ext_id, self)
 		self.send('ap', client)
 
@@ -108,6 +117,8 @@ class Game(Room):
 	stamp_id = None
 
 	def onAdd(self, client):
+		super(Game, self).onAdd(client)
+
 		client.send('jg', self.ext_id)
 
 		client.penguin.playing = True
@@ -124,9 +135,10 @@ class Arcade(Game):
 	# Non black-hole stuff
 
 	game = True
-	stamp_id = None
 
 	def onAdd(self, client):
+		super(Arcade, self).onAdd(client)
+
 		client.send('jnbhg', self.ext_id)
 
 		client.penguin.playing = True
@@ -143,8 +155,11 @@ class Multiplayer(Game):
 	# Multiplayer? Know this is crazy, still :P
 
 	game = True
+	waddle = None
 
 	def onAdd(self, client):
+		super(Multiplayer, self).onAdd(client)
+
 		client.penguin.waddling = True #MUST WADDLE!
 		
 		client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'playing' : 1, 'waddling' : 1})
@@ -172,22 +187,6 @@ class Igloo(Place):
 	def __repr__(self):
 		return "Igloo<{}#{}>".format(self.name, self.ext_id)
 
-'''
-"110": {
-	"room_id": 110,
-	"room_key": "coffee",
-	"name": "Coffee Shop",
-	"display_name": "Coffee Shop",
-	"music_id": 944,
-	"is_member": 0,
-	"path": "coffee.swf",
-	"max_users": 80,
-	"jump_enabled": false,
-	"jump_disabled": true,
-	"required_item": null,
-	"short_name": "Coffee Shop"
-	}
-'''
 
 class RoomHandler (object):
 
@@ -276,20 +275,26 @@ class RoomHandler (object):
 					maxu = 800
 					jump = False
 					item = None
-					member = False 
+					member = False
+					stamp = int(room['stamp_group_id'])
 
 					is_non_black_hole = bool(room['show_player_in_room'])
 
+					roomObj = None
+
 					if is_non_black_hole:
-						self.rooms.append(Arcade(self, _id, key, name, maxu, member, jump, item))
+						roomObj = Arcade(self, _id, key, name, maxu, member, jump, item)
 						self.details[Arcade] += 1
 
 					elif _id > 990 or _id in MULTIPLAYER_GAMES:
-						self.rooms.append(Multiplayer(self, _id, key, name, maxu, member, jump, item))
+						roomObj = Multiplayer(self, _id, key, name, maxu, member, jump, item)
 						self.details[Multiplayer] += 1
 					else:
-						self.rooms.append(Game(self, _id, key, name, max, member, jump, item))
+						roomObj = Game(self, _id, key, name, max, member, jump, item)
 						self.details[Game] += 1
+
+					roomObj.stamp_id = stamp
+					self.rooms.append(roomObj)
 
 			except Exception, e:
 					self.log('error', 'Error parsing JSON. E:', e)
@@ -297,6 +302,9 @@ class RoomHandler (object):
 
 		for r in self.details:
 				self.log('info', 'Loaded', self.details[r], '{}(s)'.format(r.__name__))
+
+		self.ROOM_CONFIG = type('RoomConfig', (object,), {'ROOM_HANDLER' : self})() # user editable, flexible attribute. Used by each game as desired
+		GeneralEvent('Room-handler', self)
 
 	def log(self, l, *a):
 		self.engine.log(l, '[RoomHandler] ', *a)

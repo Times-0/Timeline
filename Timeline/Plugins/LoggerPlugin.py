@@ -1,4 +1,4 @@
-from Timeline.Utils.Plugins.IPlugin import IPlugin, IPluginAbstractMeta
+from Timeline.Utils.Plugins.IPlugin import IPlugin, IPluginAbstractMeta, Requirement
 from Timeline.Utils.Plugins import extend
 
 from Timeline.Server.Penguin import Penguin
@@ -18,6 +18,8 @@ class LoggerPlugin(IPlugin):
 
     name = "LoggingPlugin"
     developer = "Dote"
+
+    requirements = [Requirement(**{'name' : 'LoginNotification', 'developer' : 'Dote'})]
 
     @classmethod
     def onBuild(cls):

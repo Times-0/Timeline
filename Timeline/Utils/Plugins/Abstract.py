@@ -46,9 +46,6 @@ class Abstract(AbstractManager):
     def __int__(self):
         return self.__plugin_version
 
-    def __repr__(self):
-        return "{0}:{1}#{2}".format(self.name, self.version, self.developer)
-
     @abstractproperty
     def name(self):
         return self.__plugin_name

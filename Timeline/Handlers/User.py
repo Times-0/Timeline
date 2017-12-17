@@ -318,6 +318,7 @@ def handleUpdateFeet(client, _id): # check if penguin room type is place too.. c
 
 @PacketEventHandler.onXT('s', 's#upp', WORLD_SERVER)
 def handleUpdatePhoto(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
+	print "Photo:", _id
 	if _id == 0:
 		client.dbpenguin.photo = _id
 		name = Photo.__name__.lower()

@@ -53,7 +53,7 @@ class RequirementsManager(object):
         for r in requirements:
             if not isinstance(r, Requirement):
                 continue
-            
+                
             reqm = RequirementsManager.getRequirement(r)
             if reqm is not None:
                 req.append(reqm)
@@ -149,7 +149,7 @@ class IPlugin(Abstract):
     def loadDependencies(self):
         self.dependencies = RequirementsManager.getAllRequirements(self.requirements)
         for dependency in self.dependencies:
-            dependencies.on_dependency(self)
+            dependency.on_dependency(self)
 
     def on_dependency(self, plugin):
         self.dependent.append(plugin)

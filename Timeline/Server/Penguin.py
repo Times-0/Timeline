@@ -216,7 +216,7 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 			self['frame'],
 
 			int(int(self['member']) > 0),#Is member
-			int(self['member']),			#Membership days remaining
+			self['member'].rank,			#Membership batch level
 
 			self['avatar'],			#wtf?
 			None,
@@ -298,6 +298,9 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 
 		if not self.penguin.room is None:
 			self.penguin.room.remove(self)
+
+		if self['playing'] or self['game'] is not None or self['waddling']:
+			self['game'].remove(self)
 
 		if self.engine.type == WORLD_SERVER and self.penguin.id != None:
 			yield self.engine.redis.server.delete("online:{}".format(self.penguin.id))

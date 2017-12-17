@@ -153,7 +153,7 @@ class PenguinIglooHandler(list):
 
 	@inlineCallbacks
 	def loadCurrentIgloo(self):
-		if self.penguin.dbpenguin.igloo == 0:
+		if self.find(self.penguin.dbpenguin.igloo) is None:
 			igloo = yield Igloo(owner = self.penguin['id'], location = 1, furniture = '', likes = '[]').save()
 			self.penguin.dbpenguin.igloo = igloo.id
 			self.penguin.dbpenguin.save()

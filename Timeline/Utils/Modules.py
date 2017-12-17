@@ -20,16 +20,21 @@ class ModulesEventHandler(FileSystemEventHandler):
 	def __init__(self):
 		super(ModulesEventHandler, self).__init__()
 
+	def stripModule(self, path, l = None):
+		relative_path = path[len(self.module_package):l].rstrip("/").rstrip("\\").lstrip("/").lstrip("\\").replace("\\", ".").replace("/", '.')
+		module_name = "{0}.{1}".format(self.parent_module_name, relative_path)
+
+		module_parent_path = "/".join(path.replace("\\", "/").split("/")[:-1])
+		module_parent_scope = ".".join(module_name.split(".")[:-1])
+
+		return (module_parent_path, module_parent_scope, module_name)
+
 	def on_created(self, event):
 		directory = event.is_directory
 		path = event.src_path
 
 		if directory:
-			relative_path = path[len(self.module_package):].rstrip("/").rstrip("\\").lstrip("/").lstrip("\\").replace("\\", ".").replace("/", '.')
-			module_name = "{0}.{1}".format(self.parent_module_name, relative_path)
-
-			module_parent_path = "/".join(path.replace("\\", "/").split("/")[:-1])
-			module_parent_scope = ".".join(module_name.split(".")[:-1])
+			module_parent_path, module_parent_scope, m_name = self.stripModule(path)
 			self.loadModules(module_parent_scope, [module_parent_path])
 
 			self.logger.info("on_created_directory: {0}".format(module_name))
@@ -38,11 +43,7 @@ class ModulesEventHandler(FileSystemEventHandler):
 		if not path.startswith(self.module_package) or not path.endswith(".py"):
 			return
 
-		relative_path = path[len(self.module_package):-3].rstrip("/").rstrip("\\").lstrip("/").lstrip("\\").replace("\\", ".").replace("/", '.')
-		module_name = "{0}.{1}".format(self.parent_module_name, relative_path)
-
-		module_parent_path = "/".join(path.replace("\\", "/").split("/")[:-1])
-		module_parent_scope = (".".join(module_name.split(".")[:-1]))
+		module_parent_path,	module_parent_scope, m_name = self.stripModule(path, -3)
 		self.loadModules(module_parent_scope, [module_parent_path])		
 
 		self.logger.info("on_created: {0}".format(module_name))
@@ -52,24 +53,14 @@ class ModulesEventHandler(FileSystemEventHandler):
 		path = event.src_path
 		path2 = event.dest_path
 
-		relative_path = path[len(self.module_package):-3].rstrip("/").rstrip("\\").lstrip("/").lstrip("\\").replace("\\", ".").replace("/", '.')
-		module_name = "{0}.{1}".format(self.parent_module_name, relative_path)
 
-		relative_path2 = path2[len(self.module_package):-3].rstrip("/").rstrip("\\").lstrip("/").lstrip("\\").replace("\\", ".").replace("/", '.')
-		module_name2 = "{0}.{1}".format(self.parent_module_name, relative_path2)
+		m, n, module_name = self.stripModule(path, -3)
 
-		module_parent_path = "/".join(path2.replace("\\", "/").split("/")[:-1])
-		module_parent_scope = ".".join(module_name2.split(".")[:-1])
+		module_parent_path, module_parent_scope, module_name2 = self.stripModule(path2, -3)
 
 		if directory:
-			relative_path = path[len(self.module_package):].rstrip("/").rstrip("\\").lstrip("/").lstrip("\\").replace("\\", ".").replace("/", '.')
-			module_name = "{0}.{1}".format(self.parent_module_name, relative_path)
-
-			relative_path2 = path2[len(self.module_package):].rstrip("/").rstrip("\\").lstrip("/").lstrip("\\").replace("\\", ".").replace("/", '.')
-			module_name2 = "{0}.{1}".format(self.parent_module_name, relative_path2)
-
-			module_parent_path = "/".join(path2.replace("\\", "/").split("/"))
-			module_parent_scope = ".".join(module_name2.split(".")[:-1])
+			m, n, module_name = self.stripModule(path)
+			module_parent_path, module_parent_scope, module_name2 = self.stripModule(path2)
 
 			self.clearModules(module_name, True)
 			self.loadModules(module_parent_scope, [module_parent_path])
@@ -90,14 +81,12 @@ class ModulesEventHandler(FileSystemEventHandler):
 		directory = event.is_directory
 		path = event.src_path
 
-		relative_path = path[len(self.module_package):-3].rstrip("/").rstrip("\\").lstrip("/").lstrip("\\").replace("\\", ".").replace("/", '.')
-		module_name = "{0}.{1}".format(self.parent_module_name, relative_path)
+		m , n, module_name = self.stripModule(path, -3)
 
 		pyc_path = "{0}.pyc".format(path[:-3])	
 
 		if not path.endswith(".py"):
-			relative_path = path[len(self.module_package):].rstrip("/").rstrip("\\").lstrip("/").lstrip("\\").replace("\\", ".").replace("/", '.')
-			module_name = "{0}.{1}".format(self.parent_module_name, relative_path)
+			m, n, module_name = self.stripModule(path)
 
 			self.clearModules(module_name, True)
 			
@@ -121,8 +110,7 @@ class ModulesEventHandler(FileSystemEventHandler):
 		if not path.startswith(self.module_package) or not path.endswith(".py") or directory:
 			return
 
-		relative_path = path[len(self.module_package):-3].rstrip("/").rstrip("\\").lstrip("/").lstrip("\\").replace("\\", ".").replace("/", '.')
-		module_name = "{0}.{1}".format(self.parent_module_name, relative_path)
+		m, n, module_name = self.stripModule(path, -3)
 
 		self.clearModules(module_name, only_unset = True)
 		self.reloadModules(module_name)
@@ -215,7 +203,7 @@ class ModuleHandler(ModulesEventHandler):
 		Observer = ModuleObserver()
 		ModuleEventHandler = self
 
-		Observer.schedule(ModuleEventHandler, path=self.module_parent.__path__[0], recursive=False)
+		Observer.schedule(ModuleEventHandler, path=self.module_parent.__path__[0], recursive=True)
 		Observer.start()
 
 	def loadingException(self, err):

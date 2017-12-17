@@ -113,6 +113,14 @@ class Membership(object):
         self.d = time.mktime(d.timetuple())
         self.c = c
 
+        self.rank = 1
+        months = int(int(self) * 0.03285) * int(bool(self))
+        if months > 0:
+            if months > 24:
+                self.rank = 5
+            else:
+                self.rank = int(ceil(months / 6.0))
+
     def __repr__(self):
         if time.time() > self.d:
             return 0
