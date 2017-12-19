@@ -10,7 +10,7 @@ from twisted.internet.defer import inlineCallbacks, returnValue
 from collections import deque
 import logging
 
-class FindFourAI(IPlugin):
+class Commands(IPlugin):
     """Commands Plugin"""
 
 
