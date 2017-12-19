@@ -11,7 +11,7 @@ from collections import deque
 import logging
 
 class FindFourAI(IPlugin):
-    """Display's name of penguin logging in"""
+    """Commands Plugin"""
 
 
     requirements = list()
