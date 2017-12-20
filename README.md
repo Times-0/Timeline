@@ -17,6 +17,12 @@ Timeline is built heavily on Twisted and is even-driven, most of methods are Def
   - [lxml](http://lxml.de/installation.html)
   - OPTIONAL : [colorlog](https://github.com/borntyping/python-colorlog)
   
+# Extras
+You can use the following to add more features and customization to your cpps:
+  - [FindFour AI](https://github.com/Times-0/Timeline-FindFourAI/) - An intelligent, human like bot, with whom you can play FindFour matches with.
+
+*Note: There maybe many other plugins not listed in the above list, the above are ones officially tested and found to be working and 100% legit%
+
 # Installation and Usage
 Download **Timeline**, put it in an accessable and readable directory. Navigate to that directory using CMD or Shell or any console client. Run `Start.py`. The server will start running.
 
