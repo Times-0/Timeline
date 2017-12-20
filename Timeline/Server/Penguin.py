@@ -83,7 +83,6 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 
 		self.penguin.member = Membership(self.dbpenguin.membership, self)
 		self.penguin.moderator = False #:P
-		self.penguin.epf = False #TODO
 
 		self.penguin.x = self.penguin.y = self.penguin.frame = self.penguin.avatar = 0
 

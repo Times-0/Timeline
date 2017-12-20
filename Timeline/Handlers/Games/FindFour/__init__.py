@@ -94,7 +94,7 @@ class FindFour(TableGame):
 			return False
 
 		if 0 <= x < len(self.FourGame) - 1:
-			if self.FourGame[x + 1][y] == -1:
+			if self.FourGame[x + 1][y] == 0:
 				return False
 
 

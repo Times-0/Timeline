@@ -55,12 +55,12 @@ class TableGame(Multiplayer):
 
 		self.updateTable()
 
-	def remove(self, client):
+	def remove(self, client):		
 		if list.__contains__(self, client):
 			self.leaveGame(client)
 
 		elif client in self.Waddling:
-			self.waddling.remove(client)
+			self.Waddling.remove(client)
 
 
 		self.room.append(self)
@@ -88,6 +88,10 @@ class TableGame(Multiplayer):
 			super(TableGame, self).onRemove(client)
 		except:
 			pass
+
+		GeneralEvent('Table-Left-{}-{}'.format(client['id'], self.table), client, self)
+		GeneralEvent('Table-Left-{}'.format(client['id']), client, self)
+		GeneralEvent('Table-Left-{}'.format(self.table), client, self)
 
 		client.penguin.playing = client.penguin.waddling = False
 		client.penguin.game = None

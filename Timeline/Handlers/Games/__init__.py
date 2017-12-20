@@ -30,7 +30,7 @@ def handleLeaveGame(client, data):
     if not client['playing'] or client['game'] is None:
         return client.send('lz', '-')
 
-    client['game'].leaveGame(client)
+    client['game'].remove(client)
 
 @PacketEventHandler.onXT('z', 'zm', WORLD_SERVER, p_r = False)
 def handleSendMoveToGame(client, data):

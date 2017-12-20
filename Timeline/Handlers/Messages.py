@@ -17,7 +17,7 @@ def handleSendMessage(client, _id, message):
 	if not client['id'] == _id:
 		return
 
-	message = message.strip('').replace('|', '-')
+	message = message.strip(' ').replace('|', '\|')
 
 	GeneralEvent.call('before-message', client, message)
 

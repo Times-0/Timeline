@@ -4,7 +4,7 @@ Engine is the main reactor, based on Twisted which starts the server and listens
 '''
 from Timeline.Server.Constants import TIMELINE_LOGGER, WORLD_SERVER
 from Timeline.Server.Redis import Redis
-from Timeline.Utils.Events import Event
+from Timeline.Utils.Events import Event, GeneralEvent
 from Timeline.Utils.Crumbs import Items, Postcards, Igloo, Puffle, Stamps
 from Timeline.Server.Room import RoomHandler
 from Timeline.Utils.Plugins import getPlugins
@@ -48,6 +48,7 @@ class Engine(Factory, ExtensibleObject):
 		if self.type == WORLD_SERVER:
 			self.initializeWorld()
 
+		GeneralEvent('onEngine', self)
 
 	def initializeWorld(self):
 		# Set item crumbs
@@ -62,6 +63,9 @@ class Engine(Factory, ExtensibleObject):
 		self.puffleCrumbs = Puffle.PuffleCrumbHandler(self)
 		# stamo handler
 		self.stampCrumbs = Stamps.StampHandler(self)
+
+	def __repr__(self):
+		return "<{}:{}#{}>".format(self.name, self.id, len(self.users))
 
 	def getPenguinById(self, _id):
 		_id = int(_id)

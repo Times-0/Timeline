@@ -20,6 +20,10 @@ class Event(object):
 		Event.EventObject = self
 		self.events = dict()
 
+	def removeListener(self, event, function):
+		if event in self.events and function in self.events[event]:
+			self.events[event].remove(function)
+
 	def addListener(self, event, function):
 		if not event in self.events:
 			self.events[event] = list()
@@ -37,8 +41,7 @@ class Event(object):
 			return function
 
 		if function != None:
-			self.addListener(event, function)
-			return function
+			return func(function)
 
 		return func
 

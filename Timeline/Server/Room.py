@@ -220,7 +220,7 @@ class RoomHandler (object):
 
 		if client['waddling'] or client['playing']:
 			client.send('e', 200)
-			# do more? TODO
+			client['game'].remove(client)
 
 		client.penguin.frame = 1
 		room.append(client)

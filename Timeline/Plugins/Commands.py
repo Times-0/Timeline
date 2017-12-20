@@ -21,7 +21,7 @@ class Commands(IPlugin):
     __commands__ = ["jr"]
 
     def __init__(self):
-        super(FindFourAI, self).__init__()
+        super(Commands, self).__init__()
 
         self.logger = logging.getLogger(TIMELINE_LOGGER)
 
@@ -56,7 +56,7 @@ class Commands(IPlugin):
         params = msg_packets[1:]
 
         __commands__ = [str(k).lower() for k in self.__commands__]
-        
+
         if command in __commands__:
             client.penguin.muted = True
             client.penguin.muted_for_command = True
