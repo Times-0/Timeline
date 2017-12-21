@@ -20,7 +20,8 @@ Timeline is built heavily on Twisted and is even-driven, most of methods are Def
 # Extras
 You can use the following to add more features and customization to your cpps:
   - [FindFour AI](https://github.com/Times-0/Timeline-FindFourAI/) - An intelligent, human like bot, with whom you can play FindFour matches with.
-
+  - [Commands](https://github.com/Times-0/Timeline/blob/master/Timeline/Plugins/Commands) - Comes with Timeline by default. Enables users to use shortcut commands with the chat system.
+  
 *Note: There maybe many other plugins not listed in the above list, the above are ones officially tested and found to be working and 100% legit*
 
 # Installation and Usage
