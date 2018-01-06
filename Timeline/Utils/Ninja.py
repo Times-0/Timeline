@@ -82,10 +82,10 @@ class NinjaHandler(object):
 			if self.items[self.ninja.belt] not in self.penguin['inventory']:
 				self.penguin['inventory'].append(self.items[self.ninja.belt])
 
-			# Give him some cards :P like 25 of them (5% of all cards)
+			# Give him some cards :P like 5 of them (1% of all cards)
 			eligiblePowers = sum(self.powers[:self.ninja.belt], [])
 			eligibleCards = [k for k in self.penguin.engine.cardCrumbs.cards if k.power in eligiblePowers]
-			for i in range(int(ceil(len(self.penguin.engine.cardCrumbs.cards) * 0.25))):
+			for i in range(int(ceil(len(self.penguin.engine.cardCrumbs.cards) * 0.1))):
 				randomCard = choice(eligibleCards)
 				card_id = randomCard.id
 				if card_id not in self.cards:
