@@ -100,10 +100,8 @@ print \
 > Developer : Dote
 > Version   : 4 stable
 > Updates   : [+] Game Handlers
-              [+] General Table Games handlers
-              [+] Find Four
-              [+] Fixed player rank (or level)
-              [+] Colored logging system
+              [+] Card Jitsu
+              [+] Ninja Table
               [-] Bugs fixed and errors fixed
 _______________________________________________
 """

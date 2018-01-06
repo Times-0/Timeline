@@ -5,7 +5,7 @@ Engine is the main reactor, based on Twisted which starts the server and listens
 from Timeline.Server.Constants import TIMELINE_LOGGER, WORLD_SERVER
 from Timeline.Server.Redis import Redis
 from Timeline.Utils.Events import Event, GeneralEvent
-from Timeline.Utils.Crumbs import Items, Postcards, Igloo, Puffle, Stamps
+from Timeline.Utils.Crumbs import Items, Postcards, Igloo, Puffle, Stamps, Cards
 from Timeline.Server.Room import RoomHandler
 from Timeline.Utils.Plugins import getPlugins
 from Timeline.Utils.Plugins.Abstract import ExtensibleObject
@@ -63,6 +63,8 @@ class Engine(Factory, ExtensibleObject):
 		self.puffleCrumbs = Puffle.PuffleCrumbHandler(self)
 		# stamo handler
 		self.stampCrumbs = Stamps.StampHandler(self)
+		# CJ Card handler
+		self.cardCrumbs = Cards.CardsHandler(self)
 
 	def __repr__(self):
 		return "<{}:{}#{}>".format(self.name, self.id, len(self.users))

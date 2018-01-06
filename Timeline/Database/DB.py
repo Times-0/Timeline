@@ -21,6 +21,9 @@ class EPFCom(DBObject):
     def __str__(self):
         return '|'.join(map(str, [self.message, self.getTime(), self.mascot]))
 
+class Ninja(DBObject):
+    pass
+
 class PenguinDB(object):
     """
     <Server.Penguin> will extend this to get db operations

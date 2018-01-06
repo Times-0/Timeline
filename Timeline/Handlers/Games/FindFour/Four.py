@@ -14,7 +14,7 @@ from time import time
 logger = logging.getLogger(TIMELINE_LOGGER)
 
 @GeneralEvent.on('Room-handler')
-def setRoomHandler(ROOM_HANDLER):
+def setFourMats(ROOM_HANDLER):
 	ROOM_HANDLER.ROOM_CONFIG.FourGame = {}
 	for i in FOUR_TABLES:
 		ROOM_HANDLER.ROOM_CONFIG.FourGame[i] = {}

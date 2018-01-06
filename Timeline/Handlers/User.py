@@ -61,7 +61,7 @@ def handleGetPlayerBySWID(client, data):
 
 @PacketEventHandler.onXT('s', 'u#sp', WORLD_SERVER)
 def handleSendCoordinates(client, x, y):
-	client['x'], client['y'] = x, y
+	client.penguin.x, client.penguin.y = x, y
 	client['room'].send('sp', client['id'], x, y)
 
 @PacketEventHandler.onXT('s', 'u#sb', WORLD_SERVER)

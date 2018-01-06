@@ -45,17 +45,19 @@ class Event(object):
 
 		return func
 
+	def callback(self, fn, E):
+		for i in fn:
+			i(E)
+
 	def call(self, e, *a, **kw):
 		defer = Deferred()
 		if not e in self.events:
 			return defer
 
-		for l in self.events[e]:
-			defer.addCallback(l)
-
 		EventDetails = {'e' : e, 'a' : a, 'kw' : kw}
-
-		defer.callback(EventDetails)
+		defer.addCallback(self.callback, EventDetails)
+		
+		defer.callback(self.events[e])
 		return defer
 
 	def unsetEventInModule(self, module):
@@ -99,6 +101,8 @@ class EventListener(object):
 	def __call__(self, event):
 		if event == None:
 			return
+
+		event = dict(event)
 		ra = event['a']
 		kw = event['kw']
 		if 'ra' in event and self in PacketEventHandler.function_w_rules:
@@ -106,7 +110,6 @@ class EventListener(object):
 			kw = event['rkw']
 
 		a = self.function(*ra, **kw)
-
 		if isinstance(a, Deferred):
 			def err(x):
 				a = x.getTraceback().split('\n')

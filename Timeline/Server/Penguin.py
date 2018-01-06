@@ -13,6 +13,7 @@ from Timeline.Utils.Mails import MailHandler
 from Timeline.Utils.Igloo import PenguinIglooHandler
 from Timeline.Utils.Puffle import PuffleHandler
 from Timeline.Utils.Stamps import StampHandler
+from Timeline.Utils.Ninja import NinjaHandler
 from Timeline.Utils.Crumbs.Items import Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo, Award
 from Timeline.Utils.Plugins.Abstract import ExtensibleObject
 
@@ -103,6 +104,7 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 		self.penguin.iglooHandler = PenguinIglooHandler(self)
 		self.penguin.puffleHandler = PuffleHandler(self)
 		self.penguin.stampHandler = StampHandler(self)
+		self.penguin.ninjaHandler = NinjaHandler(self)
 
 		self.loadClothing()
 
@@ -297,6 +299,8 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 
 		if not self.penguin.room is None:
 			self.penguin.room.remove(self)
+
+		self.penguin.game_index = None
 
 		if self['playing'] or self['game'] is not None or self['waddling']:
 			self['game'].remove(self)

@@ -159,10 +159,8 @@ class Multiplayer(Game):
 
 	def onAdd(self, client):
 		super(Multiplayer, self).onAdd(client)
-
-		client.penguin.waddling = True #MUST WADDLE!
 		
-		client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'playing' : 1, 'waddling' : 1})
+		client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'playing' : 1, 'waddling' : 0})
 
 
 class Igloo(Place):
@@ -212,7 +210,7 @@ class RoomHandler (object):
 		elif _type == 'name':
 			room = self.getRoomByName(_room)
 
-		if room is None:
+		if room is None or isinstance(room, Multiplayer): # You cannot join multiplayer games, you waddle and enter the gane
 			return client.send('e', 213)
 
 		if client['room'] is not None:
@@ -281,6 +279,9 @@ class RoomHandler (object):
 					is_non_black_hole = bool(room['show_player_in_room'])
 
 					roomObj = None
+
+					if _id is 0:
+						continue # Table games?
 
 					if is_non_black_hole:
 						roomObj = Arcade(self, _id, key, name, maxu, member, jump, item)

@@ -1,9 +1,10 @@
 from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER
 from Timeline import Username, Password, Inventory
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
-from Timeline.Server.Room import Game, Place
+from Timeline.Server.Room import Game, Place, Multiplayer
 
 from twisted.internet.defer import inlineCallbacks, returnValue
+from twisted.internet import reactor
 
 from collections import deque
 import logging
@@ -11,17 +12,31 @@ from time import time
 
 logger = logging.getLogger(TIMELINE_LOGGER)
 
+@PacketEventHandler.onXT('s', 'w#jx', WORLD_SERVER, p_r = False)
+def handleJoinGame(client, data):
+    if client['room'] is not None and isinstance(client['room'], Multiplayer) and int(data[2][1]) == client['room'].id:
+        client.send('jx', client['room'].ext_id)
+        
+        reactor.callLater(1, lambda *x:client['game'].getGame(client)) # client takes time to load
+
 @PacketEventHandler.onXT('z', 'gz', WORLD_SERVER, p_r = False)
 def handleGetGame(client, data):
-    if not client['waddling'] or client['game'] is None:
+    if client['game'] is None:
         return client.send('gz', '-')
 
     client.send('gz', client['game'])
 
+@PacketEventHandler.onXT('z', 'uz', WORLD_SERVER, p_r = False)
+def handleGetUpdateGame(client, data):
+    if client['game'] is None:
+        return client.send('gz', 'zzzZ')
+
+    client['game'].updateGame()
+
 @PacketEventHandler.onXT('z', 'jz', WORLD_SERVER, p_r = False)
 def handleJoinGame(client, data):
-    if not client['waddling'] or client['game'] is None:
-        return client.send('lz', '-')
+    if client['game'] is None:
+        return client.send('jz', '-')
 
     client['game'].joinGame(client)
 
@@ -51,7 +66,7 @@ def handleGameOver(client, data):
         return
 
     current_game = client['room']
-    if not isinstance(current_game, Game):
+    if not isinstance(current_game, Game) or isinstance(current_game, Multiplayer):
         client.engine.log('warn', "Game exploitation,", current_game, ':', score)
         return
 
