@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 12, 2017 at 05:21 AM
+-- Generation Time: Jan 06, 2018 at 07:45 AM
 -- Server version: 10.1.28-MariaDB
 -- PHP Version: 7.1.10
 
@@ -37,6 +37,15 @@ CREATE TABLE `bans` (
   `time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `type` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `bans`
+--
+
+INSERT INTO `bans` (`id`, `player`, `moderator`, `comment`, `expire`, `time`, `type`) VALUES
+(1, 3, 4, 'Ban test', '2017-11-07 13:20:00', '2017-11-07 12:56:02', 1);
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `epfcoms`
@@ -75,6 +84,8 @@ CREATE TABLE `igloos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 
+-- --------------------------------------------------------
+
 --
 -- Table structure for table `mails`
 --
@@ -90,6 +101,21 @@ CREATE TABLE `mails` (
   `junk` tinyint(4) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `ninjas`
+--
+
+CREATE TABLE `ninjas` (
+  `id` int(11) NOT NULL COMMENT 'penguin id',
+  `pid` int(11) NOT NULL,
+  `belt` int(2) NOT NULL DEFAULT '0',
+  `cards` text NOT NULL,
+  `matches` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `penguins`
@@ -134,8 +160,7 @@ CREATE TABLE `penguins` (
 --
 
 INSERT INTO `penguins` (`id`, `username`, `swid`, `nickname`, `password`, `email`, `hash`, `create`, `last_update`, `membership`, `inventory`, `coins`, `head`, `face`, `neck`, `feet`, `hand`, `body`, `photo`, `pin`, `color`, `igloo`, `igloos`, `furnitures`, `floors`, `locations`, `care`, `stamps`, `cover`, `agent`, `epf`) VALUES
-(203, 'test', '{882977da-bf7d-11e7-ac97-a02bb82e593b}', 'Peanut', '5f4dcc3b5aa765d61d8327deb882cf99', 'peanutlabs@bill.com', NULL, '2017-02-21 18:30:00', '2017-11-09 13:26:55', '2017-11-08 18:30:00', '1%2%606%607%608', 14696, 0, 0, 0, 0, 0, 0, 0, 606, 2, 2, '0|1509593153,1|1509593153,73|1509865708', '793|1509593153|1,2208|1509865415|1,2046|1509865436|2,2058|1509865439|2,2054|1509865442|2,2059|1509865444|2,2062|1509865449|2,749|1509865720|1,810|1509865735|1', '0|1509593153,21|1509865462,11|1509865467', '4|1509872170', '', '|14,1510234314', '2|4|4|2%1|606|372|240|225|17%1|608|368|134|0|16%1|607|378|338|0|15', 0, '0%0'),
-
+(103, 'test', '{882977da-bf7d-11e7-ac97-a02bb82e593b}', 'Peanut', '5f4dcc3b5aa765d61d8327deb882cf99', 'peanutlabs@bill.com', NULL, '2017-02-21 18:30:00', '2017-12-17 12:24:02', '2018-01-30 18:30:00', '1%2%606%607%608%3032%821%8006%8010%8011%4026%4027', 15844, 1004, 0, 0, 0, 0, 24200, 9304, 0, 2, 12, '0|1509593153,1|1509593153,73|1509865708', '793|1509593153|1,2208|1509865415|1,2046|1509865436|2,2058|1509865439|2,2054|1509865442|2,2059|1509865444|2,2062|1509865449|2,749|1509865720|1,810|1509865735|1', '0|1509593153,21|1509865462,11|1509865467', '4|1509872170', '', '14,1512891565|63,1512892202', '2|4|4|2%1|606|372|240|225|17%1|608|368|134|0|16%1|607|378|338|0|15', 1, '0%0');
 
 --
 -- Triggers `penguins`
@@ -169,6 +194,9 @@ CREATE TABLE `puffles` (
   `lastcare` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Indexes for dumped tables
+--
 
 --
 -- Indexes for table `bans`
@@ -193,6 +221,13 @@ ALTER TABLE `igloos`
 --
 ALTER TABLE `mails`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `ninjas`
+--
+ALTER TABLE `ninjas`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `pid` (`pid`);
 
 --
 -- Indexes for table `penguins`
@@ -228,7 +263,7 @@ ALTER TABLE `epfcoms`
 -- AUTO_INCREMENT for table `igloos`
 --
 ALTER TABLE `igloos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `mails`
@@ -237,10 +272,16 @@ ALTER TABLE `mails`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
+-- AUTO_INCREMENT for table `ninjas`
+--
+ALTER TABLE `ninjas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'penguin id', AUTO_INCREMENT=4;
+
+--
 -- AUTO_INCREMENT for table `penguins`
 --
 ALTER TABLE `penguins`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
 
 --
 -- AUTO_INCREMENT for table `puffles`
