@@ -14,7 +14,7 @@ logger = logging.getLogger(TIMELINE_LOGGER)
 
 @PacketEventHandler.onXT('s', 'w#jx', WORLD_SERVER, p_r = False)
 def handleJoinGame(client, data):
-    if client['room'] is not None and isinstance(client['room'], Multiplayer) and int(data[2][1]) == client['room'].id:
+    if client['room'] is not None and isinstance(client['room'], Multiplayer):
         client.send('jx', client['room'].ext_id)
         
         reactor.callLater(1, lambda *x:client['game'].getGame(client)) # client takes time to load
@@ -67,7 +67,10 @@ def handleGameOver(client, data):
 
     current_game = client['room']
     if not isinstance(current_game, Game) or isinstance(current_game, Multiplayer):
-        client.engine.log('warn', "Game exploitation,", current_game, ':', score)
+        try:
+            current_game.gameOver(client = client)
+        except:
+            client.engine.log('warn', "Game exploitation,", current_game.name, ':', score)
         return
 
     stamps = client['recentStamps']

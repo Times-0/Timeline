@@ -32,8 +32,10 @@ class NinjaHandler(object):
 		self.ninja = yield Ninja.find(where = ['pid = ?', self.penguin['id']], limit = 1)
 		
 		if self.ninja is None:
-			self.ninja = Ninja(pid = self.penguin['id'], cards = '')
+			print self.penguin['id']
+			self.ninja = Ninja(pid = self.penguin['id'], cards = '', matches = '', belt = 0)
 			yield self.ninja.save()
+			yield self.ninja.refresh()
 
 		yield self.setupCards()
 		self.setupWonMatches()
@@ -52,7 +54,7 @@ class NinjaHandler(object):
 
 			self.wonMatchCount += isWon
 
-		self.progress = self.wonMatchCount / len(self.matchesWon) * 100
+		self.progress = self.wonMatchCount / max(len(self.matchesWon), 200) * 100
 
 	def handleEarnedStamps(self):		
 		stamps = self.penguin['recentStamps']
@@ -68,12 +70,35 @@ class NinjaHandler(object):
 			coins *= 2
 
 		self.penguin.send('cjsi', '|'.join(map(str, map(int, stamps))), earned, total, total)
-		
+
+	def promoteToBlackBelt(self):
+		if self.ninja.belt > 9:
+			return 
+
+		self.ninja.belt = 10
+		self.penguin.send('cza', self.ninja.belt)
+		self.penguin['inventory'].append(104)	
+
+		eligiblePowers = sum(self.powers[:self.ninja.belt], [])
+		eligibleCards = [k for k in self.penguin.engine.cardCrumbs.cards if k.power in eligiblePowers]
+		for i in range(int(ceil(len(self.penguin.engine.cardCrumbs.cards) * 0.1))):
+			randomCard = choice(eligibleCards)
+			card_id = randomCard.id
+			if card_id not in self.cards:
+				self.cards[card_id] = [randomCard, 0]
+
+			self.cards[card_id][1] += 1
+
+		self.ninja.cards = '|'.join(map(lambda x: "{},{}".format(x, self.cards[x][1]), self.cards))
+
+		yield self.ninja.save()
+
 
 	@inlineCallbacks
 	def promoteNinja(self):
 		maxBelt = self.ninja.belt
-		belt = self.progress / 10
+		self.progress = self.wonMatchCount / max(len(self.matchesWon), 200) * 100
+		belt = int(round(self.progress / 100.0))
 
 		if belt > maxBelt and maxBelt < 10:
 			self.ninja.belt = maxBelt + 1
@@ -101,9 +126,9 @@ class NinjaHandler(object):
 	def addWin(self, against, isWon):
 		isWon = bool(isWon)
 		self.matchesWon[against] = isWon
-		self.wonMatchCount += isWon
+		self.wonMatchCount += int(isWon)
 
-		self.progress = self.wonMatchCount / max(len(self.matchesWon), 250) * 100
+		self.progress = self.wonMatchCount / max(len(self.matchesWon), 200) * 100
 
 		self.ninja.matches = "{},{}|{}".format(self.ninja.matches, against, int(isWon))
 		yield self.ninja.save()

@@ -19,6 +19,7 @@ class Event(object):
 		super(Event, self).__init__()
 		Event.EventObject = self
 		self.events = dict()
+		self.logger = logging.getLogger(TIMELINE_LOGGER)
 
 	def removeListener(self, event, function):
 		if event in self.events and function in self.events[event]:
@@ -128,7 +129,6 @@ class PacketEvent(Event):
 		self.Event = Event.Event()
 		self.packet_rules = dict() # Available packet rules. ie, cat|handler : rule
 		self.function_w_rules = list() # Functions
-		self.logger = logging.getLogger(TIMELINE_LOGGER)
 
 	def unsetEventInModule(self, module):
 		events = self.packet_rules.copy()

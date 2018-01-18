@@ -61,7 +61,7 @@ class Redis(object):
         if not self.isPenguinLoggedIn(peng):
             returnValue(False)
 
-        online = yield self.server.hmgetall('online:{}'.format(peng))
+        online = yield self.server.hgetall('online:{}'.format(peng))
         returnValue(str(online['server']) == str(server))
 
     @inlineCallbacks

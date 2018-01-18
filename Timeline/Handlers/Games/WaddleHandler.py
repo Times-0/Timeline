@@ -47,6 +47,7 @@ class Waddle(Multiplayer):
 		game = self.game(self.roomHandler)
 		game.stamp_id = self.stamp
 		game.room = self.room
+		game.waddle = self.waddle
 		for user in users:
 			user['room'].remove(user)
 			game.append(user)
@@ -74,8 +75,11 @@ class Waddle(Multiplayer):
 		self.room.send('uw', self.waddle, self.index(client))
 
 		client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'place' : self.room.ext_id})
+		try:
+			super(Waddle, self).remove(client)
+		except:
+			pass
 
-		super(Waddle, self).remove(client)
 		client.penguin['prevRooms'].append(self)
 
 		try:
@@ -127,3 +131,25 @@ def handleLeaveWaddling(client, data):
         return
 
     client['game'].remove(client) #leaveWaddling
+
+@PacketEventHandler.onXT('z', 'gw', WORLD_SERVER, p_r = False)
+def handleLeaveWaddling(client, data):
+	waddle_ids = map(int, data[2])
+	gw = list()
+	WADDLES = client.engine.roomHandler.ROOM_CONFIG.WADDLES
+	for i in waddle_ids:
+		if i not in WADDLES:
+			gw.append('{}|'.format(i))
+			continue
+
+		WADDLE_ROOM = WADDLES[i]
+		gwx = list()
+		for ix in range(WADDLE_ROOM.waddles):
+			if ix < len(WADDLE_ROOM):
+				gwx.append(player['nickname'])
+			else:
+				gwx.append('')
+		gwx = ','.join(gwx)
+		gw.append('{}|{}'.format(i, gwx))
+
+	client.send('gw', '%'.join(gw))

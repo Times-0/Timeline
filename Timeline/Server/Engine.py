@@ -89,6 +89,8 @@ class Engine(Factory, ExtensibleObject):
 
 			return True
 
+		self.redis.server.hmset("server:{}".format(self.id), {'population':len(self.users)})
+
 		return False
 
 	def buildProtocol(self, address):
@@ -102,6 +104,8 @@ class Engine(Factory, ExtensibleObject):
 
 		self.log("info", "Built new protocol for user#{0}".format(len(self.users)))
 		self.users.append(user)
+
+		self.redis.server.hmset("server:{}".format(self.id), {'population':len(self.users)})
 
 		return user
 

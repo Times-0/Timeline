@@ -14,6 +14,7 @@ from Timeline.Utils.Igloo import PenguinIglooHandler
 from Timeline.Utils.Puffle import PuffleHandler
 from Timeline.Utils.Stamps import StampHandler
 from Timeline.Utils.Ninja import NinjaHandler
+from Timeline.Utils.Currency import CurrencyHandler
 from Timeline.Utils.Crumbs.Items import Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo, Award
 from Timeline.Utils.Plugins.Abstract import ExtensibleObject
 
@@ -105,7 +106,8 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 		self.penguin.puffleHandler = PuffleHandler(self)
 		self.penguin.stampHandler = StampHandler(self)
 		self.penguin.ninjaHandler = NinjaHandler(self)
-
+		self.penguin.currencyHandler = CurrencyHandler(self)
+		
 		self.loadClothing()
 
 	def loadClothing(self):
@@ -187,6 +189,7 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 
 	def __str__(self):
 		walking_id = walking_item = walking_type = walking_subtype = ''
+		walking_state = 0
 		
 		if self['puffleHandler'].walkingPuffle is not None:
 			puffle = self['puffleHandler'].walkingPuffle
@@ -195,6 +198,7 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 			walking_item = int(puffle.hat)
 			walking_type = int(puffle.type)
 			walking_subtype = int(puffle.subtype)
+			walking_state = int(puffle.state)
 
 		data = [
 			self['id'],			
@@ -209,8 +213,8 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 			self['body'],
 			self['hand'],
 			self['feet'],
-			self['photo'],
 			self['pin'],
+			self['photo'],
 
 			self['x'],				#Cached coordinates
 			self['y'],				#Cached coordinates
@@ -224,10 +228,10 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 			None,					#Party Info
 
 			walking_id, 
-			walking_item, 
 			walking_type,
 			walking_subtype,
-			0 # DEFAULT_STATE #TODO Add golden state
+			walking_item,
+			walking_state
 		]
 
 		return '|'.join(map(str, data))

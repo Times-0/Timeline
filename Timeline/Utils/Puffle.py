@@ -9,9 +9,10 @@ from twistar.dbobject import DBObject
 from collections import deque
 import logging
 import time, json
+from random import randint
 
 class Puffle(DBObject):
-	x = y = 0
+	state = x = y = 0
 
 	def adopt(self):
 		return int(time.mktime(self.adopted.timetuple()))
@@ -37,6 +38,9 @@ class PuffleHandler(list):
 		self.updateInventory()
 
 		self.penguin.send('pgu', self)
+		
+		self.penguin.penguin.lastDigOC = self.penguin.penguin.lastDig = time.time() - 60*2
+		self.penguin.penguin.canDigGold = False
 
 	def getPuffleItem(self, _id):
 		_id = int(_id)
@@ -86,6 +90,11 @@ class PuffleHandler(list):
 		return '%'.join(map(str, self))
 
 	@inlineCallbacks
+	def refreshPuffleHealth(self):
+		for puffle in list(self):
+			yield self.setupPuffle(puffle)
+
+	@inlineCallbacks
 	def setupPuffle(self, puffle):
 		#check for puffle indices...
 		exists = yield self.penguin.engine.redis.server.exists("puffle:{}".format(puffle.id))
@@ -133,7 +142,14 @@ class PuffleHandler(list):
 
 		if fed_percent < 3 or total_percent < 6:
 			# remove
-			self.SendPuffleBackToTheWoods(puffle)
+			if randint(0, 1):
+				puffle.backyard = 1
+				puffle.food = 100
+				puffle.play = 100
+				puffle.clean = 100
+				puffle.save()
+			else:
+				self.SendPuffleBackToTheWoods(puffle)
 			returnValue(None)
 
 		if fed_percent < 10:

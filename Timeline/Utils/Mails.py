@@ -17,6 +17,8 @@ class Mail(DBObject):
 		peng = yield db.db_getPenguin('ID = ?', self.from_user)
 		if peng is None:
 			peng = 'Club Penguin Team'
+		else:
+			peng = peng.nickname
 
 		data = [peng, self.from_user, int(self.type), self.description, int(time.mktime(self.sent_on.timetuple())), int(self.id), int(self.opened)]
 		returnValue('|'.join(map(str, data)))
@@ -66,7 +68,7 @@ class MailHandler(list):
 			self.penguin.send('ms', self.penguin['coins'], 0)
 			returnValue(None)
 
-		if not self.penguin['coins'] + 1 > 10:
+		if not (int(self.penguin['coins']) > 10):
 			self.penguin.send('ms', self.penguin['coins'], 2)
 			returnValue(None)
 
@@ -113,13 +115,10 @@ class MailHandler(list):
 
 	@inlineCallbacks
 	def refresh(self):
-		old = list(self)
+		old = set(list(self))
 		yield self.fetchPostcards()
 
-		new = list(self)
-		for i in old:
-			if i in new:
-				new.remove(i)
+		new = list(set(list(self)) - old)
 
 		self.receivedNewMails(new)
 
@@ -129,6 +128,8 @@ class MailHandler(list):
 			peng = yield self.penguin.db_getPenguin('ID = ?', mail.from_user)
 			if peng is None:
 				peng = 'Club Penguin Team'
+			else:
+				peng = peng.nickname
 
 			sent_on = int(time.mktime(mail.sent_on.timetuple()))
 			self.penguin.send('mr', peng, int(mail.from_user), int(mail.type), mail.description, sent_on, int(mail.id), mail.opened)

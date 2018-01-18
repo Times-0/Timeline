@@ -62,9 +62,10 @@ class PuffleCrumbHandler(object):
 					member = bool(puffle['is_member_only'])
 
 					if not _type in self.defautPuffles:
-						continue
-
-					maxhe, maxhu, maxr = self.defautPuffles[_type]
+						maxhe, maxhu, maxr = 100, 100, 100
+					else:
+						maxhe, maxhu, maxr = self.defautPuffles[_type]
+						
 					self.puffles.append(PuffleCrumb(_type, sub_type, name, maxhe, maxhu, maxr, member))
 
 			except Exception, e:

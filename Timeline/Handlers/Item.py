@@ -17,7 +17,13 @@ def handleGetInventory(client, data):
 
 @PacketEventHandler.onXT('s', 'g#gii', WORLD_SERVER, p_r = False)
 def handleGetIglooInventory(client, data):
-	client.send('gii', client.dbpenguin.floors, client.dbpenguin.igloos, client.dbpenguin.furnitures, client.dbpenguin.locations)
+	client.send('gii', client.dbpenguin.furnitures, client.dbpenguin.floors, client.dbpenguin.igloos, client.dbpenguin.locations)
+
+@PacketEventHandler.onXT('s', 'i#currencies', WORLD_SERVER, p_r = False)
+def handleGetCurrencies(client, data):
+	currencies = client['currencyHandler'].currencies
+	cry = ["{}|{}".format(k, currencies[k]) for k in currencies]
+	client.send('currencies', ','.join(cry))
 
 @PacketEventHandler.onXT('s', 'i#ai', WORLD_SERVER)
 def handleAddItem(client, item):

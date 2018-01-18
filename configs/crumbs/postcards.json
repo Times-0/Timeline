@@ -148,5 +148,12 @@
       "subject": "Pool",
       "in_catalog": true
     }
+  },
+  "EPF": {
+    "order_position": "8",
+    "47": {
+      "subject": "Recruit EPF",
+      "in_catalog": true
+    }
   }
 }

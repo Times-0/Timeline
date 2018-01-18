@@ -98,10 +98,17 @@ print \
 ----------------------------------------------
 > AS3 CPPS Emulator. Written in Python
 > Developer : Dote
-> Version   : 4 stable
-> Updates   : [+] Game Handlers
-              [+] Card Jitsu
-              [+] Ninja Table
+> Version   : 5 stable
+> Updates   : [+] Mancala
+              [+] Sled
+              [+] Card Jitsu Sensei
+              [+] Puffle digging
+              [+] Rainbow quests and adoption
+              [+] Golden puffle adoption
+              [+] Puffle states
+              [+] Puffle Care - Feeding
+              [+] MySQL Auto Reconnect
+              [+] Redis Fix
               [-] Bugs fixed and errors fixed
 _______________________________________________
 """

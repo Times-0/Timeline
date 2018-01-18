@@ -127,7 +127,7 @@ def updateIglooConfiguration(client, _id, _type, floor, location, music, furnitu
 
 @PacketEventHandler.onXT('s', 'g#af', WORLD_SERVER)
 @inlineCallbacks
-def handleBuyFurniture(client, _id):
+def handleBuyFurniture(client, _id, deduce_coins = True):
 	furniture = client.engine.iglooCrumbs.getFurnitureById(_id)
 	if furniture is None:
 		returnValue(client.send('e', 402))
@@ -154,12 +154,13 @@ def handleBuyFurniture(client, _id):
 		client['iglooHandler'].furnitures.append(furn)
 
 	furn.quantity += 1
-	client['coins'] -= furniture.cost
+	client['coins'] -= furniture.cost * deduce_coins
 
 	client.dbpenguin.furnitures = ','.join(map(lambda x: '|'.join(map(str, [x.id, x.date, x.quantity])), client['iglooHandler'].furnitures))
 	yield client.dbpenguin.save()
 
 	client.send('af', _id, client['coins'])
+	returnValue(True)
 
 @PacketEventHandler.onXT('s', 'g#ag', WORLD_SERVER)
 @inlineCallbacks

@@ -12,6 +12,10 @@ from time import time
 
 logger = logging.getLogger(TIMELINE_LOGGER)
 
+@PacketEventHandler.onXT('s', 'u#followpath', WORLD_SERVER)
+def handlePlayerSliding(client, slide):
+	client['room'].send('followpath', client['id'], slide)
+
 @PacketEventHandler.onXT('s', 'u#pbi', WORLD_SERVER)
 @inlineCallbacks
 def handleGetPlayerById(client, _id):

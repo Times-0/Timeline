@@ -161,7 +161,7 @@ class CardJitsuGame(Multiplayer):
 			elif myValue == opValue:
 				r_won = None
 
-		elif p['hadPower'] in [13, 14, 15]:
+		if p['hadPower'] in [13, 14, 15]:
 			for i in range(len(self.Playing)):
 				if self.Playing[i]['resetGameCards'] is None:
 					continue
@@ -266,7 +266,6 @@ class CardJitsuGame(Multiplayer):
 		elif p in [13, 14, 15]:
 			px = {13:'s', 14:'f', 15:'s'}
 			for i in range(len(self.Playing)):
-				print self.gameCards[i]
 				cardsToEliminate = [k for k in self.gameCards[i] if k[0].element == px[p]]
 				for c in cardsToEliminate:
 					self.gameCards[i].remove(c) # remove that card

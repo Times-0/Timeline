@@ -1,18 +1,120 @@
-from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER
+from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER, DIGGABLES, GOLD_DIGGABLES, DIGGABLE_FURN, GOLD_DIGGABLE_FURN
 from Timeline.Utils.Puffle import Puffle
 from Timeline.Utils.Mails import Mail
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
+from Timeline.Handlers.Igloo import handleBuyFurniture
+from Timeline.Handlers.Item import handleGetCurrencies
 
 from twisted.internet.defer import inlineCallbacks, returnValue
 
 from collections import deque
 import logging, json
 from time import time
-from random import choice
+from random import choice, randint, shuffle
+
+PENDING = {}
+
+@PacketEventHandler.onXT('s', 'p#getdigcooldown', WORLD_SERVER, p_r = False)
+def handleGetDigCoolDown(client, data):
+	if client['puffleHandler'].walkingPuffle is None:
+		return
+
+	cmd = max(0, 120 - int(time() - client['lastDig']))
+	client.send('getdigcooldown', cmd)
+
+@PacketEventHandler.onXT('s', 'p#revealgoldpuffle', WORLD_SERVER, p_r = False)
+def handleCanRevealGP(client, data):
+	if client['canAdoptGold']:
+		client.send('revealgoldpuffle', client['id'])
+
+@PacketEventHandler.onXT('s', 'p#puffledigoncommand', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT('s', 'p#puffledig', WORLD_SERVER, p_r = False)
+@inlineCallbacks
+def handlePuffleDig(client, data):
+	if client['puffleHandler'].walkingPuffle is None:
+		return
+
+	cmd = data[1]
+	lDC = 'lastDig'
+	if 'oncommand' in cmd:
+		lDC += 'OC'
+	lastDig = client[lDC]
+
+	cmd = max(0, (40 if 'oncommand' not in cmd else 120) - int(time() - client[lDC]))
+	if cmd:
+		returnValue(0) # no dig
+
+	digables = range(5)
+	setattr(client.penguin, lDC, time())
+
+	digChances = list()
+	canDigGold = client['puffleHandler'].walkingPuffle.state == 1
+	for i in digables:
+		if i is 4 and not canDigGold:
+			continue
+
+		elif i is 1 and canDigGold:
+			continue
+
+		chance = randint(0, 3 + 4 * int(canDigGold and i is 'gold'))
+		digChances += [i for _ in range(chance)]
+
+	dig = choice(digChances)
+
+	if dig == 0:
+		coinsDug = int(10 * randint(1, 40))
+		client['coins'] += coinsDug
+
+		returnValue(client['room'].send('puffledig', client['id'], client['puffleHandler'].walkingPuffle.id, 0, 0, coinsDug, 0, 0))
+
+	elif dig == 1:
+		returnValue(client['room'].send('nodig', client['id'], 1))
+
+	elif dig == 2:
+		diggables = DIGGABLE_FURN
+		if client['puffleHandler'].walkingPuffle.id == 11:
+			diggables += GOLD_DIGGABLE_FURN
+
+		shuffle(diggables)
+		for dug in diggables:
+			tryDigging = yield handleBuyFurniture(client, dug, False)
+			if tryDigging is True:
+				returnValue(client['room'].send('puffledig', client['id'], client['puffleHandler'].walkingPuffle.id, 2, dug, 1, 0, 0))
+
+		client['coins'] += 600
+		returnValue(client['room'].send('puffledig', client['id'], client['puffleHandler'].walkingPuffle.id, 0, 0, 600, 0, 0))
+
+	elif dig == 3:
+		diggables = DIGGABLES
+		if client['puffleHandler'].walkingPuffle.id == 11:
+			diggables += GOLD_DIGGABLES
+
+		shuffle(diggables)
+		for dug in diggables:
+			if dug not in client['inventory']:
+				client['inventory'].append(dug)
+
+				returnValue(client['room'].send('puffledig', client['id'], client['puffleHandler'].walkingPuffle.id, 3, dug, 1, 0, 0))
+
+		client['coins'] += 500
+		returnValue(client['room'].send('puffledig', client['id'], client['puffleHandler'].walkingPuffle.id, 0, 0, 500, 0, 0))
+
+	elif dig == 4:
+		dug = randint(1, 3)
+		client['currencyHandler'].currencies[1] += dug
+		client['currencyHandler'].refreshCurrencies()
+		handleGetCurrencies(client, [-1, '', []])
+
+		if client['currencyHandler'].currencies[1] > 14:
+			client.penguin.canAdoptGold = True
+
+		returnValue(client['room'].send('puffledig', client['id'], client['puffleHandler'].walkingPuffle.id, 4, 0, dug, 0, 0))
+
 
 @PacketEventHandler.onXT('s', 'p#pg', WORLD_SERVER)
 @inlineCallbacks
 def handleGetPuffles(client, _id, isBackyard):
+	client['puffleHandler'].refreshPuffleHealth()
 	puffles = yield client['puffleHandler'].getPenguinPuffles(_id, isBackyard)
 
 	if puffles is None:
@@ -22,6 +124,7 @@ def handleGetPuffles(client, _id, isBackyard):
 
 @PacketEventHandler.onXT('s', 'p#pgmps', WORLD_SERVER, p_r = False)
 def handleGetMyPuffle(client, data):
+	client['puffleHandler'].refreshPuffleHealth()
 	puffles = str(client['puffleHandler']).split('%')
 
 	client.send('pgmps', ','.join(puffles))
@@ -42,7 +145,12 @@ def handlePuffleWalk(client, puffle, isWalking):
 			return None
 
 		client['puffleHandler'].walkingPuffle.walking = 0
+		client['puffleHandler'].walkingPuffle.state = 0
 		client['puffleHandler'].walkingPuffle.save()
+
+		client['currencyHandler'].currencies[1] = 0
+		client['currencyHandler'].refreshCurrencies()
+		client.penguin.canAdoptGold = False
 
 	puffle.walking = int(isWalking)
 	puffle.save()
@@ -64,10 +172,15 @@ def handlePuffleSwap(client, puffle):
 		return # Shitty user
 
 	client['puffleHandler'].walkingPuffle.walking = 0 
+	client['puffleHandler'].walkingPuffle.state = 0
 	client['puffleHandler'].walkingPuffle.save()
 
 	puffle.walking = 1
 	puffle.save()
+
+	client['currencyHandler'].currencies[1] = 0
+	client['currencyHandler'].refreshCurrencies()
+	client.penguin.canAdoptGold = False
 
 	client['puffleHandler'].walkingPuffle = puffle
 
@@ -78,12 +191,12 @@ def handlePuffleTrick(client, trick):
 	client['room'].send('puffletrick', int(client['id']), trick)
 
 @PacketEventHandler.onXT('s', 'p#puffleswap', WORLD_SERVER)
-def handlePuffleSwap(client, puffle, isBackyard):
+def handlePuffleSwapIB(client, puffle, isBackyard):
 	puffle = client['puffleHandler'].getPuffleById(puffle)
 	if puffle is None:
 		return
 
-	if (isBackyard and bool(puffle.backyard)) or (not backyard and not bool(puffle.backyard)): # Check if player is in igloo?
+	if (isBackyard and bool(puffle.backyard)) or (not isBackyard and not bool(puffle.backyard)): # Check if player is in igloo?
 		return #CRAZY!
 
 	if bool(puffle.walking):
@@ -171,8 +284,17 @@ def handleCheckPuffleName(client, data):
 
 	check = 1
 
-	if not n_w_s.isalnum() or not (4 < len(name) < 21):
+	if not n_w_s.isalnum() or not (3 < len(name) < 21):
 		check = 0
+
+	if client['id'] in PENDING:
+		print PENDING
+		check = name not in PENDING[client['id']]
+
+	for puffle in client['puffleHandler']:
+		if puffle.name == name:
+			check = 0
+			break
 
 	client.send('checkpufflename', name, check)
 	return bool(check)
@@ -183,8 +305,13 @@ def handleAdopt(client, _type, name, sub_type):
 	if not handleCheckPuffleName(client, [0, 0, [name]]):
 		return
 
+	if not client['id'] in PENDING:
+		PENDING[client['id']] = []
+
+	PENDING[client['id']].append(name)
+
 	puffle = client.engine.puffleCrumbs[sub_type]
-	if puffle is None:
+	if puffle is None or (_type == 10 and not client['canAdoptRainbow']) or (_type == 11 and not client['canAdoptGold']):
 		returnValue(None)
 
 	cost = 800
@@ -209,6 +336,7 @@ def handleAdopt(client, _type, name, sub_type):
 	client['puffleHandler'].append(puffle)
 
 	client.send('pn', client['coins'], puffle_db)
+	PENDING[client['id']].remove(name)
 
 @PacketEventHandler.onXT('s', 'p#ps', WORLD_SERVER)
 def handlePuffleFrame(client, puffle, frame):
@@ -318,12 +446,17 @@ def handlePuffleCareItemDelivered(client, puffle, cid):
 	puffle = client['puffleHandler'].getPuffleById(puffle)
 	if puffle is None:
 		return
-
-	health, hunger, rest = map(int, client.engine.puffleCrumbs.defautPuffles[int(puffle.type)])
+	
+	_type_ = int(puffle.type)
+	if _type_ > 9:
+		_type_ = 0
+		
+	health, hunger, rest = map(int, client.engine.puffleCrumbs.defautPuffles[_type_])
 	if cid not in client.engine.puffleCrumbs.puffleItems:
 		return client.send('e', 402)
 
 	item_details = client.engine.puffleCrumbs.puffleItems[cid]
+
 	only_purchase = bool(item_details['only_purchase'])
 	is_member = bool(int(item_details['is_member_only']))
 
@@ -342,7 +475,11 @@ def handlePuffleCareItemDelivered(client, puffle, cid):
 
 	is_food = item_details['consumption'] != 'none'
 	if is_food:
-		return
+		client['room'].send('carestationmenuchoice', client['id'], puffle.id)
+
+	if cid == 126:
+		client['room'].send('oberry', client['id'], puffle.id)
+		puffle.state = 1
 
 	fx, rx, px, cx = map(int, [item_details['effect'][k] for k in ['food', 'rest', 'play', 'clean'] ])
 	puffle.food = min(hunger, puffle.food*hunger + fx)/hunger * 100

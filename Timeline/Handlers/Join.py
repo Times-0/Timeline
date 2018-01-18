@@ -28,7 +28,8 @@ def handleJoinServer(client, _id, passd, lang):
 
 	client.canRecvPacket = True # Start receiving XT Packets
 
-	client.send('lp', client, client['coins'], 0, 1024, int(time() * 1000), client['age'], 0, client['age'], client['member'], '', client['cache'].playerWidget, client['cache'].mapCategory, client['cache'].igloo)
+	member = int(client['member']) if int(client['member']) > 0 else 0
+	client.send('lp', client, client['coins'], 0, 1024, int(time() * 1000), client['age'], 0, client['age'], member, '', client['cache'].playerWidget, client['cache'].mapCategory, client['cache'].igloo)
     
 	client.engine.roomHandler.joinRoom(client, 320, 'ext') # TODO Check for max-users limit
 
@@ -37,6 +38,13 @@ def handleJoinRoom(client, _id, x, y):
 	client.penguin.x, client.penguin.y = x, y
 
 	client.engine.roomHandler.joinRoom(client, _id, 'ext')
+
+@PacketEventHandler.onXT('s', 'j#grs', WORLD_SERVER, p_r = False)
+def handleRefreshRoom(client, data):
+	if client['room'] is None:
+		return
+
+	client['room'].onAdd(client)
 
 @PacketEventHandler.onXT('s', 'j#jp', WORLD_SERVER)
 @inlineCallbacks
@@ -71,6 +79,10 @@ def handleJoinIgloo(client, _id, _type):
 				returnValue(None)
 
 	client['prevRooms'][-1].append(client)
+
+@PacketEventHandler.onXT('s', 'r#gtc', WORLD_SERVER, p_r = False)
+def handleGetTotalPlayerCoins(client, data):
+	client.send('gtc', client['coins'])
 
 def init():
 	logger.debug('Join(j) Packet handlers initiated!')

@@ -26,7 +26,7 @@ class ModulesEventHandler(FileSystemEventHandler):
 
 		module_parent_path = "/".join(path.replace("\\", "/").split("/")[:-1])
 		module_parent_scope = ".".join(module_name.split(".")[:-1])
-
+		
 		return (module_parent_path, module_parent_scope, module_name)
 
 	def on_created(self, event):
@@ -34,7 +34,7 @@ class ModulesEventHandler(FileSystemEventHandler):
 		path = event.src_path
 
 		if directory:
-			module_parent_path, module_parent_scope, m_name = self.stripModule(path)
+			module_parent_path, module_parent_scope, module_name = self.stripModule(path)
 			self.loadModules(module_parent_scope, [module_parent_path])
 
 			self.logger.info("on_created_directory: {0}".format(module_name))
@@ -43,7 +43,7 @@ class ModulesEventHandler(FileSystemEventHandler):
 		if not path.startswith(self.module_package) or not path.endswith(".py"):
 			return
 
-		module_parent_path,	module_parent_scope, m_name = self.stripModule(path, -3)
+		module_parent_path,	module_parent_scope, module_name = self.stripModule(path, -3)
 		self.loadModules(module_parent_scope, [module_parent_path])		
 
 		self.logger.info("on_created: {0}".format(module_name))

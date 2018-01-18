@@ -23,6 +23,7 @@ import logging
 @PacketEventHandler.XTPacketRule('s', 's#upe', WORLD_SERVER)
 @PacketEventHandler.XTPacketRule('s', 's#upp', WORLD_SERVER)
 @PacketEventHandler.XTPacketRule('s', 's#upl', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule('s', 'u#followpath', WORLD_SERVER)
 def UserRules(data):
 	return [[int(data[2][0])], {}]
 

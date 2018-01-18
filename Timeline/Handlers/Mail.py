@@ -21,6 +21,7 @@ def handleGetMail(client, data):
 
 	else:
 		mail = yield client['mail'].str()
+		print mail, '?'
 		client.send('mg', mail)
 
 @PacketEventHandler.onXT('s', 'l#mst', WORLD_SERVER, p_r = False)
@@ -36,10 +37,10 @@ def handleStartMail(client, data):
 @PacketEventHandler.onXT('s', 'l#ms', WORLD_SERVER)
 @inlineCallbacks
 def handleSendMail(client, to, _id):
-	if client['mail'] is None or not client.db_penguinExists(to):
+	if client['mail'] is None or not client.db_penguinExists(value = to):
 		returnValue(client.send('ms', client['coins'], 0))
 
-	send_mail_inbox = yield Mail.find(where = ['to_user = ?', to])
+	send_mail_inbox = yield Mail.find(where = ['to_user = ? and junk != 1', to])
 	if len(send_mail_inbox) > 99:
 		returnValue(client.send('ms', client['coins'], 0))
 
