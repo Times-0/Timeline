@@ -6,6 +6,7 @@ from Timeline.Server.Constants import TIMELINE_LOGGER, WORLD_SERVER
 from Timeline.Server.Redis import Redis
 from Timeline.Utils.Events import Event, GeneralEvent
 from Timeline.Utils.Crumbs import Items, Postcards, Igloo, Puffle, Stamps, Cards
+from Timeline.Server.Music import MusicTrackEngine
 from Timeline.Server.Room import RoomHandler
 from Timeline.Utils.Plugins import getPlugins
 from Timeline.Utils.Plugins.Abstract import ExtensibleObject
@@ -65,6 +66,8 @@ class Engine(Factory, ExtensibleObject):
 		self.stampCrumbs = Stamps.StampHandler(self)
 		# CJ Card handler
 		self.cardCrumbs = Cards.CardsHandler(self)
+		# SoundStudio music handler
+		self.musicHandler = MusicTrackEngine(self)
 
 	def __repr__(self):
 		return "<{}:{}#{}>".format(self.name, self.id, len(self.users))
@@ -86,10 +89,9 @@ class Engine(Factory, ExtensibleObject):
 	def disconnect(self, client):
 		if client in self.users:
 			self.users.remove(client)
+			self.redis.server.hmset("server:{}".format(self.id), {'population':len(self.users)})
 
 			return True
-
-		self.redis.server.hmset("server:{}".format(self.id), {'population':len(self.users)})
 
 		return False
 

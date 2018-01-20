@@ -109,6 +109,7 @@ print \
               [+] Puffle Care - Feeding
               [+] MySQL Auto Reconnect
               [+] Redis Fix
+              [+] Sound Studio
               [-] Bugs fixed and errors fixed
 _______________________________________________
 """

@@ -3,7 +3,6 @@ from Timeline import Username, Password, Inventory
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
 from Timeline.Server.Room import Game, Place, Multiplayer
 from Timeline.Handlers.Games.WaddleHandler import Waddle
-from Timeline.Utils.Crumbs.Cards import Card as CJCard
 
 from twisted.internet.defer import inlineCallbacks, returnValue
 from twisted.internet import reactor
@@ -24,10 +23,6 @@ class SledRacingGame(Multiplayer):
 		super(SledRacingGame, self).__init__(rh, 999, "Sled", "Game: Sled Racing", 4, False, False, None)
 		self.Playing = [None, None, None, None]
 		self.GameStarted = False
-		self.cards = [None, None] # [tuple(cards), tuple(cards)]
-
-		self.gameCards = [[], []]
-		self.gamePicks = [[], []]
 
 	def gameOver(self, playerLeft = None, client = None):
 		self.GameStarted = False
@@ -82,7 +77,7 @@ class SledRacingGame(Multiplayer):
 		client.penguin.isFirst = False
 
 		self.Playing[client['game_index']] = client
-		client.send('jz', client['game_index'], client['nickname'], client['color'], client['ninjaHandler'].ninja.belt)
+		client.send('jz', client['game_index'], client['nickname'], client['color'], user['tube'])
 		self.updateGame()
 
 		if None not in self.Playing[:SLED_TRACKS[self.waddle]]:

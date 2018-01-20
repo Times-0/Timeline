@@ -80,6 +80,7 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 
 	def initialize(self):
 		self.penguin.nickname = Nickname(self.dbpenguin.nickname, self)
+		self.penguin.swid = self.dbpenguin.swid
 		self.penguin.inventory = Inventory(self)
 		self.penguin.inventory.parseFromString(self.dbpenguin.inventory)
 
@@ -107,6 +108,8 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 		self.penguin.stampHandler = StampHandler(self)
 		self.penguin.ninjaHandler = NinjaHandler(self)
 		self.penguin.currencyHandler = CurrencyHandler(self)
+
+		self.engine.musicHandler.init(self)
 		
 		self.loadClothing()
 
@@ -312,6 +315,8 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 		if self.engine.type == WORLD_SERVER and self.penguin.id != None:
 			yield self.engine.redis.server.delete("online:{}".format(self.penguin.id))
 			yield self.engine.redis.server.hincrby('server:{}'.format(self.engine.id), 'population', -1)
+
+			self.engine.musicHandler.deInit(self)
 
 			if self['igloo'] is not None:
 				self['igloo'].opened = False

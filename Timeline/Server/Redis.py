@@ -69,23 +69,6 @@ class Redis(object):
         key = yield self.server.get('conf:{}'.format(pid))
 
         returnValue(key)
-
-        
-    def log(self, k, *a):
-        msg = ["(Redis)"] + list(a)
-        self.engine.log(k, *msg)
-
-        
-        name = "server:{0}".format(self.engine.id)
-        yield self.server.hmset(name, {
-            'name' : self.engine.name,
-            'max' : self.engine.maximum,
-            'population' : 0
-        })
-        
-        yield self.server.sadd("servers", self.engine.id)
-        
-        self.log("info", "Setup memcache data successful!")
         
     def log(self, k, *a):
         msg = ["(Redis)"] + list(a)
