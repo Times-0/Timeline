@@ -3,6 +3,7 @@ from Timeline.Utils.Events import Event
 from Timeline.Utils.Events import GeneralEvent
 from Timeline.Utils.Crumbs.Igloo import IglooItem, FurnitureItem, FloorItem, LocationItem
 from Timeline.Server.Room import Igloo as IglooRoom
+from Timeline.Handlers.Games.CardJitsu import CJMat
 
 from twisted.internet.defer import inlineCallbacks, returnValue
 from twistar.dbobject import DBObject
@@ -110,10 +111,11 @@ class PenguinIglooHandler(list):
 			self.penguin.dbpenguin.locations = '1|{}'.format(self.penguin['age'].age)
 
 		self.penguin.dbpenguin.save() # for any updates?
-		self.loadIglooDetails()
 
 		yield self.loadIgloos()
 		yield self.loadCurrentIgloo()
+
+		self.loadIglooDetails()
 
 	@inlineCallbacks
 	def createPenguinIgloo(self, _id):
@@ -175,6 +177,7 @@ class PenguinIglooHandler(list):
 			self.penguin.engine.iglooCrumbs.penguinIgloos.append(iglooRoom)
 
 		self.penguin.penguin.igloo = iglooRoom
+		self.filterCJMats()
 
 	def __contains__(self, key):
 		if isinstance(key, Igloo):
@@ -255,3 +258,27 @@ class PenguinIglooHandler(list):
 			furniture.quantity = quantity
 
 			self.furnitures.append(furniture)
+
+	def filterCJMats(self):
+		CardJitsuWaddleId = 200
+		self.penguin.engine.roomHandler.ROOM_CONFIG.WADDLES[self.penguin['igloo'].id] = []
+
+		furnitures = map(lambda x: int(x.split('|')[0]), self.currentIgloo.furniture.split(',')) if self.currentIgloo.furniture != '' and self.currentIgloo.furniture is not None else []
+		
+		for f in furnitures:
+			if f == 786:
+				self.addCJMat(CardJitsuWaddleId)
+				CardJitsuWaddleId += 1
+
+	def addCJMat(self, wid):
+		WADDLES = self.penguin.engine.roomHandler.ROOM_CONFIG.WADDLES
+		if self.penguin['igloo'].id not in WADDLES:
+			WADDLES[self.penguin['igloo'].id] = list()
+
+		Mat = CJMat(self.penguin.engine.roomHandler, wid, "JitsuMat", "Card Jitsu Mat", 3, False, False, None)
+		Mat.waddle = wid
+		Mat.room = self.penguin['igloo']
+
+		WADDLES[self.penguin['igloo'].id].append(Mat)
+
+		self.logger.info("Added CardJitsu-Mat [%s] to %s's igloo.", wid, self.penguin['nickname'])

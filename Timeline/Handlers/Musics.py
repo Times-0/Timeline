@@ -122,9 +122,7 @@ def handleShareTrack(client, data):
 def handleGetSharedTracks(client, data):
 	musicHandler = client.engine.musicHandler
 	broadcastString = str(musicHandler)
-	Queue = [musicHandler.currentMusic] + list(musicHandler.shareQueue)
-	if None in Queue:
-		Queue.remove(None)
+	Queue = list(musicHandler.shareQueue)
 	sharedCount = len(Queue)
 
 	client.send('getsharedmusictracks', sharedCount, broadcastString)

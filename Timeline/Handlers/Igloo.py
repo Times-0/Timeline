@@ -271,6 +271,7 @@ def handleUpdateIglooSlotSummary(client, _id, summary):
 		returnValue(None)
 
 	client['iglooHandler'].currentIgloo = client['iglooHandler'].find(_id)
+	client['iglooHandler'].filterCJMats()
 	client['igloo']._id = _id
 	client.dbpenguin.igloo = client['iglooHandler'].currentIgloo.id
 	client.dbpenguin.save()

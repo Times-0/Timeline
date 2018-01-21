@@ -1,7 +1,7 @@
 from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER
 from Timeline import Username, Password, Inventory
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
-from Timeline.Server.Room import Game, Place, Multiplayer
+from Timeline.Server.Room import Game, Place, Multiplayer, Igloo
 
 from twisted.internet.defer import inlineCallbacks, returnValue
 
@@ -107,15 +107,39 @@ class Waddle(Multiplayer):
 def setRoomHandler(ROOM_HANDLER):
 	ROOM_HANDLER.ROOM_CONFIG.WADDLES = {}
 
+def handleJoinWaddleInIgloo(client, wid):
+	WADDLES = client.engine.roomHandler.ROOM_CONFIG.WADDLES
+	if client['room'].id not in WADDLES:
+		return client.send('e', 'Santa left!')
+
+	waddle = None
+	for w in WADDLES[client['room'].id]:
+		if w.waddle == wid:
+			waddle = w
+			break
+
+	if waddle is None:
+		return client.send('e', 'Santa left!')
+
+	waddle.append(client)
+
+
 @PacketEventHandler.onXT('z', 'jw', WORLD_SERVER, p_r = False)
 def handleJoinWaddling(client, data):
     wid = int(data[2][0])
-    
+
     if client['waddling'] or client['game'] is not None:
         return client.send('e', 'Freak!')
 
     # find the waddable place
     WADDLES = client.engine.roomHandler.ROOM_CONFIG.WADDLES
+
+    if isinstance(client['room'], Igloo):
+        if not client['room'].id in WADDLES:
+            return client.send('e', 'End Game!')
+
+        WADDLES = {x.waddle : x for x in WADDLES[client['room'].id]}
+
     if wid not in WADDLES:
         return
 
@@ -133,10 +157,16 @@ def handleLeaveWaddling(client, data):
     client['game'].remove(client) #leaveWaddling
 
 @PacketEventHandler.onXT('z', 'gw', WORLD_SERVER, p_r = False)
-def handleLeaveWaddling(client, data):
+def handleGetWaddling(client, data):
 	waddle_ids = map(int, data[2])
 	gw = list()
 	WADDLES = client.engine.roomHandler.ROOM_CONFIG.WADDLES
+	if isinstance(client['room'], Igloo):
+		if not client['room'].id in WADDLES:
+			return
+
+		WADDLES = {x.waddle : x for x in WADDLES[client['room'].id]}
+
 	for i in waddle_ids:
 		if i not in WADDLES:
 			gw.append('{}|'.format(i))

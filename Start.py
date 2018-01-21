@@ -110,6 +110,7 @@ print \
               [+] MySQL Auto Reconnect
               [+] Redis Fix
               [+] Sound Studio
+              [+] CJ Mats in Igloo
               [-] Bugs fixed and errors fixed
 _______________________________________________
 """
