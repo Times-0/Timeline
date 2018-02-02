@@ -29,6 +29,10 @@ def APIVersionCheck(client, version):
 def GetPenguinRandomKey(client, body):
 	client.send(client.PacketHandler.buildXML({"msg" : {'t' : 'sys', 'body' : {'action' : 'rndK', 'r' : '-1', 'k' : list([client.CryptoHandler.randomKey]) } } }))
 
+@GeneralEvent.on('onClientDisconnect')
+def handlePenguinDisconnect(client):
+	client.engine.redis.server.delete("online:{}".format(client['id']))
+
 @PacketEventHandler.onXML('login', LOGIN_SERVER)
 @inlineCallbacks
 def HandlePrimaryPenguinLogin(client, user, passd):

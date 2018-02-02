@@ -11,6 +11,14 @@ from collections import deque
 import logging, json
 from time import time
 
+@GeneralEvent.on('onClientDisconnect')
+def handleLockPenguinIgloo(client):
+	if client['igloo'] is not None:
+		client['igloo'].opened = False
+		client['iglooHandler'].currentIgloo.locked = True
+
+		yield client['iglooHandler'].currentIgloo.save()
+
 @PacketEventHandler.onXT('s', 'g#gm', WORLD_SERVER)
 @inlineCallbacks
 def handleGetPlayerIgloo(client, _id):

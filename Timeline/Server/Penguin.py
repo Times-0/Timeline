@@ -4,7 +4,7 @@ Penguin is a extension of LineReceiver, protocol. Implements the base of Client 
 '''
 
 from Timeline.Server.Constants import TIMELINE_LOGGER, PACKET_TYPE, PACKET_DELIMITER, WORLD_SERVER
-from Timeline.Utils.Events import Event
+from Timeline.Utils.Events import Event, GeneralEvent
 from Timeline.Utils.Cryptography import Crypto
 from Timeline.Server.Packets import PacketHandler
 from Timeline.Database.DB import PenguinDB, Ban
@@ -15,6 +15,7 @@ from Timeline.Utils.Puffle import PuffleHandler
 from Timeline.Utils.Stamps import StampHandler
 from Timeline.Utils.Ninja import NinjaHandler
 from Timeline.Utils.Currency import CurrencyHandler
+from Timeline.Utils.Friends import FriendsHandler
 from Timeline.Utils.Crumbs.Items import Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo, Award
 from Timeline.Utils.Plugins.Abstract import ExtensibleObject
 
@@ -52,6 +53,7 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 		
 		self.factory = self.engine = engine
 		self.logger = logging.getLogger(TIMELINE_LOGGER)
+		self.cleanConnectionLost = Deferred()
 
 		self.errored = None
 
@@ -108,10 +110,13 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 		self.penguin.stampHandler = StampHandler(self)
 		self.penguin.ninjaHandler = NinjaHandler(self)
 		self.penguin.currencyHandler = CurrencyHandler(self)
+		self.penguin.friendsHandler = FriendsHandler(self)
 
 		self.engine.musicHandler.init(self)
 		
 		self.loadClothing()
+
+		GeneralEvent('onBuildClient', self)
 
 	def loadClothing(self):
 		clothing = [Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo]
@@ -297,40 +302,19 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 
 
 	def disconnect(self):
-		self.transport.loseConnection()
+		loseDefer = self.transport.loseConnection()
 		return
 
 	@inlineCallbacks
 	def connectionLost(self, reason):
 		super(Penguin, self).connectionLost(reason)
 
-		if not self.penguin.room is None:
-			self.penguin.room.remove(self)
-
-		self.penguin.game_index = None
-
-		if self['playing'] or self['game'] is not None or self['waddling']:
-			self['game'].remove(self)
-
+		# decentralize and make disconnection more flexible
 		if self.engine.type == WORLD_SERVER and self.penguin.id != None:
-			yield self.engine.redis.server.delete("online:{}".format(self.penguin.id))
-			yield self.engine.redis.server.hincrby('server:{}'.format(self.engine.id), 'population', -1)
+			yield GeneralEvent('onClientDisconnect', self)
 
-			self.engine.musicHandler.deInit(self)
-
-			if self['igloo'] is not None:
-				self['igloo'].opened = False
-				self['iglooHandler'].currentIgloo.locked = True
-
-				yield self['iglooHandler'].currentIgloo.save()
-
-			if self['puffleHandler'] is not None:
-				for puffle in self['puffleHandler']:
-					puffle.walking = 0
-					puffle.save()
-
-
-		self.engine.disconnect(self)
+		yield self.engine.disconnect(self)
+		self.cleanConnectionLost.callback(True)
 
 	def makeConnection(self, transport):
 		self.transport = transport

@@ -14,6 +14,13 @@ from random import choice, randint, shuffle
 
 PENDING = {}
 
+@GeneralEvent.on('onClientDisconnect')
+def handleMakePuffleHomeAlone(client):
+	if client['puffleHandler'] is not None:
+		for puffle in client['puffleHandler']:
+			puffle.walking = 0
+			puffle.save()
+
 @PacketEventHandler.onXT('s', 'p#getdigcooldown', WORLD_SERVER, p_r = False)
 def handleGetDigCoolDown(client, data):
 	if client['puffleHandler'].walkingPuffle is None:

@@ -21,7 +21,9 @@ from Timeline import PacketHandler
 from Timeline import Plugins
 
 from twisted.internet import reactor
+from twisted.internet.defer import inlineCallbacks, returnValue
 from twisted.python import log
+
 import logging
 import os, sys
 
@@ -98,8 +100,11 @@ print \
 ----------------------------------------------
 > AS3 CPPS Emulator. Written in Python
 > Developer : Dote
-> Version   : 5 stable
-> Updates   : [+] Mancala
+> Version   : 5.2 stable
+> Updates   : [+] Friends
+              [+] Improved Client disconnect, and cleaned events
+              [+] Fixed e3 bug, which occues when server is explicitely closed with penguins online.
+              [+] Mancala
               [+] Sled
               [+] Card Jitsu Sensei
               [+] Puffle digging
@@ -127,24 +132,38 @@ if not DBMS.conn:
 TEObserver = log.PythonLoggingObserver(loggerName=Constants.TIMELINE_LOGGER)
 TEObserver.start()
 
+# Example of initiating server to listen to given endpoint.
+'''
+LOGIN_SERVER => Initiates Engine to be a Login server
+WORLD_SERVER => Initiates Engine to be a World Server
+
+The type of server *must* be sent to Engine as a parameter!
+'''
+LoginServer = Engine(Penguin, Constants.LOGIN_SERVER, 1, "Login")
+Gravity = Engine(Penguin, Constants.WORLD_SERVER, 100, "Gravity")
+
+@inlineCallbacks
+def safeDestroyClients():
+	clientsToDestroy = list(LoginServer.users) + list(Gravity.users)
+	for user in clientsToDestroy:
+		user.disconnect()
+		yield user.cleanConnectionLost
+
+	yield LoginServer.connectionLost('Unknown')
+	yield Gravity.connectionLost('Unknown')
+
+	TimelineLogger.debug('Viola!')
+
+
 def main():
 
 	LoadPlugins(Plugins)
-
-	# Example of initiating server to listen to given endpoint.
-	'''
-	LOGIN_SERVER => Initiates Engine to be a Login server
-	WORLD_SERVER => Initiates Engine to be a World Server
-
-	The type of server *must* be sent to Engine as a parameter!
-	'''
-	LoginServer = Engine(Penguin, Constants.LOGIN_SERVER, 1, "Login")
+	
 	LoginServer.run('127.0.0.1', 6112)
-
-	Gravity = Engine(Penguin, Constants.WORLD_SERVER, 100, "Gravity")
 	Gravity.run('127.0.0.1', 9875)
 
 
 HotLoadModule(Handlers).addCallback(lambda x: HotLoadModule(PacketHandler).addCallback(lambda x: main()))
 
+reactor.addSystemEventTrigger('before', 'shutdown', safeDestroyClients)
 reactor.run()

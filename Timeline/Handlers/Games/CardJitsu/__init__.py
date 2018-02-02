@@ -14,7 +14,7 @@ from random import choice, shuffle, sample
 
 logger = logging.getLogger(TIMELINE_LOGGER)
 
-CJ_MATS = range(200, 204) # TODO: Igloo mats?
+CJ_MATS = range(200, 204) # Igloo mats handled separately. Mats gets created on runtime.
 
 class Card(CJCard):
 	_index = 0

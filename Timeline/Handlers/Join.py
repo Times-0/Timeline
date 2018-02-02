@@ -31,7 +31,15 @@ def handleJoinServer(client, _id, passd, lang):
 	member = int(client['member']) if int(client['member']) > 0 else 0
 	client.send('lp', client, client['coins'], 0, 1024, int(time() * 1000), client['age'], 0, client['age'], member, '', client['cache'].playerWidget, client['cache'].mapCategory, client['cache'].igloo)
     
-	client.engine.roomHandler.joinRoom(client, 320, 'ext') # TODO Check for max-users limit
+	client.engine.roomHandler.joinRoom(client, 'Town', 'name') # TODO Check for max-users limit
+
+@GeneralEvent.on('onClientDisconnect')
+def handleRemoveClient(client):
+	if client['room'] is not None:
+		client['room'].remove(client)
+
+	if client['playing'] or client['game'] is not None or client['waddling']:
+		client['game'].remove(client)
 
 @PacketEventHandler.onXT('s', 'j#jr', WORLD_SERVER)
 def handleJoinRoom(client, _id, x, y):

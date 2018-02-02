@@ -107,23 +107,6 @@ class Waddle(Multiplayer):
 def setRoomHandler(ROOM_HANDLER):
 	ROOM_HANDLER.ROOM_CONFIG.WADDLES = {}
 
-def handleJoinWaddleInIgloo(client, wid):
-	WADDLES = client.engine.roomHandler.ROOM_CONFIG.WADDLES
-	if client['room'].id not in WADDLES:
-		return client.send('e', 'Santa left!')
-
-	waddle = None
-	for w in WADDLES[client['room'].id]:
-		if w.waddle == wid:
-			waddle = w
-			break
-
-	if waddle is None:
-		return client.send('e', 'Santa left!')
-
-	waddle.append(client)
-
-
 @PacketEventHandler.onXT('z', 'jw', WORLD_SERVER, p_r = False)
 def handleJoinWaddling(client, data):
     wid = int(data[2][0])

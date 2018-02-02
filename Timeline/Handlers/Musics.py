@@ -18,6 +18,10 @@ def handleAddEngine(engine):
 	if engine.type is WORLD_SERVER:
 		ENGINES.append(engine)
 
+@GeneralEvent.on('onClientDisconnect')
+def handleResetMusicStation(client):
+	client.engine.musicHandler.deInit(client)
+
 @PacketEventHandler.onXT('s', 'musictrack#getmymusictracks', WORLD_SERVER, p_r = False)
 def handleGetPlayerMusics(client, data):
 	client.engine.musicHandler.init(client)

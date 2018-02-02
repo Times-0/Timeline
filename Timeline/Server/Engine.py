@@ -13,6 +13,7 @@ from Timeline.Utils.Plugins.Abstract import ExtensibleObject
 
 from twisted.internet.protocol import Factory
 from twisted.internet.protocol import Protocol
+from twisted.internet.defer import inlineCallbacks, returnValue
 from twisted.internet import reactor
 
 from collections import deque
@@ -86,14 +87,17 @@ class Engine(Factory, ExtensibleObject):
 		reactor.listenTCP(self.port, self, interface = ip)
 		self.log("info", self.name, "listening on", "{0}:{1}".format(ip, port))
 
+	@inlineCallbacks
 	def disconnect(self, client):
+		GeneralEvent('onClientRemove', client)
+
 		if client in self.users:
 			self.users.remove(client)
-			self.redis.server.hmset("server:{}".format(self.id), {'population':len(self.users)})
+			yield self.redis.server.hmset("server:{}".format(self.id), {'population':len(self.users)})
 
-			return True
+			returnValue(True)
 
-		return False
+		returnValue(False)
 
 	def buildProtocol(self, address):
 		if len(self.users) > self.maximum:
@@ -125,7 +129,8 @@ class Engine(Factory, ExtensibleObject):
 		else:
 			self.logger.debug(message)
 
+	@inlineCallbacks
 	def connectionLost(self, reason):
 		self.log('error', "Server exited! reason:", reason)
 		
-		self.redis.server.hmset("server:{}".format(self.id), {'population':0})
+		yield self.redis.server.hmset("server:{}".format(self.id), {'population':0})
