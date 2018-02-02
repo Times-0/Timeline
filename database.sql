@@ -82,6 +82,19 @@ INSERT INTO `epfcoms` (`id`, `mascot`, `message`, `time`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `friends`
+--
+
+CREATE TABLE `friends` (
+  `id` int(11) NOT NULL,
+  `swid` varchar(40) NOT NULL,
+  `friends` text NOT NULL,
+  `requests` text NOT NULL,
+  `ignored` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `igloos`
 --
 
@@ -194,7 +207,8 @@ CREATE TABLE `penguins` (
   `stamps` text NOT NULL,
   `cover` text NOT NULL,
   `agent` int(1) NOT NULL DEFAULT '0',
-  `epf` varchar(50) NOT NULL DEFAULT '0%0'
+  `epf` varchar(50) NOT NULL DEFAULT '0%0',
+  `search_msg` text
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -317,6 +331,13 @@ ALTER TABLE `currencies`
 --
 ALTER TABLE `epfcoms`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- Indexes for table `friends`
+--
+ALTER TABLE `friends`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `swid` (`swid`);
 
 --
 -- AUTO_INCREMENT for table `igloos`
