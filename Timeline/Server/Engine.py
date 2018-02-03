@@ -131,6 +131,10 @@ class Engine(Factory, ExtensibleObject):
 
 	@inlineCallbacks
 	def connectionLost(self, reason):
-		self.log('error', "Server exited! reason:", reason)
+		self.log('warn', "Server exited! reason:", reason)
 		
+		for user in list(self.users):
+			user.disconnect()
+			yield user.cleanConnectionLost
+
 		yield self.redis.server.hmset("server:{}".format(self.id), {'population':0})
