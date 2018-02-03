@@ -132,35 +132,38 @@ if not DBMS.conn:
 TEObserver = log.PythonLoggingObserver(loggerName=Constants.TIMELINE_LOGGER)
 TEObserver.start()
 
-# Example of initiating server to listen to given endpoint.
-'''
-LOGIN_SERVER => Initiates Engine to be a Login server
-WORLD_SERVER => Initiates Engine to be a World Server
-
-The type of server *must* be sent to Engine as a parameter!
-'''
-LoginServer = Engine(Penguin, Constants.LOGIN_SERVER, 1, "Login")
-Gravity = Engine(Penguin, Constants.WORLD_SERVER, 100, "Gravity")
+SERVERS = list()
 
 @inlineCallbacks
 def safeDestroyClients():
-	clientsToDestroy = list(LoginServer.users) + list(Gravity.users)
-	for user in clientsToDestroy:
-		user.disconnect()
-		yield user.cleanConnectionLost
+	TimelineLogger.warn("Timeline is safely shutting down, this can take some time. Please don't interrupt or close the server, that might affect users experience on next login.")
 
-	yield LoginServer.connectionLost('Unknown')
-	yield Gravity.connectionLost('Unknown')
+	for engine in SERVERS:
+		yield engine.connectionLost('Unknown')
 
 	TimelineLogger.debug('Viola!')
 
 
 def main():
-
+	global SERVERS
 	LoadPlugins(Plugins)
+
+
+	# Example of initiating server to listen to given endpoint.
+	'''
+	LOGIN_SERVER => Initiates Engine to be a Login server
+	WORLD_SERVER => Initiates Engine to be a World Server
+
+	The type of server *must* be sent to Engine as a parameter!
+	'''
+	LoginServer = Engine(Penguin, Constants.LOGIN_SERVER, 1, "Login")
+	Gravity = Engine(Penguin, Constants.WORLD_SERVER, 100, "Gravity")
+
 	
 	LoginServer.run('127.0.0.1', 6112)
 	Gravity.run('127.0.0.1', 9875)
+
+	SERVERS += [LoginServer, Gravity]
 
 
 HotLoadModule(Handlers).addCallback(lambda x: HotLoadModule(PacketHandler).addCallback(lambda x: main()))
