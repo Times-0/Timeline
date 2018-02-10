@@ -4,6 +4,9 @@ Timeline is built heavily on Twisted and is even-driven, most of methods are Def
 
 For detailed information, [visit here](https://aureus.pw/topic/1619-timeline-stable-as3-cpps-server/)
 
+# Contribution
+Timeline is a free, open-source project. You can always support this by funding through [paypal](https://www.paypal.me/valid22).
+
 # Requirements
 * Softwares:
   - Python >= 2.7
@@ -51,7 +54,7 @@ TimelineLogger = InitiateLogger()
 ```
 
 # Features
-Timeline is almost completed, covering support for all features present in native CP and any classical CPPS. Below is an adaptive list breifing such features:
+Timeline is almost complete, covering support for all features present in native CP and any classical CPPS. Below is an adaptive list breifing such features:
 - Login
 - Inventory
 - Purchasing
