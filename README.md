@@ -40,7 +40,8 @@ You can query/run **database.sql** to build tables in your db.
 * Default **user**              : *username:* **test**, *password:* **password**
 * Default **crumbs** directory  : **./configs/crumbs/**
 
-**IMPORTANT :** By default Timeline uses colored logger, so you must install _'colorlog'_. If you wish not to use it and go by classical logger, change the following line
+**IMPORTANT :** 
+    By default Timeline uses colored logger, so you must install _'colorlog'_. If you wish not to use it and go by classical logger, change the following line
 ```py
 TimelineLogger = InitiateColorLogger()
 ```
@@ -48,6 +49,37 @@ to
 ```py
 TimelineLogger = InitiateLogger()
 ```
+
+# Features
+Timeline is almost completed, covering support for all features present in native CP and any classical CPPS. Below is an adaptive list breifing such features:
+- Login
+- Inventory
+- Purchasing
+- Clothing
+- Rooms (spawning)
+- Postcards
+- EPF
+- Chatting
+- Stamps
+- Puffles
+- Puffle adoption
+- Puffle digging
+- Rainbow puffle quest
+- Gold puffle quest
+- Golden nuggets
+- Igloo
+- Player actions
+- Player interactions
+- Player movements
+- Player informatics
+- Sound Studio (Music)
+- Friends
+- Games (Single Player)
+- Find Four (Multiplayer-Table)
+- Mancala (Multiplayer-Table)
+- Sled Racing (Multiplayer-Waddle)
+- Card Jitsu (Multiplayer-Waddle)
+- Card Jitsu v/s Sensei (Single Player)
 
 # Support
 If you have any issue, found any bug or error or issue, or want to suggest some improvemnt, you are free to open an issue or request a pull request.
