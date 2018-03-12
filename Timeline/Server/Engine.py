@@ -18,6 +18,7 @@ from twisted.internet import reactor
 
 from collections import deque
 import logging
+import weakref
 
 class AClient(Protocol):
 	def makeConnection(self, t):
@@ -40,7 +41,11 @@ class Engine(Factory, ExtensibleObject):
 		self.users = deque() # Thread safe
 		self.dbDetails = dict()
 		self.maximum = _max - 1
-		
+		self._listening = False
+		self._portListener = None
+
+		self.proxyReference = weakref.proxy(self)
+
 		self.redis = Redis(self)
 
 		self.log("info", "Timeline Factory Started!")
@@ -75,21 +80,26 @@ class Engine(Factory, ExtensibleObject):
 
 	def getPenguinById(self, _id):
 		_id = int(_id)
-		for peng in self.users:
+		users = list(self.users)
+		for peng in users:
 			if peng['id'] == _id:
-				return peng
+				return peng.selfRefer
 
 		return None
 
 	def run(self, ip, port):
+		if self._listening:
+			raise Exception("%s already listening. An engine can only listen to 1 TCP/IP/PORT.", self)
+
 		self.ip, self.port = ip, port
 
-		reactor.listenTCP(self.port, self, interface = ip)
+		self._portListener = reactor.listenTCP(self.port, self, interface = ip)
 		self.log("info", self.name, "listening on", "{0}:{1}".format(ip, port))
+		self._listening = True
 
 	@inlineCallbacks
 	def disconnect(self, client):
-		GeneralEvent('onClientRemove', client)
+		GeneralEvent('onClientRemove', client.selfRefer)
 
 		if client in self.users:
 			self.users.remove(client)
@@ -131,10 +141,17 @@ class Engine(Factory, ExtensibleObject):
 
 	@inlineCallbacks
 	def connectionLost(self, reason):
-		self.log('warn', "Server exited! reason:", reason)
+		self.log('warn', "Server exiting! reason:", reason)
 		
+		#yield self._portListener.stopListening()
+
+		user = None
 		for user in list(self.users):
+			self.users.remove(user)
+			user.canRecvPacket = user.ReceivePacketEnabled = False
 			user.disconnect()
+
+		if user is not None:
 			yield user.cleanConnectionLost
 
 		yield self.redis.server.hmset("server:{}".format(self.id), {'population':0})

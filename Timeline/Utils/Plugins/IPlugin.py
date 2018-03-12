@@ -1,5 +1,6 @@
 from Timeline.Utils.Plugins.Abstract import Abstract
 from Timeline.Utils.Plugins.AbstractManager import Abstraction
+from Timeline.Utils.Plugins import extend
 
 class Requirement:
     name = None
@@ -94,6 +95,16 @@ class IPluginAbstractMeta (type):
 
     def __init__(cls, name, bases, attrs):
         cls.onBuild()
+
+class IExtender (object):
+
+    __metaclass__ = IPluginAbstractMeta
+    __extends__ = []
+
+    @classmethod
+    def onBuild(cls):
+        for toextend in cls.__extends__:
+            extend(toextend, cls)
 
 class IPlugin(Abstract):
     """

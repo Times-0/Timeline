@@ -58,6 +58,9 @@ class FriendsHandler(object):
 			if penguinOnline is not None:
 				penguinOnline.send('fo', '{}|1|{}|1'.format(self.penguin['swid'], room))
 
+		if self.penguin['dontReFlushFriends']:
+			returnValue(0)
+			
 		self.friendsDBReflushLoopingCall = LoopingCall(self.reflushDatabase)
 		self.friendsDBReflushLoopingCall.start(30) # for each 30 seconds
 
@@ -65,11 +68,14 @@ class FriendsHandler(object):
 
 	@inlineCallbacks
 	def reflushDatabase(self):
-		self.logger.info("Flushing friends for %s", self.penguin['nickname'])
+		try:
+			self.logger.info("Flushing friends for %s", self.penguin['nickname'])
 
-		yield self.friendsDB.refresh()
-		yield self.fetchFriends()
-		yield self.fetchRequests()
+			yield self.friendsDB.refresh()
+			yield self.fetchFriends()
+			yield self.fetchRequests()
+		except ReferenceError:
+			pass
 
 	@inlineCallbacks
 	def removeFriend(self, swid):
@@ -209,7 +215,7 @@ class FriendsHandler(object):
 				if player_room is None:
 					player_room = '*Hidden' if isOnline else 'Offline'
 				data.append(1)
-				data.append(player_room.name)
+				data.append(player_room)
 
 			details.append(data)
 
@@ -217,99 +223,105 @@ class FriendsHandler(object):
 
 	@inlineCallbacks
 	def fetchRequests(self, checkForChanges = True):
-		if self.friendsDB.requests is None or self.friendsDB.requests == '':
-			returnValue(None)
+		try:
+			if self.friendsDB.requests is None or self.friendsDB.requests == '':
+				returnValue(None)
 
-		prev_requests = set(list(self.requests))
+			prev_requests = set(list(self.requests))
 
-		requests = self.friendsDB.requests.split(',')
-		dupRequests = list()
+			requests = self.friendsDB.requests.split(',')
+			dupRequests = list()
 
-		for swid in requests:
-			penguin = yield self.penguin.db_getPenguin('swid = ?', swid)
-			if penguin is None:
-				continue
+			for swid in requests:
+				penguin = yield self.penguin.db_getPenguin('swid = ?', swid)
+				if penguin is None:
+					continue
 
-			self.invalidateFriendRow(swid)
-			dupRequests.append((swid, penguin.id, penguin.nickname))
+				self.invalidateFriendRow(swid)
+				dupRequests.append((swid, penguin.id, penguin.nickname))
 
-		self.requests.clear()
-		self.requests.extend(dupRequests)
+			self.requests.clear()
+			self.requests.extend(dupRequests)
 
-		if not checkForChanges:
-			returnValue(None)
+			if not checkForChanges:
+				returnValue(None)
 
-		cur_requests = set(list(self.requests))
-		new_requests = cur_requests - prev_requests
+			cur_requests = set(list(self.requests))
+			new_requests = cur_requests - prev_requests
 
-		for r in new_requests:
-			self.penguin.send('fn', r[-1], r[0])
+			for r in new_requests:
+				self.penguin.send('fn', r[-1], r[0])
+		except ReferenceError:
+			pass
 
 	@inlineCallbacks
 	def fetchFriends(self, checkForChanges = True):
-		prev_friends = set(list(self.friends))
-		prev_friends_swid = [k[0] for k in self.friends]
+		try:
+			prev_friends = set(list(self.friends))
+			prev_friends_swid = [k[0] for k in self.friends]
 
-		if self.friendsDB.friends is None or self.friendsDB.friends == '':
-			friends = []
-		else:
-			friends = self.friendsDB.friends.split(',')
+			if self.friendsDB.friends is None or self.friendsDB.friends == '':
+				friends = []
+			else:
+				friends = self.friendsDB.friends.split(',')
 
-		dupFriends = list()
+			dupFriends = list()
 
-		for friend in friends:
-			swid, isBFF = friend.split('|')
-			penguin = yield self.penguin.db_getPenguin('swid = ?', swid)
-			if penguin is None:
-				continue
+			for friend in friends:
+				swid, isBFF = friend.split('|')
+				penguin = yield self.penguin.db_getPenguin('swid = ?', swid)
+				if penguin is None:
+					continue
 
-			self.invalidateFriendRow(swid)
+				self.invalidateFriendRow(swid)
 
-			dupFriends.append((swid, int(penguin.id), penguin.nickname, int(isBFF)))
+				dupFriends.append((swid, int(penguin.id), penguin.nickname, int(isBFF)))
 
-		self.friends.clear()
-		self.friends.extend(dupFriends)
+			self.friends.clear()
+			self.friends.extend(dupFriends)
 
-		if not checkForChanges:
-			returnValue(None)
+			if not checkForChanges:
+				returnValue(None)
 
-		cur_friends = set(list(self.friends))
+			cur_friends = set(list(self.friends))
 
-		new_friends = cur_friends - prev_friends
-		assumed_removed_friends = prev_friends - cur_friends
-		
-		removed_friends = []
-		cur_friends_swid = [k[0] for k in cur_friends]
+			new_friends = cur_friends - prev_friends
+			assumed_removed_friends = prev_friends - cur_friends
+			
+			removed_friends = []
+			cur_friends_swid = [k[0] for k in cur_friends]
 
-		for k in assumed_removed_friends:
-			if k[0] not in cur_friends_swid:
-				removed_friends.append(k)
+			for k in assumed_removed_friends:
+				if k[0] not in cur_friends_swid:
+					removed_friends.append(k)
 
-		for f in new_friends:
-			isOnline = yield self.penguin.engine.redis.isPenguinLoggedIn(f[1])
+			for f in new_friends:
+				isOnline = yield self.penguin.engine.redis.isPenguinLoggedIn(f[1])
 
-			data = [f[1], f[2], f[0], f[3]]
-			player_room = None
-			if isOnline:
-				player_room = self.penguin.engine.roomHandler.getRoomByExtId((yield self.penguin.engine.redis.server.hgetall('online:{}'.format(f[1])))['place'])
-				if player_room is None:
-					player_room = '*Hidden' if isOnline else 'Offline'
-				data.append(1)
-				data.append(player_room.name)
+				data = [f[1], f[2], f[0], f[3]]
+				player_room = None
+				if isOnline:
+					player_room = self.penguin.engine.roomHandler.getRoomByExtId((yield self.penguin.engine.redis.server.hgetall('online:{}'.format(f[1])))['place'])
+					if player_room is None:
+						player_room = '*Hidden' if isOnline else 'Offline'
+					data.append(1)
+					data.append(player_room)
 
-			self.penguin.send('fb', '|'.join(map(str, data)))
-			if isOnline:
-				self.penguin.send('fo', '|'.join(map(str, [f[0], 1, player_room.name, 1])))
+				self.penguin.send('fb', '|'.join(map(str, data)))
+				if isOnline:
+					self.penguin.send('fo', '|'.join(map(str, [f[0], 1, player_room, 1])))
 
-		for f in removed_friends:
-			self.penguin.send('frf', f[0])
+			for f in removed_friends:
+				self.penguin.send('frf', f[0])
 
-		for f in cur_friends:
-			isOnline = yield self.penguin.engine.redis.isPenguinLoggedIn(f[1])
-			player_room = None if not isOnline else self.penguin.engine.roomHandler.getRoomByExtId((yield self.penguin.engine.redis.server.hgetall('online:{}'.format(f[1])))['place'])
+			for f in cur_friends:
+				isOnline = yield self.penguin.engine.redis.isPenguinLoggedIn(f[1])
+				player_room = None if not isOnline else self.penguin.engine.roomHandler.getRoomByExtId((yield self.penguin.engine.redis.server.hgetall('online:{}'.format(f[1])))['place'])
 
-			player_room = '*Hidden' if player_room is None else player_room.name
-			self.penguin.send('fo', '|'.join(map(str, [f[0], isOnline, player_room, 0])))
+				player_room = '*Hidden' if player_room is None else player_room
+				self.penguin.send('fo', '|'.join(map(str, [f[0], isOnline, player_room, 0])))
+		except ReferenceError:
+			pass
 
 	@inlineCallbacks
 	def invalidateFriendRow(self, swid):

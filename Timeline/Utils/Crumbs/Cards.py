@@ -48,6 +48,7 @@ class CardsHandler(object):
 		self.package = package
 
 		self.cards = deque()
+		self.fireCards = deque()
 
 		self.setup()
 

@@ -106,7 +106,8 @@ def HandleWorldPenguinLogin(client, nickname, _id, swid, password, confirmHash, 
 	banned = yield client.banned()
 	if banned:
 		returnValue(0)
-
+	a = yield client.engine.redis.server.ping()
+	print a
 	isLoggedIn = yield client.engine.redis.isPenguinLoggedIn(client.penguin.id)
 	if isLoggedIn:
 		client.send('e', 3)

@@ -32,7 +32,7 @@ def handleGetDigCoolDown(client, data):
 @PacketEventHandler.onXT('s', 'p#revealgoldpuffle', WORLD_SERVER, p_r = False)
 def handleCanRevealGP(client, data):
 	if client['canAdoptGold']:
-		client.send('revealgoldpuffle', client['id'])
+		client['room'].send('revealgoldpuffle', client['id'])
 
 @PacketEventHandler.onXT('s', 'p#puffledigoncommand', WORLD_SERVER, p_r = False)
 @PacketEventHandler.onXT('s', 'p#puffledig', WORLD_SERVER, p_r = False)
@@ -132,7 +132,10 @@ def handleGetPuffles(client, _id, isBackyard):
 @PacketEventHandler.onXT('s', 'p#pgmps', WORLD_SERVER, p_r = False)
 def handleGetMyPuffle(client, data):
 	client['puffleHandler'].refreshPuffleHealth()
-	puffles = str(client['puffleHandler']).split('%')
+	#ID, Food, Play, Rest, Clean
+	#puffle id|type|sub_type|name|adoption|food|play|rest|clean|hat|x|y|is_walking
+
+	puffles = ['|'.join([k.split('|')[0]] + k.split('|')[5:9]) for k in (str(client['puffleHandler']).split('%') if len(client['puffleHandler']) > 0 else [])]
 
 	client.send('pgmps', ','.join(puffles))
 
@@ -228,7 +231,7 @@ def handleAddPuffleItem(client, _id):
 
 	cost = int(item_details['cost'])
 	is_member = bool(int(item_details['is_member_only']))
-	quantity = int(item_details[quantity])
+	quantity = int(item_details['quantity'])
 
 	if is_member and not client['member']:
 		return client.send('e', 999)
@@ -239,8 +242,8 @@ def handleAddPuffleItem(client, _id):
 
 	item = client['puffleHandler'].getPuffleItem(_id)
 	if item is None:
-		item = (_id, 0)
-		client['puffleHandler'].append(item)
+		item = [_id, 0]
+		client['puffleHandler'].inventory.append(item)
 
 	index = client['puffleHandler'].inventory.index(item)
 	client['puffleHandler'].inventory[index][1] += quantity
@@ -258,22 +261,38 @@ def handleGetStatus(client, data):
 def handleHatUpdate(client, puffle, hat):
 	puffle = client['puffleHandler'].getPuffleById(puffle)
 	item = client['puffleHandler'].getPuffleItem(hat)
-	if item is None or puffle is None:
+		
+	if hat == 0:
+		hat_prev = int(puffle.hat)
+		if hat_prev != 0:
+			index = client['puffleHandler'].inventory.index(client['puffleHandler'].getPuffleItem(hat_prev))
+			client['puffleHandler'].inventory[index][1] += 1
+
+			client.dbpenguin.care = '%'.join(map(lambda x: '|'.join(map(str, x)), client['puffleHandler'].inventory))
+			client.dbpenguin.save()
+
+		puffle.hat = 0
+		puffle.save()
+
+		client['room'].send('puphi', int(puffle.id), 0)
+
+	if (item is None or puffle is None):
 		return
 
 	index = client['puffleHandler'].inventory.index(item)
-	available_quantity = client['puffleHandler'].inventory[item][1]
+	available_quantity = client['puffleHandler'].inventory[index][1]
 
 	if available_quantity < 1:
 		return
 
-	hat_prev = puffle.hat
+	hat_prev = int(puffle.hat)
 	if hat_prev != 0:
-		index = client['puffleHandler'].inventory.index(hat_prev)
-		client['puffleHandler'].inventory[item][1] += 1
+		index = client['puffleHandler'].inventory.index(client['puffleHandler'].getPuffleItem(hat_prev))
+		client['puffleHandler'].inventory[index][1] += 1
 
-	client['puffleHandler'].inventory[item][1] -= 1
+	client['puffleHandler'].inventory[index][1] -= 1
 	puffle.hat = hat
+	puffle.save()
 
 	client.dbpenguin.care = '%'.join(map(lambda x: '|'.join(map(str, x)), client['puffleHandler'].inventory))
 	client.dbpenguin.save()
@@ -345,6 +364,26 @@ def handleAdopt(client, _type, name, sub_type):
 	client.send('pn', client['coins'], puffle_db)
 	PENDING[client['id']].remove(name)
 
+@PacketEventHandler.onXT('s', 'p#prp', WORLD_SERVER, p_r = False)
+@inlineCallbacks
+def handleSendPuffleBackToTheWoods(client, data):
+	puffle_id = int(data[2][0])
+	puffle = client['puffleHandler'].getPuffleById(puffle_id)
+	if puffle is None:
+		returnValue(0)
+
+	pMonths = int((time() - puffle.adopt())/60/60/24/30.5)
+	dcoins = 500 + 10 * pMonths
+	if int(client['coins']) < dcoins:
+		dcoins = int(client['coins'])
+
+	client['coins'] -= dcoins
+	handlePuffleWalk(client, int(puffle.id), False)
+
+	yield client['puffleHandler'].SendPuffleBackToTheWoods(puffle)
+	client['room'].send('prp', puffle_id)
+	client.send('gtc', client['coins'])
+
 @PacketEventHandler.onXT('s', 'p#ps', WORLD_SERVER)
 def handlePuffleFrame(client, puffle, frame):
 	peng = client['room'].owner #Check player in igloo
@@ -409,11 +448,11 @@ def handlePufflePlay(client, puffle):
 	cx = choice(range(0, health - 10))
 	fx = choice(range(10, hunger))
 
-	PX = chocie(range(10, 100))
+	PX = choice(range(10, 100))
 
-	puffle.rest = max(0, int(puffle.rest)*rest - rx)/rest * 100
-	puffle.clean = max(0, int(puffle.clean)*health - cx)/health * 100
-	puffle.food = max(0, int(puffle.food)*hunger - fx)/hunger * 100
+	puffle.rest = min(rest, int(puffle.rest)*rest - rx)/rest * 100
+	puffle.clean = min(health, int(puffle.clean)*health - cx)/health * 100
+	puffle.food = min(hunger, int(puffle.food)*hunger - fx)/hunger * 100
 	puffle.play = min(100, int(puffle.play) + PX)
 
 	puffle.save()
@@ -435,13 +474,13 @@ def handlePuffleRest(client, puffle):
 	fx = choice(range(10, 30))
 
 
-	puffle.rest = rest
-	puffle.clean = max(0, int(puffle.clean)*health - cx) / health * 100
-	puffle.food = max(0, int(puffle.food)*hunger - fx) / hunger * 100
-	puffle.play = min(0, int(puffle.play) - 10)
+	puffle.rest = 100
+	puffle.clean = min(health, int(puffle.clean)*health - cx) / health * 100
+	puffle.food = min(hunger, int(puffle.food)*hunger - fx) / hunger * 100
+	puffle.play = max(0, int(puffle.play) - 10)
 
 	puffle.save()
-
+	print puffle.clean, puffle.food, puffle.play
 	client['room'].send('pr', client['id'], puffle)
 
 @PacketEventHandler.onXT('s', 'p#pf', WORLD_SERVER)

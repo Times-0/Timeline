@@ -307,18 +307,17 @@ def handleUpdateIglooSlotSummary(client, _id, summary):
 	details = [igloo.id, 1, 0, int(bool(igloo.locked)), igloo.music, igloo.floor, igloo.location, igloo.type, likes, igloo.furniture]
 	client['igloo'].send('uvi', client['id'], ':'.join(map(str, details)))
 
+
 @PacketEventHandler.onXT('s', 'g#gr', WORLD_SERVER, p_r = False)
 @inlineCallbacks
 def handleGetOpenIgloos(client, data):
 	open_igloos = list()
+	myLikes = 0
+	myPopl = 0
+	friends_by_id = [k[1] for k in client['friendsHandler'].friends]
 
 	for igloo in client.engine.iglooCrumbs.penguinIgloos:
-		# pid|nickname|igloo_id
-		if igloo.owner == client.id:
-			open_igloos.append('|'.join(map(str, [int(penguin['id']), penguin['nickname'], _id])))
-			continue
-
-		if not igloo.opened:
+		if not igloo.opened and igloo.owner != client['id'] and igloo.owner not in friends_by_id:
 			continue
 
 		_id = igloo._id
@@ -328,10 +327,45 @@ def handleGetOpenIgloos(client, data):
 		if penguin is None:
 			continue
 
-		open_igloos.append('|'.join(map(str, [int(penguin['id']), penguin['nickname'], _id])))
+		_igloo = yield Igloo.find(_id)
+		if _igloo is None:
+			continue
+
+		likes = 0
+		like_json = json.loads(_igloo.likes)
+		for _ in like_json:
+			likes += _['count']
+
+		if igloo.owner != client['id']:
+			open_igloos.append('|'.join(map(str, [int(penguin['id']), penguin['nickname'], likes, len(igloo), int(not igloo.opened)])))
+		else:
+			myLikes = likes
+			myPopl = len(igloo)
 
 
-	client.send('gr', *open_igloos)
+	client.send('gr', myLikes, myPopl, *open_igloos if len(open_igloos) > 0 else '')
+
+@PacketEventHandler.onXT('s', 'g#grf', WORLD_SERVER, p_r = False)
+@inlineCallbacks
+def handleGetFriendIgloos(client, data):
+	friends_by_id = [k[1] for k in client['friendsHandler'].friends]
+	friend_igloos = [igloo for igloo in client.engine.iglooCrumbs.penguinIgloos if igloo.owner in friends_by_id]
+
+	availIgloos = list()
+
+	for igloo in friend_igloos:
+		_igloo = yield Igloo.find(igloo._id)
+		if _igloo is None:
+			continue
+
+		likes = 0
+		like_json = json.loads(_igloo.likes)
+		for _ in like_json:
+			likes += _['count']
+
+		availIgloos.append('|'.join(map(str, [int(igloo.owner), likes])))
+
+	client.send('grf', *availIgloos if len(availIgloos) > 0 else '')
 
 @PacketEventHandler.onXT('s', 'g#gili', WORLD_SERVER)
 @inlineCallbacks

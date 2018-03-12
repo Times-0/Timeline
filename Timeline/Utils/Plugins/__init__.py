@@ -1,6 +1,5 @@
-from Timeline.Utils.Plugins.IPlugin import IPlugin, RequirementsManager
 from Timeline.Utils.Plugins.AbstractManager import Abstraction
-from Timeline.Utils.Plugins.IPlugin import IPluginAbstractMeta
+from Timeline.Utils.Plugins.Abstract import ExtensibleObject
 from pkgutil import iter_modules
 from importlib import import_module
 
@@ -9,13 +8,13 @@ PLUGINS_LOADED = list()
 PLUGIN_ABSTRACT_OBJECTS = list()
 
 def extend(base, plugin):
-    if not hasattr(base, 'extend'):
+    if not hasattr(base, '_extend'):
         raise NotImplementedError("Unable to extend object - {}".format(base))
 
-    if not base.extend:
+    if not base._extend:
         raise PermissionError("Extend feature disabled for  - {}".format(base))
 
-    if not issubclass(plugin, IPlugin):
+    if not issubclass(plugin, IExtender):
         raise TypeError("Extend allowed only for IPlugin children")
 
     if not issubclass(base, object):
@@ -23,7 +22,13 @@ def extend(base, plugin):
 
     bases = tuple(base.__bases__)
     if not plugin in bases:
-        bases = (plugin,) + bases
+        if ExtensibleObject in bases:
+            bases = list(bases)
+            bases.insert(bases.index(ExtensibleObject), plugin)
+            bases = tuple(bases)
+
+        else:
+            bases = bases + (plugin,)
 
     base.__bases__ = bases
 
@@ -76,3 +81,5 @@ def loadPluginObjects():
         exists = sum(k.name == plugin.name and k.developer == plugin.developer and (k.version == plugin.version or k.version == 0 or plugin.version == 0) for k in Abstraction.getAllPlugins()) > 0
         if not exists:
             plugin()
+
+from Timeline.Utils.Plugins.IPlugin import IPlugin, RequirementsManager, IExtender, IPluginAbstractMeta

@@ -161,6 +161,19 @@ class CardJitsuGame(Multiplayer):
 			elif myValue == opValue:
 				r_won = None
 
+		elif p['power'] in [16, 17, 18]:
+			px = {16 : ['w', 'f'], 17 : ['s', 'w'], 18 : ['f', 's']}
+			myCard = p['picked'][0]
+			elementChange = px[p['power']]
+			if opponent_card.element == elementChange[0]:
+				opponent_card.element = elementChange[1]
+
+				winner = self.findWon()
+				r_won = self.Playing[winner] if winner != -1 else None
+
+				opponent = self.Playing[(p['game_index'] + 1) % 2]
+				opponent.penguin.resetGameCards = [opponent_card, elementChange[0]]
+
 		if p['hadPower'] in [13, 14, 15]:
 			for i in range(len(self.Playing)):
 				if self.Playing[i]['resetGameCards'] is None:
@@ -174,10 +187,9 @@ class CardJitsuGame(Multiplayer):
 				if self.Playing[i]['resetGameCards'] is None:
 					continue
 
-				for _i in self.Playing[i]['resetGameCards']:
-					_i[0][0].element = _i[1][0]
-
+				self.Playing[i]['resetGameCards'][0].element = self.Playing[i]['resetGameCards'][1]
 				self.Playing[i].penguin.resetGameCards = None
+
 
 		p.penguin.hasPower = False
 		p.penguin.power = None
@@ -265,28 +277,14 @@ class CardJitsuGame(Multiplayer):
 
 		elif p in [13, 14, 15]:
 			px = {13:'s', 14:'f', 15:'s'}
-			for i in range(len(self.Playing)):
-				cardsToEliminate = [k for k in self.gameCards[i] if k[0].element == px[p]]
-				for c in cardsToEliminate:
-					self.gameCards[i].remove(c) # remove that card
+			i = powerReceiver
+			cardsToEliminate = [k for k in self.gameCards[i] if k[0].element == px[p]]
+			for c in cardsToEliminate:
+				self.gameCards[i].remove(c) # remove that card
 
-				self.Playing[i].penguin.resetGameCards = cardsToEliminate
+			self.Playing[i].penguin.resetGameCards = cardsToEliminate
 
-			powerReceiver = -1
-
-		elif p in [16, 17, 18]:
-			px = {16 : ['w', 'f'], 17 : ['s', 'w'], 18 : ['f', 's']}
-			e = px[p][0]
-			t = px[p][1]
-			for i in range(len(self.Playing)):
-				cardsToChange = [k for k in self.gameCards[i] if k[0].element == e]
-				self.Playing[i].penguin.resetGameCards = list()
-				for c in cardsToChange:
-					c[0].element = t
-					self.Playing[i].penguin.resetGameCards.append([c, [t, e]])
-
-			return
-
+			#powerReceiver = -1
 
 		self.send('zm', 'power', pl['game_index'], powerReceiver, p, *restData)
 
@@ -299,6 +297,11 @@ class CardJitsuGame(Multiplayer):
 		p2 = self.Playing[1]
 
 		prev_winner = won
+
+		for i in [p1, p2]:
+			if i['picked'][0].power in [16, 17, 18]:
+				i.penguin.hadPower = i.penguin.power = i['picked'][0].power
+				i.penguin.hasPower = True
 
 		won = self.judgePower(p1, p2, won)
 

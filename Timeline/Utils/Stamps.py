@@ -35,7 +35,7 @@ class StampHandler(list):
 
 			self.append(stamp)
 
-		self.penguin.send('gps', self.penguin['id'], self)
+		#self.penguin.send('gps', self.penguin['id'], self) #handled in join.py
 
 	def append(self, key):
 		if not isinstance(key, Stamp):

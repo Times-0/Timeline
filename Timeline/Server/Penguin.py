@@ -28,6 +28,7 @@ from collections import deque
 import logging
 import time
 from math import ceil
+import weakref
 
 class LR(LineReceiver):
     def makeConnection(self, transport):
@@ -41,7 +42,6 @@ class LR(LineReceiver):
     
     def send(*a):
         pass
-
 
 
 class Penguin(PenguinDB, ExtensibleObject, LR):
@@ -58,6 +58,9 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 		self.errored = None
 
 		self.buildPenguin()
+
+	def __del__(self):
+		self.logger.warn('Discarding Penguin Object: %s : %s', str(self.client), self.getPortableName())
 
 	def buildPenguin(self):
 		self.handshakeStage = -1
@@ -76,47 +79,49 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 		self.penguin.room = None
 		self.penguin.prevRooms = list()
 
+		self.selfRefer = weakref.proxy(self)
+
 		# Initiate Packet Handler
-		self.PacketHandler = PacketHandler(self)
-		self.CryptoHandler = Crypto(self)
+		self.PacketHandler = PacketHandler(self.selfRefer)
+		self.CryptoHandler = Crypto(self.selfRefer)
 
 	def initialize(self):
-		self.penguin.nickname = Nickname(self.dbpenguin.nickname, self)
+		self.penguin.nickname = Nickname(self.dbpenguin.nickname, self.selfRefer)
 		self.penguin.swid = self.dbpenguin.swid
-		self.penguin.inventory = Inventory(self)
+		self.penguin.inventory = Inventory(self.selfRefer)
 		self.penguin.inventory.parseFromString(self.dbpenguin.inventory)
 
-		self.penguin.member = Membership(self.dbpenguin.membership, self)
+		self.penguin.member = Membership(self.dbpenguin.membership, self.selfRefer)
 		self.penguin.moderator = False #:P
 
 		self.penguin.x = self.penguin.y = self.penguin.frame = self.penguin.avatar = 0
 
-		self.penguin.coins = Coins(self.dbpenguin.coins, self)
-		self.penguin.age = Age(self.dbpenguin.create, self)
+		self.penguin.coins = Coins(self.dbpenguin.coins, self.selfRefer)
+		self.penguin.age = Age(self.dbpenguin.create, self.selfRefer)
 
-		self.penguin.cache = Cache(self)
+		self.penguin.cache = Cache(self.selfRefer)
 		self.penguin.muted = False
 
-		self.penguin.epf = EPFAgent(self.dbpenguin.agent, str(self.dbpenguin.epf), self)
+		self.penguin.epf = EPFAgent(self.dbpenguin.agent, str(self.dbpenguin.epf), self.selfRefer)
 		
 		clothing = [Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo]
 		for cloth in clothing:
 			name = cloth.__name__.lower()
 			self.penguin[name] = cloth(0, 0, name + " item", False, False, False)
 
-		self.penguin.mail = MailHandler(self)
-		self.penguin.iglooHandler = PenguinIglooHandler(self)
-		self.penguin.puffleHandler = PuffleHandler(self)
-		self.penguin.stampHandler = StampHandler(self)
-		self.penguin.ninjaHandler = NinjaHandler(self)
-		self.penguin.currencyHandler = CurrencyHandler(self)
-		self.penguin.friendsHandler = FriendsHandler(self)
+		self.penguin.mail = MailHandler(self.selfRefer)
+		self.penguin.iglooHandler = PenguinIglooHandler(self.selfRefer)
+		self.penguin.puffleHandler = PuffleHandler(self.selfRefer)
+		self.penguin.stampHandler = StampHandler(self.selfRefer)
+		self.penguin.ninjaHandler = NinjaHandler(self.selfRefer)
+		self.penguin.currencyHandler = CurrencyHandler(self.selfRefer)
+		self.penguin.friendsHandler = FriendsHandler(self.selfRefer)
 
-		self.engine.musicHandler.init(self)
+		self.engine.musicHandler.init(self.selfRefer)
 		
 		self.loadClothing()
 
-		GeneralEvent('onBuildClient', self)
+		GeneralEvent('onBuildClient', self.selfRefer)
 
 	def loadClothing(self):
 		clothing = [Color, Head, Face, Neck, Body, Hand, Feet, Pin, Photo]
@@ -228,8 +233,8 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 			self['y'],				#Cached coordinates
 			self['frame'],
 
-			int(int(self['member']) > 0),#Is member
-			self['member'].rank,			#Membership batch level
+			self['member'].rank,    #Member/Player rank
+			int(self['member']),	#Membership days remaining
 
 			self['avatar'],			#wtf?
 			None,
@@ -307,11 +312,13 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 
 	@inlineCallbacks
 	def connectionLost(self, reason):
+		del self.PacketHandler.penguin
 		super(Penguin, self).connectionLost(reason)
 
 		# decentralize and make disconnection more flexible
 		if self.engine.type == WORLD_SERVER and self.penguin.id != None:
-			yield GeneralEvent('onClientDisconnect', self)
+			self.engine.roomHandler.removeFromAnyRoom(self.selfRefer)
+			yield GeneralEvent('onClientDisconnect', self.selfRefer)
 
 		yield self.engine.disconnect(self)
 		self.cleanConnectionLost.callback(True)
@@ -321,7 +328,7 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 		self.client = self.transport
 		self.connectionMade = True
 
-		super(Penguin, self).makeConnection(transport)
+		self.send("<cross-domain-policy><allow-access-from domain='*' to-ports='{0}' /></cross-domain-policy>".format(self.engine.port))
 
 
 class PenguinObject(dict):

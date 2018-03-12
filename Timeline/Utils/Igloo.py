@@ -245,7 +245,7 @@ class PenguinIglooHandler(list):
 			location = PenguinLocationItem(location.id, location.name, location.igloo, location.cost)
 			location.date = date
 
-			self.floors.append(location)
+			self.locations.append(location)
 
 		for furniture in furnitures:
 			_id, date, quantity = map(int, furniture.split('|'))

@@ -48,6 +48,8 @@ class CardJitsuSensei(CardJitsuGame):
 		super(CardJitsuSensei, self).gameOver(playerLeft, playerWon, winCards)
 		sensei['room'].remove(sensei)
 
+		del sensei
+
 	def pickSenseiCard(self, canWin, card):
 		sfw = {'s':'f', 'f':'w', 'w':'s'}
 		pickedElement = card[0].element

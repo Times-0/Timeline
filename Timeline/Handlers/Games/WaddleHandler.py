@@ -159,7 +159,7 @@ def handleGetWaddling(client, data):
 		gwx = list()
 		for ix in range(WADDLE_ROOM.waddles):
 			if ix < len(WADDLE_ROOM):
-				gwx.append(player['nickname'])
+				gwx.append(WADDLE_ROOM[ix]['nickname'])
 			else:
 				gwx.append('')
 		gwx = ','.join(gwx)

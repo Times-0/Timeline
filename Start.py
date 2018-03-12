@@ -21,11 +21,14 @@ from Timeline import PacketHandler
 from Timeline import Plugins
 
 from twisted.internet import reactor
+from twisted.internet.task import LoopingCall
 from twisted.internet.defer import inlineCallbacks, returnValue
 from twisted.python import log
 
 import logging
-import os, sys
+import os, sys, signal
+import gc
+
 
 '''
 global -> TIMELINE_LOGGER : Defines the name of logging class used globally!
@@ -100,23 +103,16 @@ print \
 ----------------------------------------------
 > AS3 CPPS Emulator. Written in Python
 > Developer : Dote
-> Version   : 5.2 stable
-> Updates   : [+] Friends
-              [+] Improved Client disconnect, and cleaned events
-              [+] Fixed e3 bug, which occues when server is explicitely closed with penguins online.
-              [+] Mancala
-              [+] Sled
-              [+] Card Jitsu Sensei
-              [+] Puffle digging
-              [+] Rainbow quests and adoption
-              [+] Golden puffle adoption
-              [+] Puffle states
-              [+] Puffle Care - Feeding
-              [+] MySQL Auto Reconnect
-              [+] Redis Fix
-              [+] Sound Studio
-              [+] CJ Mats in Igloo
-              [-] Bugs fixed and errors fixed
+> Version   : 6 production stable
+> Updates   : [+] Card Jitsu Fire
+              [+] Loads of Glitches, Errors, bugs fixed
+              [+] Extensible Plugin Object's charcter changes
+              [+] Used weakreference instead of strongly referenced penguin object
+              [+] Tracing Penguin Object's destruction
+              [+] Igloo Puffles Fix
+              [+] Changed how client disconnects
+              [+] Mod handlers - Kick, Mute
+              [-] Bugs and Glitches
 _______________________________________________
 """
 
@@ -142,8 +138,19 @@ def safeDestroyClients():
 		yield engine.connectionLost('Unknown')
 
 	TimelineLogger.debug('Viola!')
+	#reactor.callFromThread(reactor.stop)
 
+def onExitSignal(*a):
+	print 'Closing Timeline?'
+	if not reactor.running:
+		os._exit()
+		sys.exit()
 
+	reactor.callFromThread(reactor.stop)
+
+for sig in (signal.SIGABRT, signal.SIGILL, signal.SIGINT, signal.SIGSEGV, signal.SIGTERM):
+	signal.signal(sig, onExitSignal)
+	
 def main():
 	global SERVERS
 	LoadPlugins(Plugins)

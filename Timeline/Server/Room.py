@@ -31,7 +31,15 @@ class Room (list):
 	def onInit(self):
 		pass
 
+	def deChequeReferences(self):
+		for i, k in enumerate(self):
+			try:
+				k['nickname']
+			except ReferenceError:
+				del self[i]
+
 	def append(self, client):
+		self.deChequeReferences()
 		if not isinstance(client, self.roomHandler.engine.protocol):
 			return
 
@@ -59,17 +67,20 @@ class Room (list):
 
 	def onAdd(self, client):
 		try:
+			self.deChequeReferences()
 			super(Room, self).onAdd(client)
 		except:
 			pass
 
 	def onRemove(self, client):
 		try:
+			self.deChequeReferences()
 			super(Room, self).onRemove(client)
 		except:
 			pass
 
 	def remove(self, client):
+		self.deChequeReferences()
 		if not client in self:
 			return
 
@@ -77,15 +88,17 @@ class Room (list):
 		client.penguin.room = None
 		client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'place' : 0})
 
-		super(Room, self).remove(client)
+		super(Room, self).remove(client) if client in self else None
 		client.penguin['prevRooms'].append(self)
 		self.onRemove(client)
 
 	def send(self, *a):
+		self.deChequeReferences()
 		for c in self:
 			c.send(*a)
 
 	def sendExcept(self, e, *a):
+		self.deChequeReferences()
 		for c in self:
 			if not c['id'] == e:
 				c.send(*a)
@@ -94,6 +107,7 @@ class Room (list):
 		return "Room<{}#{}>".format(self.id, self.keyName)
 
 	def __str__(self):
+		self.deChequeReferences()
 		return '%'.join(map(str, self))
 
 	def __int__(self):
@@ -173,7 +187,9 @@ class Igloo(Place):
 	backyard = None
 
 	def append(self, client):
-		if not self.opened and not client['id'] is self.owner:
+		clientFriends = [k[1] for k in client['friendsHandler'].friends]
+
+		if not self.opened and not client['id'] == self.owner and not self.owner in clientFriends:
 			return client['prevRooms'][-1].append(client)
 
 		super(Igloo, self).append(client)
@@ -222,6 +238,10 @@ class RoomHandler (object):
 
 		client.penguin.frame = 1
 		room.append(client)
+
+	def removeFromAnyRoom(self, client):
+		for room in list(self.rooms):
+			room.remove(client) if client in room else None
 
 	def setup(self):
 		self.rooms.clear()

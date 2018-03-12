@@ -48,7 +48,7 @@ def handleAddEPFItem(client, _id):
 		return client.send('e', 405)
 
 	client['epf'].p -= item.cost
-	client.dbpenguin['epf'] = '{}%{}'.format(client['epf'].p, client['epf'].t)
+	client.dbpenguin.epf = '{}%{}'.format(client['epf'].p, client['epf'].t)
 
 	client['inventory'].append(item)
 

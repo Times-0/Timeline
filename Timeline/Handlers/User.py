@@ -386,3 +386,10 @@ def handleUpdateFlag(client, _id): # check if penguin room type is place too.. c
 	client['room'].send('upl', int(client['id']), int(item))
 
 	client.dbpenguin.save()
+
+@PacketEventHandler.onXT('s', 'u#gbffl', WORLD_SERVER, p_r = False)
+def handleGetBFFList(client, data):
+	friends = list(client['friendsHandler'].friends)
+	bffs = [str(k[1]) for k in friends if k[3]]
+
+	client.send('gbffl', ','.join(bffs))

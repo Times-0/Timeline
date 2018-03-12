@@ -18,11 +18,11 @@ def handleGetPenguinCards(client, data):
 
 @PacketEventHandler.onXT('s', 'ni#gnl', WORLD_SERVER, p_r = False)
 def handleGetNinjaLevel(client, data):
-	client.send('gnl', client['ninjaHandler'].ninja.belt, (client['ninjaHandler'].ninja.belt) * 10)
+	client.send('gnl', client['ninjaHandler'].ninja.belt, int(round(client['ninjaHandler'].progress)), 10)
 
 @PacketEventHandler.onXT('s', 'ni#gfl', WORLD_SERVER, p_r = False)
 def handleGetFireLevel(client, data):
-	client.send('gfl', client['ninjaHandler'].ninja.fire, (client['ninjaHandler'].ninja.fire) * 10)
+	client.send('gfl', client['ninjaHandler'].ninja.fire, int(client['ninjaHandler'].elementalWins['f']['progress']), 5)
 
 @PacketEventHandler.onXT('s', 'ni#gwl', WORLD_SERVER, p_r = False)
 def handleGetWaterLevel(client, data):

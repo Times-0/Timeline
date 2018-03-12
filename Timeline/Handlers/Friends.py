@@ -62,9 +62,6 @@ def handleSearchPenguin(client, data):
 	if len(searchQuery) < 4:
 		searchResults.append({'msg' : 'The search query must be atleast 4 characters long.', 'nickname' : 'Search Bot 2'})
 
-	if len(results) < 1:
-		searchResults.append({'msg' : 'Your query yield no result. Search for some other penguin.', 'nickname' : 'Search Bot 3'})
-
 	if len(searchResults) > 0:
 		returnValue(client.send('fs', json.dumps(searchResults)))
 
@@ -79,6 +76,9 @@ def handleSearchPenguin(client, data):
 			a['swid'] = r.swid
 
 		searchResults.append(a)
+
+	if len(searchResults) < 1:
+		searchResults.append({'msg' : 'Your query yield no result. Search for some other penguin.', 'nickname' : 'Search Bot 3'})
 
 	client.send('fs', json.dumps(searchResults))
 

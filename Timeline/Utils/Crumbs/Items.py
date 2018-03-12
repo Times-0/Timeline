@@ -5,6 +5,7 @@ from collections import deque
 import logging
 import json
 import os, sys
+from time import time
 
 class Item(object):
 	type = 0
@@ -65,6 +66,7 @@ class Feet(Item):
 
 class Pin(Item):
 	type = 8
+	release = int(time())
 
 class Photo(Item):
 	type = 9

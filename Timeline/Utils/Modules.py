@@ -207,6 +207,7 @@ class ModuleHandler(ModulesEventHandler):
 		Observer.start()
 
 	def loadingException(self, err):
+		print err.getTraceback()
 		self.logger.error("[Error loading module] : {}".format(err.getErrorMessage()))
 		sys.exit(0)
 

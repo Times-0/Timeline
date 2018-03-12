@@ -1,4 +1,4 @@
-from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER
+from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER, GOLD_RUSH_DIGGABLES, PROBS
 from Timeline import Username, Password
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
 from Timeline.Server.Room import Igloo
@@ -8,6 +8,7 @@ from twisted.internet.defer import inlineCallbacks, returnValue
 from collections import deque
 import logging
 from time import time
+import random
 
 logger = logging.getLogger(TIMELINE_LOGGER)
 
@@ -19,19 +20,20 @@ def handleJoinServer(client, _id, passd, lang):
 		returnValue(client.disconnect())
 
 	# User logged in!
-	GeneralEvent.call("penguin-logged", client)
+	GeneralEvent.call("penguin-logged", client.selfRefer)
 	yield client.engine.redis.server.hincrby('server:{}'.format(client.engine.id), 'population', 1)
 	yield client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'joined' : 1})
 
 	client.initialize()
 	client.send('js', *(map(int, [client['member'] > 0, client['moderator'], client['epf']])))
+	client.send('gps', client['id'], client['stampHandler'])
 
 	client.canRecvPacket = True # Start receiving XT Packets
 
 	member = int(client['member']) if int(client['member']) > 0 else 0
 	client.send('lp', client, client['coins'], 0, 1024, int(time() * 1000), client['age'], 0, client['age'], member, '', client['cache'].playerWidget, client['cache'].mapCategory, client['cache'].igloo)
     
-	client.engine.roomHandler.joinRoom(client, 'Town', 'name') # TODO Check for max-users limit
+	client.engine.roomHandler.joinRoom(client, 'dojofire', 'name') # TODO Check for max-users limit
 
 @GeneralEvent.on('onClientDisconnect')
 def handleRemoveClient(client):
@@ -40,6 +42,10 @@ def handleRemoveClient(client):
 
 	if client['playing'] or client['game'] is not None or client['waddling']:
 		client['game'].remove(client)
+
+@GeneralEvent.on('onBuildClient')
+def handleSetGoldenRushDigging(client):
+	client.penguin.lastGoldenRushDig = int(time()) - 3
 
 @PacketEventHandler.onXT('s', 'j#jr', WORLD_SERVER)
 def handleJoinRoom(client, _id, x, y):
@@ -91,6 +97,23 @@ def handleJoinIgloo(client, _id, _type):
 @PacketEventHandler.onXT('s', 'r#gtc', WORLD_SERVER, p_r = False)
 def handleGetTotalPlayerCoins(client, data):
 	client.send('gtc', client['coins'])
+
+def random_picks(sequence, relative_odds):
+	table = [ z for x, y in zip(sequence, relative_odds) for z in [x]*y ]
+	while True:
+		yield random.choice(table)
+
+DIGGABLE = random_picks(GOLD_RUSH_DIGGABLES, PROBS)
+
+@PacketEventHandler.onXT('s', 'r#cdu', WORLD_SERVER, p_r = False)
+def handleGoldRushDig(client, data):
+	cannotDig = max(0, 3 - int(time() - client['lastGoldenRushDig']))
+	dcoin = DIGGABLE.next() * int(not cannotDig)
+	if dcoin: 
+		setattr(client.penguin, 'lastGoldenRushDig', int(time()))
+		client['coins'] += dcoin
+
+	client.send('cdu', dcoin, client['coins'])
 
 def init():
 	logger.debug('Join(j) Packet handlers initiated!')

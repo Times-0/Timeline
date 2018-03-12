@@ -17,14 +17,15 @@ def handleJoinGame(client, data):
     if client['room'] is not None and isinstance(client['room'], Multiplayer):
         client.send('jx', client['room'].ext_id)
         
-        reactor.callLater(1, lambda *x:client['game'].getGame(client)) # client takes time to load
+        #reactor.callLater(4, lambda *x:client['game'].getGame(client)) # client takes time to load
 
 @PacketEventHandler.onXT('z', 'gz', WORLD_SERVER, p_r = False)
 def handleGetGame(client, data):
     if client['game'] is None:
         return client.send('gz', '-')
 
-    client.send('gz', client['game'])
+    #client.send('gz', client['game'])
+    client['game'].getGame(client)
 
 @PacketEventHandler.onXT('z', 'uz', WORLD_SERVER, p_r = False)
 def handleGetUpdateGame(client, data):
@@ -60,12 +61,12 @@ def handleGameOver(client, data):
     coins = round(score/10.0)
 
     client.penguin.playing = False
+    current_game = client['room']
 
     if coins > 10000:
         client.engine.log('warn', "Potential coins manipulation,", current_game, ':', score)
         return
 
-    current_game = client['room']
     if not isinstance(current_game, Game) or isinstance(current_game, Multiplayer):
         try:
             current_game.gameOver(client = client)
@@ -82,7 +83,7 @@ def handleGameOver(client, data):
     earned = len(e_stamps)
     total = len(g_stamps)
 
-    if total == earned:
+    if total == earned and total != 0:
         coins *= 2
 
     client['coins'] += coins

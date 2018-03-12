@@ -19,7 +19,7 @@ class Puffle(DBObject):
 
 	def __str__(self):
 		#puffle id|type|sub_type|name|adoption|food|play|rest|clean|hat|x|y|is_walking
-		return '|'.join(map(str, [int(self.id), int(self.type), int(self.subtype), self.name, self.adopt(), int(self.food), int(self.play), int(self.rest), int(self.clean), int(self.hat), int(self.x), int(self.y), int(self.walking)]))
+		return '|'.join(map(str, [int(self.id), int(self.type), int(self.subtype) if int(self.subtype) != 0 else '', self.name, self.adopt(), int(self.food), int(self.play), int(self.rest), int(self.clean), int(self.hat), int(self.x), int(self.y), int(self.walking)]))
 
 class PuffleHandler(list):
 
@@ -51,12 +51,18 @@ class PuffleHandler(list):
 		return None
 
 	def updateInventory(self):
+		self.inventory = list()
+
+		if self.penguin.dbpenguin.care == '' or self.penguin.dbpenguin.care == None:
+			self.penguin.dbpenguin.care = "1|1%3|1%8|1%27|1%28|1%29|1%30|1%31|1%32|1%33|1%34|1%35|1%36|1%37|1%38|1%103|1%125|1%129|1%130|1%131|1%132|1"
+			self.penguin.dbpenguin.save()
+
 		inventory = str(self.penguin.dbpenguin.care).split('%')
 		for inv in inventory:
 			if inv == '':
 				continue
 			i = inv.split('|')
-			self.inventory.append((int(i[0]), int(i[1])))
+			self.inventory.append([int(i[0]), int(i[1])])
 
 	@inlineCallbacks
 	def fetchPuffles(self):
@@ -106,10 +112,14 @@ class PuffleHandler(list):
 		puffle.y = int(coordinates['y'])
 
 		care_history = json.loads(puffle.lastcare)
-		if care_history is None or len(care_history) < 1 or bool(int(puffle.backyard)):
-			return # ULTIMATE PUFFLE <indefinite health and energy>
-
 		now = int(time.time())
+
+		if care_history is None or len(care_history) < 1 or bool(int(puffle.backyard)):
+			care_history['food'] = care_history['play'] = care_history['bath'] = now
+			puffle.lastcare = json.dumps(care_history)
+			puffle.save()
+
+			return # ULTIMATE PUFFLE <indefinite health and energy>
 		
 		last_fed = care_history['food']
 		last_played = care_history['play']
@@ -206,7 +216,7 @@ class PuffleHandler(list):
 
 	def __contains__(self, key):
 		if isinstance(key, Puffle):
-			key = int(puffle.id)
+			key = int(key.id)
 
 		return self.getPuffleById(key) is not None
 

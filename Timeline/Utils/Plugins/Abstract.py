@@ -6,7 +6,7 @@ class ExtensibleObject(object):
     In a safer side, inherit all class you want to make 'Extensible' from this ExtensibleObject.
     '''
 
-    extend = True
+    _extend = True
 
     pass
 

@@ -10,15 +10,17 @@ from twisted.internet.defer import inlineCallbacks, returnValue
 from collections import deque
 import logging
 from time import time
+import copy
 
 logger = logging.getLogger(TIMELINE_LOGGER)
 
 @GeneralEvent.on('onEngine')
 @inlineCallbacks
-def getSensei(engine):
+def setSensei(engine):
 	if not engine.type is  WORLD_SERVER:
 		returnValue(0)
 	sensei = Sensei(engine)
+	sensei.penguin.dontReFlushFriends = True
 
 	sensei.penguin.username = Sensei.username
 	yield sensei.db_init()
@@ -45,7 +47,16 @@ def handleGetWaddlingCJ(client, data):
 		return
 
 	users = [str(k['id']) for k in ROOM_HANDLER.ROOM_CONFIG.WADDLES[mat]]
-	client.send('%xt%gwcj%-1%'.format('%'.join(users)))
+	print users
+	client.send('%xt%gwcj%-1%{}%'.format('%'.join(users)))
+
+def getSensei(engine):
+	sensei = copy.copy(engine.sensei)
+	sensei.penguin = type(engine.sensei.penguin)()
+	for i, j in dict.iteritems(engine.sensei.penguin):
+		setattr(sensei.penguin, i, j)
+
+	return sensei
 
 @PacketEventHandler.onXT('z', 'jsen', WORLD_SERVER, p_r = False)
 def handleJoinSenseiCJ(client, data):
@@ -53,15 +64,19 @@ def handleJoinSenseiCJ(client, data):
 	gameMat = CJMat(ROOM_HANDLER, 998, "JitsuMat", "Card Jitsu Mat", 3, False, False, None)
 	gameMat.waddle = 998
 	gameMat.game = CardJitsuSensei
+	senseiRoom = client['room']
 
-	sensei = client.engine.sensei
+	sensei = getSensei(client.engine)
+
 	gameMat.append(sensei)
 	gameMat.append(client)
 
 	game = client['game']
 	game.send('scard', game.ext_id, 998, 2)
 
+	sensei.penguin.game_index = 0
 	game.joinGame(sensei)
+	list.remove(senseiRoom, client)
 
 @inlineCallbacks
 def checkForSensei():

@@ -77,7 +77,7 @@ class SledRacingGame(Multiplayer):
 		client.penguin.isFirst = False
 
 		self.Playing[client['game_index']] = client
-		client.send('jz', client['game_index'], client['nickname'], client['color'], user['tube'])
+		client.send('jz', client['game_index'], client['nickname'], client['color'], client['tube'])
 		self.updateGame()
 
 		if None not in self.Playing[:SLED_TRACKS[self.waddle]]:

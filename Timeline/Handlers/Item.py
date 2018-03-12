@@ -49,7 +49,7 @@ def handleAddItem(client, item):
 
 	if client.addItem(item):
 		client.send('ai', item, client['coins'])
-		GeneralEvent.call('add-item:{}'.format(item))
+		GeneralEvent.call('add-item:{}'.format(item), client)
 
 @PacketEventHandler.onXT('s', 'i#qpp', WORLD_SERVER)
 @inlineCallbacks
