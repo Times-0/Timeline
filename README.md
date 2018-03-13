@@ -11,7 +11,7 @@ Timeline is a free, open-source project. You can always support this by funding 
 
 # Requirements
 * Softwares:
-  - Python >= 2.7
+  - Python 2.7.X
   - MySQL, with MySQL-c and MySQL-python connector
   - Redis server
 
