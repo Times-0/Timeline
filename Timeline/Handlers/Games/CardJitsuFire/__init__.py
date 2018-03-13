@@ -501,7 +501,7 @@ class CardJitsuGame(Multiplayer):
 		self.setupCards()
 		self.setupBattleArena()
 
-		self.Playing = map(lambda i: CJFirePlayer(self.Playing[i], i, 1, 0, self.GameCards[i], self.GameDeck[i]), range(len(self.Playing)))
+		self.Playing = map(lambda i: CJFirePlayer(self.Playing[i], i, 6, 0, self.GameCards[i], self.GameDeck[i]), range(len(self.Playing)))
 		self.slotPlayer = self.Playing[0]
 		self.tabPlayer = self.Playing[0]
 		self.tabMatch = None
