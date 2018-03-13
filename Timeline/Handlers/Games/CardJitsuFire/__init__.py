@@ -53,7 +53,7 @@ class Tile(object):
 		self.i = position
 		self.players = list()
 		self.player = None
-		self.resetSymbol = False
+		self.resetBattleType = self.resetSymbol = False
 		self.battleStarted = False
 
 		self.battlers = list()
@@ -221,7 +221,8 @@ class CardJitsuGame(Multiplayer):
 
 			opponentIndex = int(param[1])
 			opponent = self.getPlayer(opponentIndex)
-			if opponent is None:
+			battlers = [k.index for k in self.tabMatch.players]
+			if opponent is None or (opponentIndex not in battlers and len(battlers) > 1):
 				return client.send('e', 'All to you!')
 
 			self.tabMatch.battlers = [client, opponent]
@@ -244,7 +245,7 @@ class CardJitsuGame(Multiplayer):
 
 			self.boardTimeoutHandler = reactor.callLater(22, self.checkGameStatus)
 
-		print param
+		
 
 	def getPlayer(self, index):
 		for _ in self.Playing:
@@ -270,7 +271,7 @@ class CardJitsuGame(Multiplayer):
 		playerCards = [_['picked'] for _ in battlers]
 		playerCardValues = [(i, j.value if j.element == trumpSymbol else 0) for i, j in enumerate(playerCards)]
 		playerCardValues.sort(key = lambda x: x[1], reverse = 1)
-		print playerCardValues
+		
 		canTie = playerCardValues[0][1] == playerCardValues[1][1]
 		maxValue = playerCardValues[0][1]
 
@@ -393,10 +394,18 @@ class CardJitsuGame(Multiplayer):
 		if self.tabMatch.resetSymbol:
 			self.tabMatch.symbol = 'n'
 
+		if self.tabMatch.resetBattleType:
+			self.tabMatch.battle = 'bt'
+			self.tabMatch.resetBattleType = False
+
 		self.tabMatch = None
 
 	def startBattle(self):
 		battleType = self.tabMatch.battle
+		if len(self.tabMatch.players) > 1:
+			battleType = self.tabMatch.battle = 'be'
+			self.tabMatch.resetBattleType = True
+			
 		symbol = self.tabMatch.symbol
 		isCJMatch = battleType == 'be'
 
@@ -410,7 +419,7 @@ class CardJitsuGame(Multiplayer):
 			return client.send('zm', 'ct')
 
 		if isCJMatch and len(self.tabMatch.battlers) < 1:
-			availableOpponents = ','.join(map(lambda x: str(x.index), [_ for _ in self.Playing if _ is not client]))
+			availableOpponents = ','.join(map(lambda x: str(x.index), [_ for _ in (self.Playing if len(self.tabMatch.players) < 2 else self.tabMatch.players) if _ is not client]))
 			return client.send('zm', 'co', availableOpponents)
 
 		self.tabMatch.battleStarted = True
