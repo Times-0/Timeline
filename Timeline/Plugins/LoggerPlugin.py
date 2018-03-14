@@ -1,4 +1,4 @@
-from Timeline.Utils.Plugins.IPlugin import IPlugin, IPluginAbstractMeta, Requirement
+from Timeline.Utils.Plugins.IPlugin import IExtender, IPluginAbstractMeta, Requirement
 from Timeline.Utils.Plugins import extend
 
 from Timeline.Server.Penguin import Penguin
@@ -11,19 +11,14 @@ from twisted.internet.defer import inlineCallbacks, returnValue
 from collections import deque
 import logging
 
-class LoggerPlugin(IPlugin):
+class LoggerPlugin(IExtender):
     """extends penguin object to log new penguin initialization and disconnect"""
-
-    __metaclass__ = IPluginAbstractMeta
 
     name = "LoggingPlugin"
     developer = "Dote"
 
-    requirements = [Requirement(**{'name' : 'LoginNotification', 'developer' : 'Dote'})]
+    __extends__ = [Penguin]
 
-    @classmethod
-    def onBuild(cls):
-        extend(Penguin, cls)
 
     def makeConnection(self, transport):
         self.engine.log("info", "New client connection:", self.client)

@@ -16,8 +16,8 @@ class LoginNotification(IPlugin):
     name = 'LoginNotification'
     developer = 'Dote'
 
-    def __init__(self):
-        super(LoginNotification, self).__init__()
+    def __init__(self, *e):
+        super(LoginNotification, self).__init__(*e)
 
         self.logger = logging.getLogger(TIMELINE_LOGGER)
         self.logger.info("Login Notification activated!")
