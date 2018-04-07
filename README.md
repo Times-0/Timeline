@@ -25,6 +25,8 @@ Timeline is a free, open-source project. You can always support this by funding 
   - OPTIONAL : [colorlog](https://github.com/borntyping/python-colorlog)
   
 # Extras
+- [Register for Timeline](https://github.com/Times-0/Register/) - Official Register/signup utility for Timeline. This comes in with, email verify tool builtin (both email checkup and account authenticiation).
+
 You can use the following to add more features and customization to your cpps:
   - [FindFour AI](https://github.com/Times-0/Timeline-FindFourAI/) - An intelligent, human like bot, with whom you can play FindFour matches with.
   - [Commands](https://github.com/Times-0/Timeline/blob/master/Timeline/Plugins/Commands) - Comes with Timeline by default. Enables users to use shortcut commands with the chat system.
