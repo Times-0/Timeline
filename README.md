@@ -2,7 +2,6 @@
 AS3 CPPS Emulator, written in Python.
 Timeline is built heavily on Twisted and is even-driven, most of methods are Deferred too!
 
-**Anyone except _Zaseth_ can use this source**
 
 For detailed information, [visit here](https://aureus.pw/topic/1619-timeline-stable-as3-cpps-server/)
 
