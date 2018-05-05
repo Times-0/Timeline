@@ -301,9 +301,12 @@ class FriendsHandler(object):
 				data = [f[1], f[2], f[0], f[3]]
 				player_room = None
 				if isOnline:
-					player_room = self.penguin.engine.roomHandler.getRoomByExtId((yield self.penguin.engine.redis.server.hgetall('online:{}'.format(f[1])))['place'])
-					if player_room is None:
-						player_room = '*Hidden' if isOnline else 'Offline'
+					try:
+						player_room = self.penguin.engine.roomHandler.getRoomByExtId((yield self.penguin.engine.redis.server.hgetall('online:{}'.format(f[1])))['place'])
+						if player_room is None:
+							player_room = '*Hidden' if isOnline else 'Offline'
+					except:
+						player_room = '*Hidden'
 					data.append(1)
 					data.append(player_room)
 
@@ -316,9 +319,12 @@ class FriendsHandler(object):
 
 			for f in cur_friends:
 				isOnline = yield self.penguin.engine.redis.isPenguinLoggedIn(f[1])
-				player_room = None if not isOnline else self.penguin.engine.roomHandler.getRoomByExtId((yield self.penguin.engine.redis.server.hgetall('online:{}'.format(f[1])))['place'])
-
-				player_room = '*Hidden' if player_room is None else player_room
+				try:
+					player_room = self.penguin.engine.roomHandler.getRoomByExtId((yield self.penguin.engine.redis.server.hgetall('online:{}'.format(f[1])))['place'])
+				except:
+					player_room = None
+				if player_room is None:
+					player_room = '*Hidden' if isOnline else 'Offline'
 				self.penguin.send('fo', '|'.join(map(str, [f[0], isOnline, player_room, 0])))
 		except ReferenceError:
 			pass

@@ -14,7 +14,7 @@ def SendMessageRule(data):
 
 @PacketEventHandler.onXT('s', 'm#sm', WORLD_SERVER)
 def handleSendMessage(client, _id, message):
-	if not client['id'] == _id:
+	if not client['id'] == _id or client['stealth_mode'] or client['mascot_mode']:
 		return
 
 	message = message.strip(' ').replace('|', '\|')

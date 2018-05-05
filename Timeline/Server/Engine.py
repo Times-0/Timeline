@@ -55,7 +55,7 @@ class Engine(Factory, ExtensibleObject):
 		if self.type == WORLD_SERVER:
 			self.initializeWorld()
 
-		GeneralEvent('onEngine', self)
+		self.redis.redisConnectionDefer.addCallback(lambda *x: GeneralEvent('onEngine', self))
 
 	def initializeWorld(self):
 		# Set item crumbs
@@ -150,8 +150,6 @@ class Engine(Factory, ExtensibleObject):
 			self.users.remove(user)
 			user.canRecvPacket = user.ReceivePacketEnabled = False
 			user.disconnect()
-
-		if user is not None:
 			yield user.cleanConnectionLost
 
 		yield self.redis.server.hmset("server:{}".format(self.id), {'population':0})

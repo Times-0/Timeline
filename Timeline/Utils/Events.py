@@ -5,6 +5,7 @@ Events : Initiates Twisted-defer based Packet-Event handler!!
 
 from Timeline.Server.Constants import TIMELINE_LOGGER
 from twisted.internet.defer import Deferred
+from twisted.internet.threads import deferToThread
 import logging, traceback
 
 class Event(object):
@@ -59,10 +60,7 @@ class Event(object):
 			return defer
 
 		EventDetails = {'e' : e, 'a' : a, 'kw' : kw}
-		defer.addCallback(self.callback, EventDetails)
-		
-		defer.callback(self.events[e])
-		return defer
+		return deferToThread(self.callback, self.events[e], EventDetails)
 
 	def unsetEventInModule(self, module):
 		events = self.events.copy()

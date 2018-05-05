@@ -17,7 +17,8 @@ class Redis(object):
         self.engine = engine
         self.server = None
         
-        redis.Connection(host = '127.0.0.1', reconnect = True).addCallback(self.initPenguins)
+        self.redisConnectionDefer = redis.ConnectionPool(host = '127.0.0.1', reconnect = True)
+        self.redisConnectionDefer.addCallback(self.initPenguins)
         
     @inlineCallbacks
     def initPenguins(self, pool):
@@ -52,6 +53,8 @@ class Redis(object):
 
     @inlineCallbacks
     def isPenguinLoggedIn(self, peng_id):
+        x = yield self.server.hgetall("online:{}".format(peng_id))
+        print x
         exists = yield self.server.exists('online:{0}'.format(peng_id))
 
         returnValue(exists)

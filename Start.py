@@ -153,8 +153,6 @@ for sig in (signal.SIGABRT, signal.SIGILL, signal.SIGINT, signal.SIGSEGV, signal
 	
 def main():
 	global SERVERS
-	LoadPlugins(Plugins)
-
 
 	# Example of initiating server to listen to given endpoint.
 	'''
@@ -172,6 +170,7 @@ def main():
 
 	SERVERS += [LoginServer, Gravity]
 
+LoadPlugins(Plugins)
 
 HotLoadModule(Handlers).addCallback(lambda x: HotLoadModule(PacketHandler).addCallback(lambda x: main()))
 

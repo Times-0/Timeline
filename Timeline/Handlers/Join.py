@@ -25,7 +25,8 @@ def handleJoinServer(client, _id, passd, lang):
 	yield client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'joined' : 1})
 
 	client.initialize()
-	client.send('js', *(map(int, [client['member'] > 0, client['moderator'], client['epf']])))
+	#											 # guide not member :P
+	client.send('js', *(map(int, [client['epf'], client['member'] > 0, client['moderator']])))
 	client.send('gps', client['id'], client['stampHandler'])
 
 	client.canRecvPacket = True # Start receiving XT Packets
@@ -82,7 +83,7 @@ def handleJoinIgloo(client, _id, _type):
 	if _type == 'backyard':
 		if client['prevRooms'][-1] == room:
 			if room.backyard is None:
-				room.backyard = Igloo(client, room.ext_id, room.keyName, "{}'s Backyard".format(room.name), 150, False, False, None)
+				room.backyard = Igloo(client.engine.roomHandler, room.ext_id, room.keyName, "{}'s Backyard".format(room.name), 150, False, False, None)
 				room.backyard.type = 'backyard'
 				room.backyard.opened = True
 				room.backyard.owner = room.owner

@@ -315,7 +315,7 @@ def handleCheckPuffleName(client, data):
 
 	if client['id'] in PENDING:
 		print PENDING
-		check = name not in PENDING[client['id']]
+		check = int(name not in PENDING[client['id']])
 
 	for puffle in client['puffleHandler']:
 		if puffle.name == name:
@@ -338,6 +338,7 @@ def handleAdopt(client, _type, name, sub_type):
 
 	puffle = client.engine.puffleCrumbs[sub_type]
 	if puffle is None or (_type == 10 and not client['canAdoptRainbow']) or (_type == 11 and not client['canAdoptGold']):
+		PENDING[client['id']].remove(name)
 		returnValue(None)
 
 	cost = 800
@@ -345,6 +346,7 @@ def handleAdopt(client, _type, name, sub_type):
 		cost = 400
 
 	if puffle.member and not client['member']:
+		PENDING[client['id']].remove(name)
 		returnValue(client.send('e', 999))
 
 	now = int(time())
@@ -514,7 +516,7 @@ def handlePuffleCareItemDelivered(client, puffle, cid):
 		if item is None:
 			return
 
-		available_quantity = client['puffleHandler'].inventory[item][1]
+		available_quantity = client['puffleHandler'].inventory[client['puffleHandler'].inventory.index(item)][1]
 
 		if available_quantity < 1:
 			return

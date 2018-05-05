@@ -148,7 +148,7 @@ class PuffleHandler(list):
 		play_percent = int((play*max_play/100- ((now - last_played) * 0.05 * max_play / (24 * 60 * 60))) * 100 / max_play)
 		clean_percent = int((clean*max_clean/100 - ((now - last_bathed) * 0.05 * max_clean / (24 * 60 * 60))) * 100 / max_clean)
 
-		total_percent = (fed_percent + play_percent + clean_percent)/3
+		total_percent = (fed_percent + play_percent + clean_percent)/3.0
 
 		if fed_percent < 3 or total_percent < 6:
 			# remove

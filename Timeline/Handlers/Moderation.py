@@ -63,7 +63,7 @@ def KickPlayerCommand(client, reason):
 
 @GeneralEvent.on('ban-player')
 @inlineCallbacks
-def BanPlayerCommand(client, by_id, reason = 'Cheating/Hacking/Manipulation/Rude/Against Rules', hours = 1, type = 1):
+def BanPlayerCommand(client, by_id, reason = 'Cheating/Hacking/Manipulation/Rude/Against Rules', hours = 1, type = 1, ban_type = 601):
 	'''
 	client: Penguin object to be banned
 	by_id : Id of moderator banning client, 0 for system
@@ -73,6 +73,10 @@ def BanPlayerCommand(client, by_id, reason = 'Cheating/Hacking/Manipulation/Rude
 		1 => Banned in game, via packets
 		2 => Banned by control panel
 		3 => Banned by Server, auto banned
+	ban_type[601]: Type of ban
+		601: normal ban
+		610: auto ban
+		hacking auto ban: 611
 	'''
 	seconds = hours * 60 * 60 if hours > 0 else 946080000
 	expire = int(time() + seconds)
@@ -81,7 +85,7 @@ def BanPlayerCommand(client, by_id, reason = 'Cheating/Hacking/Manipulation/Rude
 	yield Ban(player = client['id'], moderator = by_id, comment = reason, expire = expire, type = type).save()
 	isBanned = yield client.banned()
 	if not isBanned:
-		client.send('e', 601, hours)
+		client.send('e', ban_type, hours)
 		client.disconnect()
 
 @PacketEventHandler.onXT('s', 'o#k', WORLD_SERVER)
@@ -90,8 +94,10 @@ def handleKickPlayer(client, _id):
 		client.engine.log('warn', '%s tried to kick %s. %s is not a moderator.', client['nickname'], _id)
 		return GeneralEvent('ban-player', client, 0, 'Hacking or Manipulating server. Unauthorized kick {}, while not a moderator.'.format(_id), 1, 3)
 
-	_mutable = GetPenguin(client.engine, _id)
-	GeneralEvent('kick-player', _mutable, '{} kicked {} on {}'.format(client['nickname'], _mutable['nickname'], client.engine))
+	_kickable = GetPenguin(client.engine, _id)
+	if _mutable['moderator']:
+		return client.send('e', 800)
+	GeneralEvent('kick-player', _kickable, '{} kicked {} on {}'.format(client['nickname'], _kickable['nickname'], client.engine))
 
 @PacketEventHandler.onXT('s', 'o#m', WORLD_SERVER)
 def handleMutePlayer(client, _id):
@@ -100,4 +106,6 @@ def handleMutePlayer(client, _id):
 		return GeneralEvent('ban-player', client, 0, 'Hacking or Manipulating server. Unauthorized (un)muting {}, while not a moderator.'.format(_id), 1, 3)
 
 	_mutable = GetPenguin(client.engine, _id)
+	if _mutable['moderator']:
+		return client.send('e', 800)
 	GeneralEvent('mute-player', _mutable, '{} (un)muted {} on {}'.format(client['nickname'], _mutable['nickname'], client.engine))

@@ -15,7 +15,7 @@ def extend(base, plugin):
         raise PermissionError("Extend feature disabled for  - {}".format(base))
 
     if not issubclass(plugin, IExtender):
-        raise TypeError("Extend allowed only for IPlugin children")
+        raise TypeError("Extend allowed only for IExtender children")
 
     if not issubclass(base, object):
         raise TypeError("Can extend only new-styled classes deriving objects")
@@ -28,7 +28,7 @@ def extend(base, plugin):
             bases = tuple(bases)
 
         else:
-            bases = bases + (plugin,)
+            bases = (plugin,) + bases
 
     base.__bases__ = bases
 

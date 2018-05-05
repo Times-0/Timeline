@@ -113,7 +113,7 @@ class Membership(object):
         self.d = time.mktime(d.timetuple())
         self.c = c
 
-        self.rank = 1
+        self.rank = int(bool(self))
         months = int(int(self) * 0.03285) * int(bool(self))
         if months > 0:
             if months > 24:
@@ -173,7 +173,7 @@ class Coins(object):
         return str(self.coins)
 
     def __int__(self):
-        return self.coins
+        return int(self.coins)
 
     def __add__(self, c):
         a = Coins(self.coins, None)
@@ -196,7 +196,7 @@ class Coins(object):
         return self
 
     def __init__(self, co, c):
-        self.coins = co
+        self.coins = int(co)
         self.c = c
 
     def __update(self):
@@ -208,6 +208,8 @@ class Coins(object):
         
 
 class Inventory(list):
+
+    _extend = True
 
     def __init__(self, penguin, *items):
         super(Inventory, self).__init__()
@@ -227,7 +229,8 @@ class Inventory(list):
     def __str__(self):
         return '%'.join(map(str, self))
 
-    def __addItem(self, item, u = True):
+    def _addItem_(self, item, u = True):
+        print 'not updated :-('
         if self.penguin is None or not u:
             return
 
@@ -304,8 +307,7 @@ class Inventory(list):
                     if items is False:
                         return
 
-                    for i in items:
-                        self.append(i, u)
+                    self.append(items, u)
 
                 return
             else:
@@ -315,7 +317,7 @@ class Inventory(list):
             return
 
         super(Inventory, self).append(item)
-        self.__addItem(item, u)
+        self._addItem_(item, u)
 
     def insert(self, index, item):
         if isinstance(item, Item):

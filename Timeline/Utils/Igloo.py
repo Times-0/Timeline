@@ -168,7 +168,7 @@ class PenguinIglooHandler(list):
 
 		iglooRoom = self.penguin.engine.iglooCrumbs.getPenguinIgloo(self.penguin['id'])
 		if iglooRoom == None:
-			iglooRoom = IglooRoom(self.penguin, (1000 + self.penguin['id']), '{} igloo'.format(self.penguin['id']), "{}'s Igloo".format(self.penguin['nickname']), 100, False, False, None)
+			iglooRoom = IglooRoom(self.penguin.engine.roomHandler, (1000 + self.penguin['id']), '{} igloo'.format(self.penguin['id']), "{}'s Igloo".format(self.penguin['nickname']), 100, False, False, None)
 			iglooRoom.owner = int(self.penguin['id'])
 			
 			iglooRoom.opened = not bool(self.currentIgloo.locked)

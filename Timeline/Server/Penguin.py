@@ -92,7 +92,9 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 		self.penguin.inventory.parseFromString(self.dbpenguin.inventory)
 
 		self.penguin.member = Membership(self.dbpenguin.membership, self.selfRefer)
-		self.penguin.moderator = False #:P
+		self.penguin.moderator = int(self.dbpenguin.moderator)
+		self.penguin.stealth_mode = self['moderator'] == 2
+		self.penguin.mascot_mode = self['moderator'] == 3
 
 		self.penguin.x = self.penguin.y = self.penguin.frame = self.penguin.avatar = 0
 
@@ -312,13 +314,17 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 
 	@inlineCallbacks
 	def connectionLost(self, reason):
-		del self.PacketHandler.penguin
 		super(Penguin, self).connectionLost(reason)
 
 		# decentralize and make disconnection more flexible
 		if self.engine.type == WORLD_SERVER and self.penguin.id != None:
-			self.engine.roomHandler.removeFromAnyRoom(self.selfRefer)
+			#self.engine.roomHandler.removeFromAnyRoom(self.selfRefer) # needs some fix b4 further usage on-disconnect
+			self.engine.roomHandler.removeFromAnyRoom(self.selfRefer, self) # experimental
+			# sending self just to make sure it doesn't throw weak-reference error
+
 			yield GeneralEvent('onClientDisconnect', self.selfRefer)
+		
+			yield self.engine.redis.server.delete("online:{}".format(self['id']))
 
 		yield self.engine.disconnect(self)
 		self.cleanConnectionLost.callback(True)

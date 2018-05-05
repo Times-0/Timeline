@@ -241,7 +241,7 @@ def handleIsIglooOpen(client, _id):
 		return
 
 	igloo = yield Igloo.find(iglooRoom._id)
-	client.send('pio', int(not bool(int(igloo.locked))))
+	client.send('pio', int((not bool(int(igloo.locked))) or client['moderator']))
 
 @PacketEventHandler.onXT('s', 'g#cli', WORLD_SERVER, p_r = False)
 @inlineCallbacks

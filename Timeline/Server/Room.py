@@ -1,5 +1,6 @@
 from Timeline.Server.Constants import TIMELINE_LOGGER, PACKET_TYPE, PACKET_DELIMITER, AVAILABLE_XML_PACKET_TYPES, NON_BLACK_HOLE_GAMES, MULTIPLAYER_GAMES
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
+from Timeline.Utils.Plugins.Abstract import ExtensibleObject
 
 from twisted.python.rebuild import rebuild
 from twisted.internet import threads
@@ -11,6 +12,7 @@ from collections import deque
 import logging
 import os, sys
 import json
+import traceback
 
 class Room (list):
 	game = False
@@ -59,11 +61,11 @@ class Room (list):
 		super(Room, self).append(client)
 		client.penguin.room = self
 
-		client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'place' : self.ext_id})
+		client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'place' : self.ext_id if not client['stealth_mode'] else None})
 		GeneralEvent.call('joined-room', client, self.id)
 		GeneralEvent.call('joined-room-{}'.format(self.ext_id), client, self.ext_id)
 
-		self.onAdd(client)
+		self.onAdd(client)			
 
 	def onAdd(self, client):
 		try:
@@ -108,7 +110,7 @@ class Room (list):
 
 	def __str__(self):
 		self.deChequeReferences()
-		return '%'.join(map(str, self))
+		return '%'.join(map(str, [_ for _ in self if not _['stealth_mode']]))
 
 	def __int__(self):
 		return self.id
@@ -118,8 +120,11 @@ class Place(Room):
 	def onAdd(self, client):
 		super(Place, self).onAdd(client)
 
-		client.send('jr', self.ext_id, self)
-		self.send('ap', client)
+		client.send('jr', self.ext_id, *((self, ) if len(str(self)) > 0 else []))
+		self.send('ap', client) if not client['stealth_mode'] else client.send('ap', client)
+		if client['mascot_mode']:
+			GeneralEvent("mascot-joined-room", self, client)
+			GeneralEvent("mascot:{}-joined-room".format(client['nickname']), self)
 
 	def __repr__(self):
 		return "Place<{}#{}>".format(self.id, self.keyName)
@@ -165,7 +170,7 @@ class Arcade(Game):
 
 		client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'playing' : 0})
 
-class Multiplayer(Game):
+class Multiplayer(Game, ExtensibleObject):
 	# Multiplayer? Know this is crazy, still :P
 
 	game = True
@@ -189,7 +194,7 @@ class Igloo(Place):
 	def append(self, client):
 		clientFriends = [k[1] for k in client['friendsHandler'].friends]
 
-		if not self.opened and not client['id'] == self.owner and not self.owner in clientFriends:
+		if (not self.opened and not client['id'] == self.owner and not self.owner in clientFriends) and not client['moderator']:
 			return client['prevRooms'][-1].append(client)
 
 		super(Igloo, self).append(client)
@@ -239,7 +244,7 @@ class RoomHandler (object):
 		client.penguin.frame = 1
 		room.append(client)
 
-	def removeFromAnyRoom(self, client):
+	def removeFromAnyRoom(self, client, *args):
 		for room in list(self.rooms):
 			room.remove(client) if client in room else None
 
