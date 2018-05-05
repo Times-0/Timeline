@@ -64,6 +64,9 @@ Timeline is almost complete, covering support for all features present in native
 - Inventory
 - Purchasing
 - Clothing
+- Modetrator
+- Stealth Moderator
+- Mascots
 - Rooms (spawning)
 - Postcards
 - EPF
