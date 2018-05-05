@@ -201,7 +201,7 @@ CREATE TABLE `penguins` (
 -- Triggers `penguins`
 --
 CREATE TRIGGER `penguins_OnInsert` BEFORE INSERT ON `penguins` FOR EACH ROW SET NEW.`create` = NOW(),
-NEW.`swid` = CONCAT('{', uuid(), '}')
+NEW.`swid` = CONCAT('{', uuid(), '}');
 
 -- --------------------------------------------------------
 
