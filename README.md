@@ -2,7 +2,7 @@
 AS2 & AS3 CPPS Emulator, written in Python.
 Timeline is built heavily on Twisted and is even-driven, most of methods are Deferred too!
 
-## AS2 and AS3 Cross-Compatibility
+## AS2 and AS3 Cross-Compatibility (From Timeline v6 (v6 is currently scheduled for future))
 **The flexibility of Timeline, makes sure it's cross-compatible with both AS2 and AS3 clients. By default Timeline runs as an AS3 CPPS Server, all you need to do is edit `Start.py` to specify which specific Engines/Servers belongs to AS2/AS3. You can look at `AS2` branch for more examples on Start.py**
 
 *For convinience, here, we refer both Timeline AS2 and AS3 as Timeline.*
