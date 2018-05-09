@@ -2,11 +2,12 @@
 AS2 & AS3 CPPS Emulator, written in Python.
 Timeline is built heavily on Twisted and is even-driven, most of methods are Deferred too!
 
-## AS2 and AS3 Cross-Compatibility (From Timeline v6 (v6 is currently scheduled for future))
-**The flexibility of Timeline, makes sure it's cross-compatible with both AS2 and AS3 clients. By default Timeline runs as an AS3 CPPS Server, all you need to do is edit `Start.py` to specify which specific Engines/Servers belongs to AS2/AS3. You can look at `AS2` branch for more examples on Start.py**
+## AS2 and AS3 Cross-Compatibility
+**The flexibility of Timeline, makes sure it's cross-compatible with both AS2 and AS3 clients.** 
+
+From the vesion 6 of Timeline, Timeline can run both AS2 and AS3 Servers at once. One solution for multiple problems. AS2 is integrated into the AS3 Piece of pie, with some tweaks and added extra flavors. *No loss of Performance, experience, and stability has been made during this compatibility upgrade. It indeed works more better than ever before*. Timeline v6 is ready for prodution too.
 
 *For convinience, here, we refer both Timeline AS2 and AS3 as Timeline.*
-**Note:** _This update (future) on Timeline v6 will introduce a new way of handling and emitting events and handlers._
 
 For detailed information, [visit here](https://aureus.pw/topic/1619-timeline-stable-as3-cpps-server/)
 
@@ -66,38 +67,38 @@ TimelineLogger = InitiateLogger()
 
 # Features
 Timeline is almost complete, covering support for all features present in native CP and any classical CPPS. Below is an adaptive list breifing such features:
-- Login
-- Inventory
-- Purchasing
-- Clothing
-- Modetrator
-- Stealth Moderator
-- Mascots
-- Rooms (spawning)
-- Postcards
-- EPF
-- Chatting
-- Stamps
-- Puffles
-- Puffle adoption
-- Puffle digging
-- Rainbow puffle quest
-- Gold puffle quest
-- Golden nuggets
-- Igloo
-- Player actions
-- Player interactions
-- Player movements
-- Player informatics
-- Sound Studio (Music)
-- Friends
-- Games (Single Player)
-- Find Four (Multiplayer-Table)
-- Mancala (Multiplayer-Table)
-- Sled Racing (Multiplayer-Waddle)
-- Card Jitsu (Multiplayer-Waddle)
-- Card Jitsu v/s Sensei (Single Player)
-- Card Jitsu Fire (Multiplayer-Waddle)
+- Login                 \[AS2, AS3]
+- Inventory             \[AS2, AS3]
+- Purchasing            \[AS2, AS3]
+- Clothing              \[AS2, AS3]
+- Modetrator            \[AS2, AS3]
+- Stealth Moderator     \[AS3]  *AS2 client natively doesn't support stealth mod, even if Timeline does*
+- Mascots               \[AS2, AS3]
+- Rooms (spawning)      \[AS2, AS3]
+- Postcards             \[AS2, AS3]
+- EPF                   \[AS2, AS3]
+- Chatting              \[AS2, AS3]
+- Stamps                \[AS2, AS3]
+- Puffles               \[AS3] *to do as2*
+- Puffle adoption       \[AS3] *to do as2*
+- Puffle digging        \[AS3] *Puffle Digging is AS3 exclusive feature, AS2 client doesn't support it*
+- Rainbow puffle quest  \[AS3] *Rainbow puffle is AS2 only, AS2 client doesn't suppor it*
+- Gold puffle quest     \[AS3] *Golden puffle is AS3 only,*
+- Golden nuggets        \[AS3] *       AS2 client doesn't support it*
+- Igloo                 \[AS3] *to do as2*
+- Player actions        \[AS2, AS3]
+- Player interactions   \[AS2, AS3]
+- Player movements      \[AS2, AS3]
+- Player informatics    \[AS2, AS3]
+- Sound Studio (Music)  \[AS3] *Sound studio is an AS3 exclusive feature, AS2 client doesn't support it*
+- Friends               \[AS2, AS3]
+- Games (Single Player) \[AS2, AS3]
+- Find Four (Multiplayer-Table)         \[AS3] *todo as2*
+- Mancala (Multiplayer-Table)           \[AS3] *todo as2*
+- Sled Racing (Multiplayer-Waddle)      \[AS3] *todo as2*
+- Card Jitsu (Multiplayer-Waddle)       \[AS3] *todo as2*
+- Card Jitsu v/s Sensei (Single Player) \[AS3] *todo as2*
+- Card Jitsu Fire (Multiplayer-Waddle)  \[AS3] *todo as2*
 
 # Support
 If you have any issue, found any bug or error or issue, or want to suggest some improvemnt, you are free to open an issue or request a pull request.
