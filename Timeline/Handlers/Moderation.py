@@ -9,8 +9,13 @@ from collections import deque
 import logging
 from time import time
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.XTPacketRule('s', 'o#k', WORLD_SERVER)
 @PacketEventHandler.XTPacketRule('s', 'o#m', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule_AS2('s', 'o#k', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule_AS2('s', 'o#m', WORLD_SERVER)
 def SendMessageRule(data):
 	return [[int(data[2][0])], {}]
 
@@ -88,7 +93,11 @@ def BanPlayerCommand(client, by_id, reason = 'Cheating/Hacking/Manipulation/Rude
 		client.send('e', ban_type, hours)
 		client.disconnect()
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'o#k', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'o#k', WORLD_SERVER)
 def handleKickPlayer(client, _id):
 	if not client['moderator']:
 		client.engine.log('warn', '%s tried to kick %s. %s is not a moderator.', client['nickname'], _id)
@@ -99,7 +108,11 @@ def handleKickPlayer(client, _id):
 		return client.send('e', 800)
 	GeneralEvent('kick-player', _kickable, '{} kicked {} on {}'.format(client['nickname'], _kickable['nickname'], client.engine))
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'o#m', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'o#m', WORLD_SERVER)
 def handleMutePlayer(client, _id):
 	if not client['moderator']:
 		client.engine.log('warn', '%s tried to (un)mute %s. %s is not a moderator.', client['nickname'], _id)

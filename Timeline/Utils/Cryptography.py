@@ -2,7 +2,7 @@
 Timeline - An AS3 CPPS emulator, written by dote, in python. Extensively using Twisted modules and is event driven.
 Cryptography is a tool which helps in calculating the cyrpto-algorithemic functions.
 '''
-from Timeline.Server.Constants import TIMELINE_LOGGER
+from Timeline.Server.Constants import TIMELINE_LOGGER, AS3_PROTOCOL
 from Timeline.Utils.Events import Event
 
 from collections import deque
@@ -22,7 +22,7 @@ class Crypto(object):
 		self.logger = logging.getLogger(TIMELINE_LOGGER)
 		self.random_literals = list(ascii_letters + str(digits) + "+_=/_@#$%^&*()-':;!?,.`~\|<>{}")
 		self.randomKey = self.random(5) + "-" + self.random(4)
-		self.salt = "a1ebe00441f5aecb185d0ec178ca2305Y(02.>'H}t\":E1_root"
+		self.salt = "a1ebe00441f5aecb185d0ec178ca2305Y(02.>'H}t\":E1_root" if self.penguin.Protocol == AS3_PROTOCOL else "Y(02.>'H}t\":E1"
 
 	def swap(self, text, length):
 		return text[length:] + text[:length]

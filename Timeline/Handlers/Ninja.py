@@ -10,13 +10,21 @@ import logging
 from time import time
 from random import sample
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'cd#gcd', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'cd#gcd', WORLD_SERVER, p_r = False)
 def handleGetPenguinCards(client, data):
 	cards = client['ninjaHandler'].cards
 	m = int(bool(client['member']))
 	client.send('gcd', '|'.join(map(lambda x: '{},{},{}'.format(x, cards[x][1], 0 if not m else cards[x][1]), cards)))
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'ni#gnl', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'ni#gnl', WORLD_SERVER, p_r = False)
 def handleGetNinjaLevel(client, data):
 	client.send('gnl', client['ninjaHandler'].ninja.belt, int(round(client['ninjaHandler'].progress)), 10)
 
@@ -32,7 +40,11 @@ def handleGetWaterLevel(client, data):
 def handleGetSnowLevel(client, data):
 	client.send('gsl', client['ninjaHandler'].ninja.snow, (client['ninjaHandler'].ninja.snow) * 10)
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'ni#gnr', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'ni#gnr', WORLD_SERVER, p_r = False)
 @inlineCallbacks
 def handleGetNinjaRank(client, data):
 	_id = int(data[2][0])
@@ -43,7 +55,11 @@ def handleGetNinjaRank(client, data):
 	ninja = yield Ninja.find(where = ['pid = ?', _id], limit = 1)
 	client.send('gnr', _id, ninja.belt, ninja.fire, ninja.water, ninja.snow)
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'cd#bpc', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'cd#bpc', WORLD_SERVER, p_r = False)
 def handleBuyPowerCard(client, data):
 	if not client['member']:
 		return client.send('e', 999)

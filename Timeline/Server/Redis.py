@@ -45,11 +45,13 @@ class Redis(object):
     def getWorldServers(self):
         servers = yield self.server.smembers("servers")
         s = dict({})
-        
+        smu = dict()
+
         for sid in servers:
             s[sid] = yield self.server.hgetall("server:{0}".format(sid))
+            smu[sid] = set((yield self.server.smembers("users:{}".format(sid))))
         
-        returnValue(s)
+        returnValue([s, smu])
 
     @inlineCallbacks
     def isPenguinLoggedIn(self, peng_id):

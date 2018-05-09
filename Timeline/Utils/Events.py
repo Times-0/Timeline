@@ -3,7 +3,7 @@ Timeline - An AS3 CPPS emulator, written by dote, in python. Extensively using T
 Events : Initiates Twisted-defer based Packet-Event handler!!
 '''
 
-from Timeline.Server.Constants import TIMELINE_LOGGER
+from Timeline.Server.Constants import TIMELINE_LOGGER, AS3_PROTOCOL, AS2_PROTOCOL
 from twisted.internet.defer import Deferred
 from twisted.internet.threads import deferToThread
 import logging, traceback
@@ -117,7 +117,8 @@ class EventListener(object):
 				def err(x):
 					a = x.getTraceback().split('\n')
 					self.x.logger.error("Error executing method - {} : {}".format(self.function.__name__, x.getErrorMessage() + "["+ a[-2].strip() + ' in ' + a[-4].strip() +"]"))
-					
+					#x.printDetailedTraceback()
+
 				a.addErrback(err)
 		except:
 			traceback.print_exc()
@@ -153,17 +154,17 @@ class PacketEvent(Event):
 		return super(PacketEvent, self).unsetEventsInModulesAndSubModules(module)
 
     #                   xml   action data engin  
-	def FetchRule(self, type, c, h_t, s_t):
+	def FetchRule(self, type, c, h_t, s_t, server_protocol):
 		type = str(type).lower()
-		rule = "{3}->{2}^{0}|{1}".format(c, h_t, type, s_t)
+		rule = "{3}:{4}->{2}^{0}|{1}".format(c, h_t, type, s_t, server_protocol)
 
 		if rule in self.packet_rules:
 			return self.packet_rules[rule]
 
 		return None
 
-	def XTPacketRule(self, c, h, s_t, function = None):
-		rule = '{2}->xt^{0}|{1}'.format(c, h, s_t)
+	def XTPacketRule(self, c, h, s_t, function = None, server_protocol = AS3_PROTOCOL):
+		rule = '{2}:{3}->xt^{0}|{1}'.format(c, h, s_t, server_protocol)
 		def func(function):
 			self.packet_rules[rule] = function
 			return function
@@ -174,8 +175,8 @@ class PacketEvent(Event):
 
 		return func
 
-	def XMLPacketRule(self, a, s_t, t = 'sys', function = None):
-		rule = "{2}->xml^{0}|{1}".format(a, t, s_t)
+	def XMLPacketRule(self, a, s_t, t = 'sys', function = None, server_protocol = AS3_PROTOCOL):
+		rule = "{2}:{3}->xml^{0}|{1}".format(a, t, s_t, server_protocol)
 		
 		def func(function):
 			self.packet_rules[rule] = function
@@ -187,7 +188,14 @@ class PacketEvent(Event):
 
 		return func
 
-	def on(self, _type, category, server_type, handler=None):
+	def XTPacketRule_AS2(self, c, h, s_t, function = None):
+		return self.XTPacketRule(c, h, s_t, function, AS2_PROTOCOL)
+		
+	def XMLPacketRule_AS2(self, a, s_t, t = 'sys', function = None):
+		return self.XMLPacketRule(a, s_t, t, function, AS2_PROTOCOL)
+			
+
+	def on(self, _type, category, server_type, handler=None, server_protocol = AS3_PROTOCOL):
 		_type = str(_type).lower()
 		if _type == 'xml':
 			return self.onXML(category, server_type)
@@ -231,13 +239,19 @@ class PacketEvent(Event):
 
 		return func
 
-	def onXML(self, action, server_type, type = 'sys', p_r = True, function = None):
-		event = "{2}-></{1}-{0}>".format(str(action), type, str(server_type))
+	def onXML(self, action, server_type, type = 'sys', p_r = True, function = None, server_protocol = AS3_PROTOCOL):
+		event = "{2}:{3}-></{1}-{0}>".format(str(action), type, str(server_type), server_protocol)
 		return self.on_packet(event, p_r, function) #super(PacketEvent, self).on(event)
 
-	def onXT(self, c, h, s_t, p_r = True, function = None):
-		event = "{2}->%{0}%{1}%".format(str(c), str(h), str(s_t))
+	def onXT(self, c, h, s_t, p_r = True, function = None, server_protocol = AS3_PROTOCOL):
+		event = "{2}:{3}->%{0}%{1}%".format(str(c), str(h), str(s_t), server_protocol)
 		return self.on_packet(event, p_r, function) #super(PacketEvent, self).on(event)
+
+	def onXML_AS2(self, action, server_type, type = 'sys', p_r = True, function = None):
+		return self.onXML(action, server_type, type, p_r, function, AS2_PROTOCOL)
+
+	def onXT_AS2(self, c, h, s_t, p_r = True, function = None):
+		return self.onXT(c, h, s_t, p_r, function, AS2_PROTOCOL)
 
 class GeneralEvent(Event):
 

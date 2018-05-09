@@ -9,7 +9,11 @@ from collections import deque
 import logging
 from time import time
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'st#gsbcd', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'st#gsbcd', WORLD_SERVER)
 @inlineCallbacks
 def handleGetSBCoverDetails(client, _id):
 	peng = yield Penguin.find(_id)
@@ -28,7 +32,11 @@ def handleGetSBCoverDetails(client, _id):
 	rest = cover_details[1:]
 	client.send('gsbcd', colourID, highlightID, patternID, claspIconArtID, *rest)
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'st#gps', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'st#gps', WORLD_SERVER)
 @inlineCallbacks
 def handleGetPlayerStamps(client, _id):
 	peng = yield Penguin.find(_id)
@@ -41,12 +49,20 @@ def handleGetPlayerStamps(client, _id):
 
 	client.send('gps', _id, '|'.join(map(lambda x: x.split(',')[0], stamps.split("|"))))
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'st#gmres', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'st#gmres', WORLD_SERVER, p_r = False)
 def handleGetRecentStamps(client, data):
 	client.send('gmres', '|'.join(map(str, client['recentStamps'])))
 	client.penguin.recentStamps = list()
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'st#ssbcd', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'st#ssbcd', WORLD_SERVER)
 def handleSBCoverUpdate(client, color, highlight, pattern, icon, stamps):
 	coverCrumb = client.engine.stampCrumbs.cover
 
@@ -92,7 +108,11 @@ def handleSBCoverUpdate(client, color, highlight, pattern, icon, stamps):
 
 	client.send('ssbcd', 'success')
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'st#sse', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'st#sse', WORLD_SERVER)
 def handleStampEarned(client, _id):
 	stamp = client.engine.stampCrumbs[_id]
 	if stamp is None:

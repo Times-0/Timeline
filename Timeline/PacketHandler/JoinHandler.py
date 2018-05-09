@@ -7,7 +7,11 @@ from twisted.internet.defer import Deferred
 from collections import deque
 import logging
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.XTPacketRule('s', 'j#js', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule_AS2('s', 'j#js', WORLD_SERVER)
 def JoinServerRule(data):
 	param = data[2]
 
@@ -21,7 +25,11 @@ def JoinServerRule(data):
 
 	return [[_id, pword, lang], {}]
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.XTPacketRule('s', 'j#jr', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule_AS2('s', 'j#jr', WORLD_SERVER)
 def JoinRoomRule(data):
 	param = data[2]
 
@@ -36,7 +44,11 @@ def JoinRoomRule(data):
 
 	return [[room, x, y], {}]
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.XTPacketRule('s', 'j#jp', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule_AS2('s', 'j#jp', WORLD_SERVER)
 def JoinPlayerRule(data):
 
 	return [[int(data[2][0]), str(data[2][1])], {}]

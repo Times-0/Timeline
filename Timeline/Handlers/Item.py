@@ -11,11 +11,19 @@ from time import time
 
 logger = logging.getLogger(TIMELINE_LOGGER)
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'i#gi', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'i#gi', WORLD_SERVER, p_r = False)
 def handleGetInventory(client, data):
 	client.send('gi', *map(int, client['inventory']))
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'g#gii', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'g#gii', WORLD_SERVER, p_r = False)
 def handleGetIglooInventory(client, data):
 	client.send('gii', client.dbpenguin.furnitures, client.dbpenguin.floors, client.dbpenguin.igloos, client.dbpenguin.locations)
 
@@ -25,7 +33,11 @@ def handleGetCurrencies(client, data):
 	cry = ["{}|{}".format(k, currencies[k]) for k in currencies]
 	client.send('currencies', ','.join(cry))
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'i#ai', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'i#ai', WORLD_SERVER)
 def handleAddItem(client, item):
 	item = client.engine.itemCrumbs[item]
 	
@@ -51,7 +63,11 @@ def handleAddItem(client, item):
 		client.send('ai', item, client['coins'])
 		GeneralEvent.call('add-item:{}'.format(item), client)
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'i#qpp', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'i#qpp', WORLD_SERVER)
 @inlineCallbacks
 def handleGetPins(client, _id):
 	penguin = yield client.db_getPenguin('ID = ?', _id)
@@ -68,7 +84,11 @@ def handleGetPins(client, _id):
 		pins . append([''])
 	client.send('qpp', *(map(lambda x: '|'.join(map(str, x)), pins)))
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'i#qpa', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'i#qpa', WORLD_SERVER)
 @inlineCallbacks
 def handleGetAwards(client, _id):
 	penguin = yield client.db_getPenguin('ID = ?', _id)

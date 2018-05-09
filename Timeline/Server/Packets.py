@@ -118,8 +118,8 @@ class PacketHandler(object):
 				body = data[1][i]
 				action = body.get("action")
 
-				event = "{2}-></{0}-{1}>".format(data[0], action, self.penguin.engine.type)
-				RuleHandler = PacketEventHandler.FetchRule('xml', action, data[0], self.penguin.engine.type)
+				event = "{2}:{3}-></{0}-{1}>".format(data[0], action, self.penguin.engine.type, self.penguin.Protocol)
+				RuleHandler = PacketEventHandler.FetchRule('xml', action, data[0], self.penguin.engine.type, self.penguin.Protocol)
 				
 				if RuleHandler != None:
 					args, kwargs = RuleHandler(body)
@@ -134,8 +134,8 @@ class PacketHandler(object):
 			if data == True:
 				return False
 
-			event = "{2}->%{0}%{1}%".format(data[0], data[1], self.penguin.engine.type)
-			RuleHandler = PacketEventHandler.FetchRule('xt', data[0], data[1], self.penguin.engine.type)
+			event = "{2}:{3}->%{0}%{1}%".format(data[0], data[1], self.penguin.engine.type, self.penguin.Protocol)
+			RuleHandler = PacketEventHandler.FetchRule('xt', data[0], data[1], self.penguin.engine.type, self.penguin.Protocol)
 			if RuleHandler != None:
 				args, kwargs = RuleHandler(data)
 			else:

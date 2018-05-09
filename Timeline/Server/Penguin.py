@@ -3,7 +3,7 @@ Timeline - An AS3 CPPS emulator, written by dote, in python. Extensively using T
 Penguin is a extension of LineReceiver, protocol. Implements the base of Client Object
 '''
 
-from Timeline.Server.Constants import TIMELINE_LOGGER, PACKET_TYPE, PACKET_DELIMITER, WORLD_SERVER
+from Timeline.Server.Constants import TIMELINE_LOGGER, PACKET_TYPE, PACKET_DELIMITER, WORLD_SERVER, AS3_PROTOCOL, AS2_PROTOCOL
 from Timeline.Utils.Events import Event, GeneralEvent
 from Timeline.Utils.Cryptography import Crypto
 from Timeline.Server.Packets import PacketHandler
@@ -45,12 +45,16 @@ class LR(LineReceiver):
 
 
 class Penguin(PenguinDB, ExtensibleObject, LR):
+	'''
+	AS3 Protocol Implementation
+	'''
 
 	delimiter = chr(0)
 
 	def __init__(self, engine):
 		super(Penguin, self).__init__()
-		
+
+		self.Protocol = engine.server_protocol
 		self.factory = self.engine = engine
 		self.logger = logging.getLogger(TIMELINE_LOGGER)
 		self.cleanConnectionLost = Deferred()
@@ -60,7 +64,7 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 		self.buildPenguin()
 
 	def __del__(self):
-		self.logger.warn('Discarding Penguin Object: %s : %s', str(self.client), self.getPortableName())
+		self.logger.warn('Discarding Penguin<%s> Object: %s : %s', self.engine.server_protocol, str(self.client), self.getPortableName())
 
 	def buildPenguin(self):
 		self.handshakeStage = -1
@@ -70,7 +74,7 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 
 		# Some XT packets are sent before J#JS to make sure client is alive, just to make sure to ignore it ;)
 		# ('category', 'handler', 0 or 1 : execute : don't execute)
-		self.ignorableXTPackets = [('s', 'j#js', 1), ('s', 'p#getdigcooldown', 0), ('s', 'u#h', 0)] 
+		self.ignorableXTPackets = [('s', 'j#js', 1), ('s', 'p#getdigcooldown', 0), ('s', 'u#h', 0), ('s', 'f#epfgf', 0)]
 
 		self.penguin = PenguinObject()
 		self.penguin.name = None
@@ -168,15 +172,15 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 
 	def getPortableName(self):
 		if self["username"] == None and self["id"] == None:
-			return self.client
+			return "{}, {}".format(repr(self.client), self.Protocol)
 
 		if self["username"] != None:
-			return self["username"]
+			return "{}, {}".format(self["username"], self.Protocol)
 
 		if self["id"] != None:
-			return self["id"]
+			return "{}, {}".format(self["id"], self.Protocol)
 
-		return self["username"]
+		return "{}, {}".format(self["username"], self.Protocol)
 
 	def addItem(self, item):
 		if isinstance(item, int):
@@ -203,6 +207,10 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 		return True
 
 	def __str__(self):
+		'''
+		AS2 Compatile
+		'''
+
 		walking_id = walking_item = walking_type = walking_subtype = ''
 		walking_state = 0
 		
@@ -247,7 +255,7 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 			walking_subtype,
 			walking_item,
 			walking_state
-		]
+		][:-8 if self.Protocol == AS2_PROTOCOL else None]
 
 		return '|'.join(map(str, data))
 

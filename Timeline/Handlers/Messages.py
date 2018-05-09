@@ -8,11 +8,19 @@ from collections import deque
 import logging
 from time import time
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.XTPacketRule('s', 'm#sm', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule_AS2('s', 'm#sm', WORLD_SERVER)
 def SendMessageRule(data):
 	return [[int(data[2][0]), str(data[2][1])], {}]
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'm#sm', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'm#sm', WORLD_SERVER)
 def handleSendMessage(client, _id, message):
 	if not client['id'] == _id or client['stealth_mode'] or client['mascot_mode']:
 		return

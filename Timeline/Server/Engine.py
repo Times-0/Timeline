@@ -2,7 +2,7 @@
 Timeline - An AS3 CPPS emulator, written by dote, in python. Extensively using Twisted modules and is event driven.
 Engine is the main reactor, based on Twisted which starts the server and listens to given details
 '''
-from Timeline.Server.Constants import TIMELINE_LOGGER, WORLD_SERVER
+from Timeline.Server.Constants import TIMELINE_LOGGER, WORLD_SERVER, AS3_PROTOCOL
 from Timeline.Server.Redis import Redis
 from Timeline.Utils.Events import Event, GeneralEvent
 from Timeline.Utils.Crumbs import Items, Postcards, Igloo, Puffle, Stamps, Cards
@@ -32,8 +32,9 @@ class Engine(Factory, ExtensibleObject):
 	Implements the base class for reactor. Here is where things get sorted up!
 	"""
 	
-	def __init__(self, protocol, _type, _id, name="World Server 1", _max=300):
+	def __init__(self, protocol, _type, _id, name="World Server 1", _max=300, server_protocol = AS3_PROTOCOL):
 		self.protocol = protocol
+		self.server_protocol = server_protocol
 		self.type = _type
 		self.id = _id
 		self.logger = logging.getLogger(TIMELINE_LOGGER)
@@ -76,7 +77,7 @@ class Engine(Factory, ExtensibleObject):
 		self.musicHandler = MusicTrackEngine(self)
 
 	def __repr__(self):
-		return "<{}:{}#{}>".format(self.name, self.id, len(self.users))
+		return "{}<{}:{}#{}>".format(self.name, self.server_protocol, self.id, len(self.users))
 
 	def getPenguinById(self, _id):
 		_id = int(_id)

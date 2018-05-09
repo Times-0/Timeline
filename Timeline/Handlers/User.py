@@ -25,26 +25,46 @@ def handleGetPlayerById(client, _id):
 
 	client.send('pbi', penguin.swid, _id, penguin.nickname)
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'u#sf', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'u#sf', WORLD_SERVER)
 def handleSendFrame(client, frame):
 	#TODO Check frame
 	client.penguin.frame = frame
 	client['room'].send('sf', client['id'], client['frame'])
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'u#sa', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'u#sa', WORLD_SERVER)
 def handleSendAction(client, action):
 	client['room'].send('sf', client['id'], action)
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'u#se', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'u#se', WORLD_SERVER)
 def handleSendEmote(client, emote):
 	client['room'].send('se', client['id'], emote)
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'u#ss', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'u#ss', WORLD_SERVER)
 def handleSendSafeMsg(client, safe):
 	# really necessary to check?
 	client['room'].send('ss', client['id'], safe)
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'u#gp', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'u#gp', WORLD_SERVER)
 @inlineCallbacks
 def handleGetPlayer(client, _id):
 	penguin = yield client.db_getPenguin('ID = ?', _id)
@@ -63,12 +83,20 @@ def handleGetPlayerBySWID(client, data):
 
 	client.send('pbs', penguin.username, penguin.id)
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'u#sp', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'u#sp', WORLD_SERVER)
 def handleSendCoordinates(client, x, y):
 	client.penguin.x, client.penguin.y = x, y
 	client['room'].send('sp', client['id'], x, y)
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'u#sb', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'u#sb', WORLD_SERVER)
 def handleSnowBall(client, x, y):
 	client['room'].send('sb', client['id'], x, y)
 
@@ -80,7 +108,11 @@ def handle(client, _id):
 	# and more...
 	pass
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'u#pbsu', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'u#pbsu', WORLD_SERVER)
 @inlineCallbacks
 def handleGetUsernames(client, swid):
 	usernames = list()
@@ -93,11 +125,19 @@ def handleGetUsernames(client, swid):
 
 	client.send('pbsu', ','.join(usernames))
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'u#h', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'u#h', WORLD_SERVER, p_r = False)
 def handleHeartBeat(client, data):
 	client.send('h', 'pong')
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 's#upc', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 's#upc', WORLD_SERVER)
 def handleUpdateColor(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
 	item = client.engine.itemCrumbs[_id]
 	if not _id in client['inventory'] or item == False:
@@ -122,7 +162,11 @@ def handleUpdateColor(client, _id): # check if penguin room type is place too.. 
 
 	client.dbpenguin.save()
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 's#uph', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 's#uph', WORLD_SERVER)
 def handleUpdateHead(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
 	if _id == 0:
 		client.dbpenguin.head = _id
@@ -155,7 +199,11 @@ def handleUpdateHead(client, _id): # check if penguin room type is place too.. c
 
 	client.dbpenguin.save()
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 's#upf', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 's#upf', WORLD_SERVER)
 def handleUpdateFace(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
 	if _id == 0:
 		client.dbpenguin.face = _id
@@ -188,7 +236,11 @@ def handleUpdateFace(client, _id): # check if penguin room type is place too.. c
 
 	client.dbpenguin.save()
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 's#upn', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 's#upn', WORLD_SERVER)
 def handleUpdateNeck(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
 	if _id == 0:
 		client.dbpenguin.neck = _id
@@ -221,7 +273,11 @@ def handleUpdateNeck(client, _id): # check if penguin room type is place too.. c
 
 	client.dbpenguin.save()
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 's#upb', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 's#upb', WORLD_SERVER)
 def handleUpdateBody(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
 	if _id == 0:
 		client.dbpenguin.body = _id
@@ -254,7 +310,11 @@ def handleUpdateBody(client, _id): # check if penguin room type is place too.. c
 
 	client.dbpenguin.save()
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 's#upa', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 's#upa', WORLD_SERVER)
 def handleUpdateHand(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
 	if _id == 0:
 		client.dbpenguin.hand = _id
@@ -287,7 +347,11 @@ def handleUpdateHand(client, _id): # check if penguin room type is place too.. c
 
 	client.dbpenguin.save()
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 's#upe', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 's#upe', WORLD_SERVER)
 def handleUpdateFeet(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
 	if _id == 0:
 		client.dbpenguin.feet = _id
@@ -320,7 +384,11 @@ def handleUpdateFeet(client, _id): # check if penguin room type is place too.. c
 
 	client.dbpenguin.save()
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 's#upp', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 's#upp', WORLD_SERVER)
 def handleUpdatePhoto(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
 	print "Photo:", _id
 	if _id == 0:
@@ -354,7 +422,11 @@ def handleUpdatePhoto(client, _id): # check if penguin room type is place too.. 
 
 	client.dbpenguin.save()
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 's#upl', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 's#upl', WORLD_SERVER)
 def handleUpdateFlag(client, _id): # check if penguin room type is place too.. can he change clothes when he play? LOL!
 	if _id == 0:
 		client.dbpenguin.pin = _id
@@ -387,7 +459,11 @@ def handleUpdateFlag(client, _id): # check if penguin room type is place too.. c
 
 	client.dbpenguin.save()
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'u#gbffl', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'u#gbffl', WORLD_SERVER, p_r = False)
 def handleGetBFFList(client, data):
 	friends = list(client['friendsHandler'].friends)
 	bffs = [str(k[1]) for k in friends if k[3]]

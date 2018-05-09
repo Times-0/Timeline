@@ -103,15 +103,13 @@ print \
 ----------------------------------------------
 > AS3 CPPS Emulator. Written in Python
 > Developer : Dote
-> Version   : 6 production stable
-> Updates   : [+] Card Jitsu Fire
-              [+] Loads of Glitches, Errors, bugs fixed
-              [+] Extensible Plugin Object's charcter changes
-              [+] Used weakreference instead of strongly referenced penguin object
-              [+] Tracing Penguin Object's destruction
-              [+] Igloo Puffles Fix
-              [+] Changed how client disconnects
-              [+] Mod handlers - Kick, Mute
+> Version   : 6 production stable (AS2 + AS3) [Cross-compatible]
+> Updates   : [+] Support for AS2
+              [+] Most handlers updated to Support both AS2 and AS3
+              [+] AS2 login handlers
+              [+] EPF, Items, Join, Room, Login, Mail, Messages, 
+                  Moderation, Ninja, Stamps, User actions, handlers
+                  updated to support AS2
               [-] Bugs and Glitches
 _______________________________________________
 """
@@ -164,11 +162,22 @@ def main():
 	LoginServer = Engine(Penguin, Constants.LOGIN_SERVER, 1, "Login")
 	Gravity = Engine(Penguin, Constants.WORLD_SERVER, 100, "Gravity")
 
+
+	'''
+	Example of running AS2 Server. Note the server_protocol paramater in the Engine contruction.
+	'''
+
+	AS2LoginServer = Engine(Penguin, Constants.LOGIN_SERVER, 2, "Login AS2", server_protocol = Constants.AS2_PROTOCOL)
+	GravityAS2 = Engine(Penguin, Constants.WORLD_SERVER, 101, "Gravity AS2", server_protocol = Constants.AS2_PROTOCOL)
+
 	
 	LoginServer.run('127.0.0.1', 6112)
 	Gravity.run('127.0.0.1', 9875)
 
-	SERVERS += [LoginServer, Gravity]
+	AS2LoginServer.run('127.0.0.1', 6113)
+	GravityAS2.run('127.0.0.1', 9876)
+
+	SERVERS += [LoginServer, Gravity, AS2LoginServer, GravityAS2]
 
 LoadPlugins(Plugins)
 

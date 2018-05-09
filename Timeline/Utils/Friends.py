@@ -211,9 +211,7 @@ class FriendsHandler(object):
 			isOnline = yield self.penguin.engine.redis.isPenguinLoggedIn(friend[1])
 
 			if isOnline:
-				player_room = self.penguin.engine.roomHandler.getRoomByExtId((yield self.penguin.engine.redis.server.hgetall('online:{}'.format(friend[1])))['place'])
-				if player_room is None:
-					player_room = '*Hidden' if isOnline else 'Offline'
+				player_room = yield self.getPlayerRoom(f[1])
 				data.append(1)
 				data.append(player_room)
 
@@ -253,6 +251,13 @@ class FriendsHandler(object):
 				self.penguin.send('fn', r[-1], r[0])
 		except ReferenceError:
 			pass
+
+	@inlineCallbacks
+	def getPlayerRoom(self, id):
+		online = (yield self.penguin.engine.redis.server.hmget("online:{}".format(id), ['place']))[0]
+		online = self.penguin.engine.roomHandler.getRoomByExtId(online) if online else '*Hidden'
+
+		returnValue(online)
 
 	@inlineCallbacks
 	def fetchFriends(self, checkForChanges = True):
@@ -301,12 +306,7 @@ class FriendsHandler(object):
 				data = [f[1], f[2], f[0], f[3]]
 				player_room = None
 				if isOnline:
-					try:
-						player_room = self.penguin.engine.roomHandler.getRoomByExtId((yield self.penguin.engine.redis.server.hgetall('online:{}'.format(f[1])))['place'])
-						if player_room is None:
-							player_room = '*Hidden' if isOnline else 'Offline'
-					except:
-						player_room = '*Hidden'
+					player_room = yield self.getPlayerRoom(f[1])
 					data.append(1)
 					data.append(player_room)
 
@@ -319,12 +319,8 @@ class FriendsHandler(object):
 
 			for f in cur_friends:
 				isOnline = yield self.penguin.engine.redis.isPenguinLoggedIn(f[1])
-				try:
-					player_room = self.penguin.engine.roomHandler.getRoomByExtId((yield self.penguin.engine.redis.server.hgetall('online:{}'.format(f[1])))['place'])
-				except:
-					player_room = None
-				if player_room is None:
-					player_room = '*Hidden' if isOnline else 'Offline'
+				player_room = yield self.getPlayerRoom(f[1])
+
 				self.penguin.send('fo', '|'.join(map(str, [f[0], isOnline, player_room, 0])))
 		except ReferenceError:
 			pass

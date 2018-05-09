@@ -26,13 +26,19 @@ Rule : Version = int version, else error.
 '''
 @PacketEventHandler.XMLPacketRule('verChk', LOGIN_SERVER)
 @PacketEventHandler.XMLPacketRule('verChk', WORLD_SERVER)
+@PacketEventHandler.XMLPacketRule_AS2('verChk', LOGIN_SERVER)
+@PacketEventHandler.XMLPacketRule_AS2('verChk', WORLD_SERVER)
 def XMLVersionCheckRule(data):
 	version = data.find("ver").get("v")
 	v = int(version)
 	
 	return [[v], {}]
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.XMLPacketRule('login', LOGIN_SERVER)
+@PacketEventHandler.XMLPacketRule_AS2('login', LOGIN_SERVER)
 def XMLoginLiteralsRule(data):
 	login = data.find("login")
 
@@ -62,6 +68,35 @@ def XMLoginLiteralsRule(data):
 
 	return [[username, password], {}]
 
+'''
+AS2 Specific World server login rules
+'''
+
+@PacketEventHandler.XMLPacketRule_AS2('login', WORLD_SERVER)
+def XMLWorldLiteralsRuleAS2(data):
+	login = data.find('login')
+
+	user = login.find('nick').text.strip()
+	passd = login.find('pword').text
+
+	username_length = len(user)
+	if username_length < 4 or username_length > 20:
+		raise Exception("[TE011] Invalid username length - {0}".format(len(user)))
+
+	username_w_space = user.replace(" ", '')
+	if not username_w_space.isalnum():
+		raise Exception("[TE012] Invalid characters found in username - {0}".format(user))
+
+	loginKey, confirmHash = passd[:32], passd[32:]
+	if loginKey == '' or confirmHash == '' or loginKey == None or confirmHash == None:
+		raise Exception("[TE016] Invalid LoginKey or ConfirmationHash : {}, {}".format(loginKey, confirmHash))
+
+	return [[user, confirmHash, loginKey], {}]
+
+
+'''
+AS3 Specific World Login Packet Rule
+'''
 @PacketEventHandler.XMLPacketRule('login', WORLD_SERVER)
 def XMLWorldLiteralsRule(data):
 	login = data.find('login')

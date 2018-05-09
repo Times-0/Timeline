@@ -9,11 +9,19 @@ from collections import deque
 import logging
 from time import time
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'f#epfga', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'f#epfga', WORLD_SERVER, p_r = False)
 def handleGetEPFStatus(client, data):
 	client.send('epfga', int(bool(client['epf'])))
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'f#epfsa', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'f#epfsa', WORLD_SERVER, p_r = False)
 def handlePromoteAgent(client, data):
 	if client['epf']:
 		return
@@ -24,15 +32,27 @@ def handlePromoteAgent(client, data):
 
 	client.send('epfsa', 1)
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'epfgr', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'epfgr', WORLD_SERVER, p_r = False)
 def handleGetEPFP(client, data):
 	client.send('epfgr', client['epf'].p, client['epf'].t)
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.XTPacketRule('s', 'f#epfai', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule_AS2('s', 'f#epfai', WORLD_SERVER)
 def EPFAIRule(data):
 	return [[int(data[2][0])], {}]
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'f#epfai', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'f#epfai', WORLD_SERVER)
 def handleAddEPFItem(client, _id):
 	item = client.engine.itemCrumbs[_id]
 	if item is None:
@@ -55,7 +75,11 @@ def handleAddEPFItem(client, _id):
 	client.dbpenguin.save()
 	client.send('epfai', client.epfai.p)
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'f#epfgm', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'f#epfgm', WORLD_SERVER, p_r = False)
 @inlineCallbacks
 def handleGetCOM(client, data):
 	Messages = yield EPFCom.find(limit = 10, orderby = 'time DESC')

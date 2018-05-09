@@ -7,13 +7,23 @@ from twisted.internet.defer import Deferred
 from collections import deque
 import logging
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.XTPacketRule('s', 'st#gsbcd', WORLD_SERVER)
 @PacketEventHandler.XTPacketRule('s', 'st#gps', WORLD_SERVER)
 @PacketEventHandler.XTPacketRule('s', 'st#sse', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule_AS2('s', 'st#gsbcd', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule_AS2('s', 'st#gps', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule_AS2('s', 'st#sse', WORLD_SERVER)
 def GetSBCoverRule(data):
 	return [[int(data[2][0])], {}]
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.XTPacketRule('s', 'st#ssbcd', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule_AS2('s', 'st#ssbcd', WORLD_SERVER)
 def SBCoverRule(data):
 	param = data[2]
 
