@@ -79,13 +79,13 @@ Timeline is almost complete, covering support for all features present in native
 - EPF                   \[AS2, AS3]
 - Chatting              \[AS2, AS3]
 - Stamps                \[AS2, AS3]
-- Puffles               \[AS3] *to do as2*
-- Puffle adoption       \[AS3] *to do as2*
+- Puffles               \[AS2, AS3]
+- Puffle adoption       \[AS2, AS3]
 - Puffle digging        \[AS3] *Puffle Digging is AS3 exclusive feature, AS2 client doesn't support it*
 - Rainbow puffle quest  \[AS3] *Rainbow puffle is AS2 only, AS2 client doesn't suppor it*
 - Gold puffle quest     \[AS3] *Golden puffle is AS3 only,*
 - Golden nuggets        \[AS3] *       AS2 client doesn't support it*
-- Igloo                 \[AS3] *to do as2*
+- Igloo                 \[AS2, AS3]
 - Player actions        \[AS2, AS3]
 - Player interactions   \[AS2, AS3]
 - Player movements      \[AS2, AS3]
