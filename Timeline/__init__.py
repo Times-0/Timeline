@@ -48,7 +48,7 @@ class Nickname(str):
         return super(Nickname, self).__new__(self, n)
     
     def __init__(self, n, c):
-        self.n = n
+        self.n = str(n).title()
         self.c = c
 
     def __str__(self):
@@ -63,7 +63,7 @@ class Nickname(str):
     
     @nickname.setter
     def nickname(self, n):
-        if self.c.db_nicknameUpdate(n):
+        if (yield self.c.db_nicknameUpdate(n)):
             self.n = n
             
     @property
@@ -230,7 +230,6 @@ class Inventory(list):
         return '%'.join(map(str, self))
 
     def _addItem_(self, item, u = True):
-        print 'not updated :-('
         if self.penguin is None or not u:
             return
 

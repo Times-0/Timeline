@@ -43,12 +43,17 @@ def JoinRoomRule(data):
 		pass
 
 	return [[room, x, y], {}]
+'''
+AS2 Join Igloo
+'''
+@PacketEventHandler.XTPacketRule_AS2('s', 'j#jp', WORLD_SERVER)
+def JoinPlayerRuleAS2(data):
+	return [[int(data[2][0]) - 1000, 'igloo'], {}]
 
 '''
-AS2 and AS3 Compatible
+AS3 Join Igloo
 '''
 @PacketEventHandler.XTPacketRule('s', 'j#jp', WORLD_SERVER)
-@PacketEventHandler.XTPacketRule_AS2('s', 'j#jp', WORLD_SERVER)
 def JoinPlayerRule(data):
 
 	return [[int(data[2][0]), str(data[2][1])], {}]

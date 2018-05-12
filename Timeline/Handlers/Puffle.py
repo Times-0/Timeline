@@ -140,7 +140,7 @@ def handleGetMyPuffle(client, data):
 	client.send('pgmps', ','.join(puffles))
 
 @PacketEventHandler.onXT('s', 'p#pw', WORLD_SERVER)
-def handlePuffleWalk(client, puffle, isWalking):
+def handlePuffleWalk(client, puffle, isWalking, sendPacket = True):
 	puffle = client['puffleHandler'].getPuffleById(puffle)
 
 	if puffle is None:
@@ -167,7 +167,7 @@ def handlePuffleWalk(client, puffle, isWalking):
 
 	client['puffleHandler'].walkingPuffle = puffle if isWalking else None
 
-	client['room'].send('pw', client['id'], puffle.id, puffle.type, puffle.subtype, int(isWalking), puffle.hat)
+	client['room'].send('pw', client['id'], puffle.id, puffle.type, puffle.subtype, int(isWalking), puffle.hat) if sendPacket else None
 
 @PacketEventHandler.onXT('s', 'p#pufflewalkswap', WORLD_SERVER)
 def handlePuffleSwap(client, puffle):
@@ -327,9 +327,9 @@ def handleCheckPuffleName(client, data):
 
 @PacketEventHandler.onXT('s', 'p#pn', WORLD_SERVER)
 @inlineCallbacks
-def handleAdopt(client, _type, name, sub_type):
+def handleAdopt(client, _type, name, sub_type, sendPuffleAdopt = True):
 	if not handleCheckPuffleName(client, [0, 0, [name]]):
-		return
+		returnValue(None)
 
 	if not client['id'] in PENDING:
 		PENDING[client['id']] = []
@@ -347,7 +347,8 @@ def handleAdopt(client, _type, name, sub_type):
 
 	if puffle.member and not client['member']:
 		PENDING[client['id']].remove(name)
-		returnValue(client.send('e', 999))
+		client.send('e', 999)
+		returnValue(None)
 
 	now = int(time())
 	care = '{"food" : {now},"play" : {now},"bath" : {now}}'.replace('{now}', str(now))
@@ -363,8 +364,10 @@ def handleAdopt(client, _type, name, sub_type):
 
 	client['puffleHandler'].append(puffle)
 
-	client.send('pn', client['coins'], puffle_db)
+	client.send('pn', client['coins'], puffle_db) if sendPuffleAdopt else None
 	PENDING[client['id']].remove(name)
+
+	returnValue(puffle_db)
 
 @PacketEventHandler.onXT('s', 'p#prp', WORLD_SERVER, p_r = False)
 @inlineCallbacks
@@ -387,6 +390,7 @@ def handleSendPuffleBackToTheWoods(client, data):
 	client.send('gtc', client['coins'])
 
 @PacketEventHandler.onXT('s', 'p#ps', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'p#ps', WORLD_SERVER)
 def handlePuffleFrame(client, puffle, frame):
 	peng = client['room'].owner #Check player in igloo
 
@@ -394,6 +398,7 @@ def handlePuffleFrame(client, puffle, frame):
 	client['room'].send('ps', puffle, frame)
 
 @PacketEventHandler.onXT('s', 'p#pm', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'p#pm', WORLD_SERVER)
 @inlineCallbacks
 def handlePuffleMove(client, puffle, x, y):
 	peng = client['room'].owner
@@ -436,7 +441,7 @@ def handlePuffleBath(client, puffle):
 	client['room'].send('pb', client['id'], client['coins'], puffle, 100)
 
 @PacketEventHandler.onXT('s', 'p#pp', WORLD_SERVER)
-def handlePufflePlay(client, puffle):
+def handlePufflePlay(client, puffle, sendPacket = True):
 	puffle = client['puffleHandler'].getPuffleById(puffle)
 	if puffle is None:
 		return
@@ -459,10 +464,12 @@ def handlePufflePlay(client, puffle):
 
 	puffle.save()
 
-	client['room'].send('pp', client['id'], puffle, 27) #TODO: Play type
+	client['room'].send('pp', client['id'], puffle, 27) if sendPacket else None #TODO: Play type
+
+	return puffle
 
 @PacketEventHandler.onXT('s', 'p#pr', WORLD_SERVER)
-def handlePuffleRest(client, puffle):
+def handlePuffleRest(client, puffle, sendPacket = True):
 	puffle = client['puffleHandler'].getPuffleById(puffle)
 	if puffle is None:
 		return
@@ -483,7 +490,9 @@ def handlePuffleRest(client, puffle):
 
 	puffle.save()
 	print puffle.clean, puffle.food, puffle.play
-	client['room'].send('pr', client['id'], puffle)
+	client['room'].send('pr', client['id'], puffle) if sendPacket else None
+
+	return puffle
 
 @PacketEventHandler.onXT('s', 'p#pf', WORLD_SERVER)
 def handlePuffleFeed(client, puffle):

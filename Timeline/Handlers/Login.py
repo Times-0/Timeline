@@ -107,7 +107,7 @@ def HandlePrimaryPenguinLogin(client, user, passd):
 
 		if Friends in World, then, World - Friends will be a set such that n(W-F) < n(W)
 		'''
-		worldsWithFriends = list(i for i in wu if len(wu[i]) != len(wu[i] - friends))
+		worldsWithFriends = list(str(i) for i in wu if len(wu[i]) != len(wu[i] - friends))
 		wwf = '|'.join(worldsWithFriends)
 
 		client.send('l', client.dbpenguin.id, confh, wwf, world)
@@ -168,7 +168,6 @@ def HandleWorldPenguinLogin(client, nickname, _id, swid, password, confirmHash, 
 
 	if not client.CryptoHandler.bcheck(details, loginkey[32:]) or not client.CryptoHandler.bcheck(details, confirmHash) or not client.CryptoHandler.bcheck(details, password):
 		client.send('e', 101)
-		print loginkey, loginkey[32:]
 		returnValue(client.disconnect())
 	
 	yield client.engine.redis.server.delete("conf:{}".format(client.penguin.id))

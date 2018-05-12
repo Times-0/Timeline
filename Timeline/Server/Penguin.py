@@ -46,7 +46,7 @@ class LR(LineReceiver):
 
 class Penguin(PenguinDB, ExtensibleObject, LR):
 	'''
-	AS3 Protocol Implementation
+	AS2 + AS3 Protocol Implementation
 	'''
 
 	delimiter = chr(0)

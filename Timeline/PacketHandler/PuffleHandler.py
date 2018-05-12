@@ -30,12 +30,14 @@ def PuffleSwapRule(data):
 	return[[int(data[2][0])], {}]
 
 @PacketEventHandler.XTPacketRule('s', 'p#pm', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule_AS2('s', 'p#pm', WORLD_SERVER)
 def PuffleMoveRule(data):
 	return [[int(data[2][0]), int(data[2][1]), int(data[2][2])], {}]
 
 @PacketEventHandler.XTPacketRule('s', 'p#puphi', WORLD_SERVER)
 @PacketEventHandler.XTPacketRule('s', 'p#ps', WORLD_SERVER)
 @PacketEventHandler.XTPacketRule('s', 'p#pcid', WORLD_SERVER)
+@PacketEventHandler.XTPacketRule_AS2('s', 'p#ps', WORLD_SERVER)
 def PuffleUpdateRule(data):
 	return [[int(data[2][0]), int(data[2][1])], {}]
 

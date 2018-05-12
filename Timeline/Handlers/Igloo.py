@@ -105,10 +105,9 @@ def updateIglooConfiguration(client, _id, _type, floor, location, music, furnitu
 		if not client['iglooHandler'].hasFurniture(furn):
 			return
 
-		if not furn in fbyid:
-			fbyid[furn] = 0
+		fbyid[furn] = fbyid[furn] + 1 if furn in fbyid else 1
 
-		if fbyid[furn] + 1 > client['iglooHandler'].getFurniture(furn).max:
+		if fbyid[furn] > client['iglooHandler'].getFurniture(furn).max or fbyid[furn] > client['iglooHandler'].getFurniture(furn).quantity:
 			return
 
 	if not client['igloo']._id == _id:

@@ -211,7 +211,7 @@ class FriendsHandler(object):
 			isOnline = yield self.penguin.engine.redis.isPenguinLoggedIn(friend[1])
 
 			if isOnline:
-				player_room = yield self.getPlayerRoom(f[1])
+				player_room = yield self.getPlayerRoom(friend[1])
 				data.append(1)
 				data.append(player_room)
 

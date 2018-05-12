@@ -36,7 +36,11 @@ def handlePenguinRoomSwap(client, rid):
 
 		friend.send('fo', '{}|1|{}|{}'.format(client['swid'], client['room'].name, canShowNotif))
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'f#n', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'f#n', WORLD_SERVER, p_r = False)
 @inlineCallbacks
 def handleNewFriendRequest(client, data):
 	swid = data[2][0]
@@ -47,7 +51,11 @@ def handleNewFriendRequest(client, data):
 
 	client['friendsHandler'].sendRequest(swid)
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'f#s', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'f#s', WORLD_SERVER, p_r = False)
 @inlineCallbacks
 def handleSearchPenguin(client, data):
 	searchQuery = data[2][0].strip()
@@ -82,22 +90,35 @@ def handleSearchPenguin(client, data):
 
 	client.send('fs', json.dumps(searchResults))
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'f#bf', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'f#bf', WORLD_SERVER, p_r = False)
 def handleChangeBFFStatus(client, data):
 	swid = data[2][0]
 	isBFF = int(data[2][1])
 
 	client['friendsHandler'].handleChangeBFF(swid, isBFF)
 
+'''
+AS2 and AS3 Compatibility
+'''
 @PacketEventHandler.onXT('s', 'f#a', WORLD_SERVER, p_r = False)
 @PacketEventHandler.onXT('s', 'f#r', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'f#a', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'f#r', WORLD_SERVER, p_r = False)
 def handleAcceptOrRejectFriendRequest(client, data):
 	accepted = data[1][-1] == 'a'
 	swid = data[2][0]
 
 	client['friendsHandler'].friendRequestResponse(swid, accepted)
 
+'''
+AS2 and AS3 Compatible
+'''
 @PacketEventHandler.onXT('s', 'f#rf', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'f#rf', WORLD_SERVER, p_r = False)
 def handleRemoveFriend(client, data):
 	swid = data[2][0]
 

@@ -13,6 +13,7 @@ from time import time
 logger = logging.getLogger(TIMELINE_LOGGER)
 
 @PacketEventHandler.onXT('s', 'w#jx', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'w#jx', WORLD_SERVER, p_r = False)
 def handleJoinGame(client, data):
     if client['room'] is not None and isinstance(client['room'], Multiplayer):
         client.send('jx', client['room'].ext_id)
@@ -20,14 +21,18 @@ def handleJoinGame(client, data):
         #reactor.callLater(4, lambda *x:client['game'].getGame(client)) # client takes time to load
 
 @PacketEventHandler.onXT('z', 'gz', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('z', 'gz', WORLD_SERVER, p_r = False)
 def handleGetGame(client, data):
     if client['game'] is None:
         return client.send('gz', '-')
 
-    #client.send('gz', client['game'])
-    client['game'].getGame(client)
+    if hasattr(client['game'], 'getGame'):
+        client['game'].getGame(client)
+    else:
+        client.send('gz', client['game'])
 
 @PacketEventHandler.onXT('z', 'uz', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('z', 'uz', WORLD_SERVER, p_r = False)
 def handleGetUpdateGame(client, data):
     if client['game'] is None:
         return client.send('gz', 'zzzZ')
@@ -35,6 +40,7 @@ def handleGetUpdateGame(client, data):
     client['game'].updateGame()
 
 @PacketEventHandler.onXT('z', 'jz', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('z', 'jz', WORLD_SERVER, p_r = False)
 def handleJoinGame(client, data):
     if client['game'] is None:
         return client.send('jz', '-')
@@ -42,6 +48,7 @@ def handleJoinGame(client, data):
     client['game'].joinGame(client)
 
 @PacketEventHandler.onXT('z', 'lz', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('z', 'lz', WORLD_SERVER, p_r = False)
 def handleLeaveGame(client, data):
     if not client['playing'] or client['game'] is None:
         return client.send('lz', '-')
@@ -49,6 +56,7 @@ def handleLeaveGame(client, data):
     client['game'].remove(client)
 
 @PacketEventHandler.onXT('z', 'zm', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('z', 'zm', WORLD_SERVER, p_r = False)
 def handleSendMoveToGame(client, data):
     if not client['playing'] or client['game'] is None:
         return client.send('e', '?Cheating!')
@@ -56,6 +64,7 @@ def handleSendMoveToGame(client, data):
     client['game'].play(client, data[2])
 
 @PacketEventHandler.onXT('z', 'zo', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('z', 'zo', WORLD_SERVER, p_r = False)
 def handleGameOver(client, data):
     score = int(data[2][0])
     coins = round(score/10.0)

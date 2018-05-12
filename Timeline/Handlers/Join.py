@@ -91,11 +91,11 @@ def handleJoinIgloo(client, _id, _type):
 	if room is None:
 		returnValue(None)
 
-	if client['room'] is not None:
-		client['room'].remove(client)
-
 	if client['waddling'] or client['playing']:
 		client.send('e', 200)
+
+	if client['room'] is not None:
+		client['room'].remove(client)
 	
 	puffles = yield client['puffleHandler'].getPenguinPuffles(_id, _type == 'backyard')
 
@@ -116,7 +116,7 @@ def handleJoinIgloo(client, _id, _type):
 				room.backyard.append(client)
 				returnValue(None)
 
-	client['prevRooms'][-1].append(client)
+	#client['prevRooms'][-1].append(client)
 
 '''
 AS2 and AS3 Compatible

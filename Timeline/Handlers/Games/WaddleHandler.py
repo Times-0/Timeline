@@ -108,6 +108,7 @@ def setRoomHandler(ROOM_HANDLER):
 	ROOM_HANDLER.ROOM_CONFIG.WADDLES = {}
 
 @PacketEventHandler.onXT('z', 'jw', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('z', 'jw', WORLD_SERVER, p_r = False)
 def handleJoinWaddling(client, data):
     wid = int(data[2][0])
 
@@ -133,6 +134,7 @@ def handleJoinWaddling(client, data):
     WADDLE_ROOM.append(client) # JoinWaddle
 
 @PacketEventHandler.onXT('z', 'lw', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('z', 'lw', WORLD_SERVER, p_r = False)
 def handleLeaveWaddling(client, data):
     if not client['waddling'] or client['game'] is None or client['playing']:
         return
@@ -140,6 +142,7 @@ def handleLeaveWaddling(client, data):
     client['game'].remove(client) #leaveWaddling
 
 @PacketEventHandler.onXT('z', 'gw', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('z', 'gw', WORLD_SERVER, p_r = False)
 def handleGetWaddling(client, data):
 	waddle_ids = map(int, data[2])
 	gw = list()

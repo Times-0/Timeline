@@ -115,6 +115,7 @@ class TableGame(Multiplayer):
 		return '%'.join(map(str, gameStr))
 
 @PacketEventHandler.onXT('s', 'a#jt', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'a#jt', WORLD_SERVER, p_r = False)
 def handleJoinToTable(client, data):
 	table = int(data[2][0])
 
@@ -132,6 +133,7 @@ def handleJoinToTable(client, data):
 	Event('JoinTable-{}'.format(table), client, table)
 
 @PacketEventHandler.onXT('s', 'a#lt', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'a#lt', WORLD_SERVER, p_r = False)
 def handleLeave(client, data):
 	if client['game'] is None:
 		return
