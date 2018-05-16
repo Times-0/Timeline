@@ -13,17 +13,6 @@ from collections import deque
 import logging, json
 from time import time
 
-
-''' list of packets
-AIRTOWER.addListener(AIRTOWER.GET_FURNITURE_LIST,handleGetFurnitureListFromServer);
-AIRTOWER.addListener(AIRTOWER.GET_IGLOO_DETAILS,handleGetPlayerIgloo);	
-AIRTOWER.addListener(AIRTOWER.GET_IGLOO_LIST,handleLoadPlayerIglooList);
-AIRTOWER.addListener(AIRTOWER.GET_OWNED_IGLOOS,handleGetOwnedIgloos);
-AIRTOWER.addListener(AIRTOWER.BUY_FURNITURE,handleSendBuyFurniture);
-AIRTOWER.addListener(AIRTOWER.UPDATE_FLOOR,handleSendBuyIglooFloor);
-AIRTOWER.addListener(AIRTOWER.UPDATE_IGLOO_TYPE,handleSendBuyIglooType);
-'''
-
 @PacketEventHandler.onXT_AS2('s', 'g#gm', WORLD_SERVER)
 @inlineCallbacks
 def handleGetPlayerIgloo(client, _id):
@@ -66,7 +55,7 @@ def handleBuyIglooAS2(client, _id):
 
 @PacketEventHandler.onXT_AS2('s', 'g#gf', WORLD_SERVER, p_r = False)
 def handleGetFurnitires(client, data):
-	client.send('gf', *(map(lambda f: '{}|{}'.format(int(f), f.quantity))))
+	client.send('gf', *(map(lambda f: '{}|{}'.format(int(f), f.quantity), client['iglooHandler'].furnitures)))
 
 @PacketEventHandler.onXT_AS2('s', 'g#um', WORLD_SERVER)
 def handleActivateIgloo(client, music):
@@ -105,4 +94,4 @@ def handleSaveFurnitureConfiguration(client, furns):
 @PacketEventHandler.onXT_AS2('s', 'g#cr', WORLD_SERVER, p_r = False)
 @PacketEventHandler.onXT_AS2('s', 'g#or', WORLD_SERVER, p_r = False)
 def handleLockAndOpenIgloo(client, data):
-	client['iglooHandler'].currentIgloo.locked = int(data[1] == 'c')
+	client['iglooHandler'].currentIgloo.locked = int(data[1][-2] == 'c')

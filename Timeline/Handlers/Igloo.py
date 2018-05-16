@@ -300,8 +300,7 @@ def handleUpdateIglooSlotSummary(client, _id, summary):
 			client['igloo'].opened = not locked
 
 	igloo = client['iglooHandler'].currentIgloo
-	for i in json.loads(str(igloo.likes)):
-		likes += i['count']
+	likes = sum([i['count'] for i in json.loads(str(igloo.likes))])
 
 	details = [igloo.id, 1, 0, int(bool(igloo.locked)), igloo.music, igloo.floor, igloo.location, igloo.type, likes, igloo.furniture]
 	client['igloo'].send('uvi', client['id'], ':'.join(map(str, details)))
@@ -330,10 +329,7 @@ def handleGetOpenIgloos(client, data):
 		if _igloo is None:
 			continue
 
-		likes = 0
-		like_json = json.loads(_igloo.likes)
-		for _ in like_json:
-			likes += _['count']
+		likes = [i['count'] for i in json.loads(_igloo.likes)]
 
 		if igloo.owner != client['id']:
 			open_igloos.append('|'.join(map(str, [int(penguin['id']), penguin['nickname'], likes, len(igloo), int(not igloo.opened)])))
@@ -376,7 +372,7 @@ def handleGetIglooLikes(client, start, end):
 	likes = str(igloo.likes)
 	likes = json.loads(likes)
 
-	count = 0
+	count = [i['count'] for i in likes]
 	for i in likes:
 		count += i['count']
 

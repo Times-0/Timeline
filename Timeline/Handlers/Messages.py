@@ -22,7 +22,7 @@ AS2 and AS3 Compatible
 @PacketEventHandler.onXT('s', 'm#sm', WORLD_SERVER)
 @PacketEventHandler.onXT_AS2('s', 'm#sm', WORLD_SERVER)
 def handleSendMessage(client, _id, message):
-	if not client['id'] == _id or client['stealth_mode'] or client['mascot_mode']:
+	if not client['id'] == _id:
 		return
 
 	message = message.strip(' ').replace('|', '\|')
@@ -31,6 +31,9 @@ def handleSendMessage(client, _id, message):
 
 	if client['muted']:
 		GeneralEvent.call('after-message-muted', client, message)
+		return
+
+	if client['stealth_mode'] or client['mascot_mode']:
 		return
 
 	client['room'].send('sm', _id, message)

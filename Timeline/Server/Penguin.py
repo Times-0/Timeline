@@ -330,9 +330,8 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 			self.engine.roomHandler.removeFromAnyRoom(self.selfRefer, self) # experimental
 			# sending self just to make sure it doesn't throw weak-reference error
 
-			yield GeneralEvent('onClientDisconnect', self.selfRefer)
-		
 			yield self.engine.redis.server.delete("online:{}".format(self['id']))
+			yield GeneralEvent('onClientDisconnect', self.selfRefer)
 
 		yield self.engine.disconnect(self)
 		self.cleanConnectionLost.callback(True)

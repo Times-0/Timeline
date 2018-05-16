@@ -54,14 +54,14 @@ def handleAS2PuffleAdopt(client, _type, name):
 	if puffleAdopted is not None:
 		client.send('pn', client['coins'], getAS2PuffleString(client, [puffle_db]))
 
-@PacketEventHandler.onXT_AS2('s', 'p#pip', WORLD_SERVER)
-@PacketEventHandler.onXT_AS2('s', 'p#pir', WORLD_SERVER)
+@PacketEventHandler.onXT_AS2('s', 'p#pip', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('s', 'p#pir', WORLD_SERVER, p_r = False)
 def handleInitiateInteraction(client, data):
 	puffle, x, y = map(int, data[2])
 	if client['puffleHandler'].getPuffleById(puffle) is None:
 		return
 
-	client.send(data[1], puffle, x, y)
+	client.send(data[1].split('#')[-1], puffle, x, y)
 
 @PacketEventHandler.onXT_AS2('s', 'p#ip', WORLD_SERVER, p_r = False)
 @PacketEventHandler.onXT_AS2('s', 'p#ir', WORLD_SERVER, p_r = False)
@@ -73,7 +73,7 @@ def handlePuffleInteract(client, data):
 	puffle = function(client, puffle, False)
 
 	if puffle is not None:
-		client['room'].send(data[1] , getAS2PuffleString(client, [puffle]), *(map(int, data[2][1:])))
+		client['room'].send(data[1].split('#')[-1] , getAS2PuffleString(client, [puffle]), *(map(int, data[2][1:])))
 
 @PacketEventHandler.onXT_AS2('s', 'p#if', WORLD_SERVER, p_r = False)
 @PacketEventHandler.onXT_AS2('s', 'p#pf', WORLD_SERVER, p_r = False)
@@ -100,7 +100,7 @@ def handleFeedPuffle(client, data):
 
 	puffle.save()
 	
-	client.send(data[1], client['coins'], getAS2PuffleString(client, [puffle]), *(map(int, data[2][1:])))
+	client.send(data[1].split('#')[-1], client['coins'], getAS2PuffleString(client, [puffle]), *(map(int, data[2][1:])))
 
 @PacketEventHandler.onXT_AS2('s', 'p#pw', WORLD_SERVER, p_r = False)
 def handlePuffleWalk(client, data):
