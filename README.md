@@ -93,8 +93,9 @@ Timeline is almost complete, covering support for all features present in native
 - Sound Studio (Music)  \[AS3] *Sound studio is an AS3 exclusive feature, AS2 client doesn't support it*
 - Friends               \[AS2, AS3]
 - Games (Single Player) \[AS2, AS3]
-- Find Four (Multiplayer-Table)         \[AS3] *todo as2*
-- Mancala (Multiplayer-Table)           \[AS3] *todo as2*
+- Find Four (Multiplayer-Table)         \[AS3]
+- Mancala (Multiplayer-Table)           \[AS3]
+- TreasureHunt (Multiplayer-Table) \[AS2, AS3]
 - Sled Racing (Multiplayer-Waddle)      \[AS3] *todo as2*
 - Card Jitsu (Multiplayer-Waddle)       \[AS3] *todo as2*
 - Card Jitsu v/s Sensei (Single Player) \[AS3] *todo as2*
