@@ -29,9 +29,7 @@ def handleGetPlayerIgloo(client, _id):
 	igloo = yield Igloo.find(iglooRoom._id)
 	likes = 0
 	if igloo.likes != '' and igloo.likes != None:
-		j = json.loads(igloo.likes)
-		for i in j:
-			likes += i['count']
+		j = sum([i['count'] for i in json.loads(igloo.likes)])
 
 	details = [igloo.id, 1, 0, int(bool(igloo.locked)), igloo.music, igloo.floor, igloo.location, igloo.type, likes, igloo.furniture]
 
@@ -81,10 +79,7 @@ def getIglooLayoutList(client, _id):
 		if i.id == client['igloo']._id:
 			locked = i.locked
 
-		likes = 0
-		for j in json.loads(i.likes):
-			likes += j['count']
-
+		likes = sum([i['count'] for i in json.loads(i.likes)])
 		total_likes += likes
 
 		details = [i.id, ix, 0, int(locked), i.music, i.floor, i.location, i.type, likes, i.furniture]
@@ -123,9 +118,7 @@ def updateIglooConfiguration(client, _id, _type, floor, location, music, furnitu
 	igloo.music = music
 	igloo.furniture = furniture_string
 
-	likes = 0
-	for i in json.loads(str(igloo.likes)):
-		likes += i['count']
+	likes = sum([i['count'] for i in json.loads(str(igloo.likes))])
 
 	yield igloo.save()
 
@@ -329,7 +322,7 @@ def handleGetOpenIgloos(client, data):
 		if _igloo is None:
 			continue
 
-		likes = [i['count'] for i in json.loads(_igloo.likes)]
+		likes = sum([i['count'] for i in json.loads(_igloo.likes)])
 
 		if igloo.owner != client['id']:
 			open_igloos.append('|'.join(map(str, [int(penguin['id']), penguin['nickname'], likes, len(igloo), int(not igloo.opened)])))
@@ -354,9 +347,7 @@ def handleGetFriendIgloos(client, data):
 			continue
 
 		likes = 0
-		like_json = json.loads(_igloo.likes)
-		for _ in like_json:
-			likes += _['count']
+		like_json = sum([i['count'] for i in json.loads(_igloo.likes)])
 
 		availIgloos.append('|'.join(map(str, [int(igloo.owner), likes])))
 
@@ -372,9 +363,7 @@ def handleGetIglooLikes(client, start, end):
 	likes = str(igloo.likes)
 	likes = json.loads(likes)
 
-	count = [i['count'] for i in likes]
-	for i in likes:
-		count += i['count']
+	count = sum([i['count'] for i in likes])
 
 	like = {
 		'likedby' : {

@@ -235,7 +235,7 @@ class TreasureMap(object):
 		self.generateRows()
 		self.generateColumns()
 
-		self.gem_map = [g.coordinates for g in self.raw_map if isinstance(g, Gem)]
+		self.gem_map = [g.coordinates for g in self.raw_map if isinstance(g, Gem) and not isinstance(g, RareGem)]
 
 	def generateTreasure(self):
 		'''

@@ -15,11 +15,11 @@ logger = logging.getLogger(TIMELINE_LOGGER)
 
 @GeneralEvent.on('Room-handler')
 def setFourMats(ROOM_HANDLER):
-	ROOM_HANDLER.ROOM_CONFIG.FourGame = {}
+	ROOM_HANDLER.ROOM_CONFIG.HuntGame = {}
 	for i in HUNT_TABLES:
-		ROOM_HANDLER.ROOM_CONFIG.FourGame[i] = {}
+		ROOM_HANDLER.ROOM_CONFIG.HuntGame[i] = {}
 		for j in HUNT_TABLES[i]:
-			ROOM_HANDLER.ROOM_CONFIG.FourGame[i][j] = TreasureHunt(ROOM_HANDLER, j, i) # new game
+			ROOM_HANDLER.ROOM_CONFIG.HuntGame[i][j] = TreasureHunt(ROOM_HANDLER, j, i) # new game
 
 	logger.debug("TreasureHunt Tables Loaded")
 
@@ -35,10 +35,10 @@ def handleJoinTable(client, table):
 	ROOM_HANDLER = client.engine.roomHandler
 	room = client['room'].ext_id
 
-	if room not in ROOM_HANDLER.ROOM_CONFIG.FourGame or table not in ROOM_HANDLER.ROOM_CONFIG.FourGame[room]:
+	if room not in ROOM_HANDLER.ROOM_CONFIG.HuntGame or table not in ROOM_HANDLER.ROOM_CONFIG.HuntGame[room]:
 		return client.send('e', 402)
 
-	ROOM_HANDLER.ROOM_CONFIG.FourGame[room][table].append(client)
+	ROOM_HANDLER.ROOM_CONFIG.HuntGame[room][table].append(client)
 
 @Event.on('LeaveTable-300')
 @Event.on('LeaveTable-301')
@@ -52,8 +52,8 @@ def handleLeaveTable(client, table):
 	ROOM_HANDLER = client.engine.roomHandler
 	room = client['game'].room.ext_id
 
-	if room not in ROOM_HANDLER.ROOM_CONFIG.FourGame or table not in ROOM_HANDLER.ROOM_CONFIG.FourGame[room]:
+	if room not in ROOM_HANDLER.ROOM_CONFIG.HuntGame or table not in ROOM_HANDLER.ROOM_CONFIG.HuntGame[room]:
 		return client.send('e', 402)
 
-	ROOM_HANDLER.ROOM_CONFIG.FourGame[room][table].remove(client)
+	ROOM_HANDLER.ROOM_CONFIG.HuntGame[room][table].remove(client)
 	# ROOM_HANDLER.ROOM_CONFIG.FourGame[room][table].room.append(client)
