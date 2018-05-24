@@ -1,4 +1,4 @@
-from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER
+from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER, SERVER_ONLY_STAMP_GROUP
 from Timeline import Username, Password, Inventory
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
 from Timeline.Database.DB import Penguin
@@ -22,7 +22,7 @@ def handleGetSBCoverDetails(client, _id):
 
 	cover = str(peng.cover)
 	if cover == '':
-		cover = peng.cover = '1|0|0|0|0'
+		cover = peng.cover = '1|0|0|0'
 		peng.save()
 
 	cover_details = cover.split('%')
@@ -113,9 +113,14 @@ AS2 and AS3 Compatible
 '''
 @PacketEventHandler.onXT('s', 'st#sse', WORLD_SERVER)
 @PacketEventHandler.onXT_AS2('s', 'st#sse', WORLD_SERVER)
-def handleStampEarned(client, _id):
+def handleStampEarned(client, _id, fromServer = False):
 	stamp = client.engine.stampCrumbs[_id]
 	if stamp is None:
+		return
+
+	if stamp.group in SERVER_ONLY_STAMP_GROUP and not fromServer:
+		client.engine.log("warn", client['username'], "trying to manipulate Stamp System.")
+		# ban?
 		return
 
 	if stamp in client['stampHandler']:
@@ -134,3 +139,16 @@ def handleStampEarned(client, _id):
 	client.penguin.recentStamps.append(stamp)
 
 	client.send('aabs', int(stamp))
+
+'''
+Handler to award user stamp, if he's in same room as a mascot. 
+'''
+@GeneralEvent.on("mascot-joined-room")
+def handleAwardMascotStamp(room, mascot_name, penguins):
+	availableMascotStamps = room.roomHandler.engine.stampCrumbs.getStampsByGroup(6)
+	mascotStamps = {str(stamp.name).strip():stamp.id for stamp in availableMascotStamps}
+	mascotToSearch = str(mascot_name).strip()
+
+	if mascotToSearch in mascotStamps:
+		stampId = mascotStamps[mascotToSearch]
+		[handleStampEarned(client, stampId, True) for client in penguins]

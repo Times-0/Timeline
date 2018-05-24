@@ -123,8 +123,16 @@ class Place(Room):
 		client.send('jr', self.ext_id, *((self, ) if len(str(self)) > 0 else []))
 		self.send('ap', client) if not client['stealth_mode'] else client.send('ap', client)
 		if client['mascot_mode']:
-			GeneralEvent("mascot-joined-room", self, client)
 			GeneralEvent("mascot:{}-joined-room".format(client['nickname']), self)
+
+		self.checkForMascotPresence()
+
+	def checkForMascotPresence(self):
+		mascots = set(m['nickname'] for m in self if m['mascot_mode'])
+		penguins = [p for p in self if not p['mascot_mode']]
+
+		[GeneralEvent("mascot-joined-room", self, mascot, penguins) for mascot in mascots]
+		self.roomHandler.engine.log("info", "Mascot presence found in room: ", self.name)
 
 	def __repr__(self):
 		return "Place<{}#{}>".format(self.id, self.keyName)
@@ -171,7 +179,7 @@ class Arcade(Game):
 		client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'playing' : 0})
 
 class Multiplayer(Game, ExtensibleObject):
-	# Multiplayer? Know this is crazy, still :P
+	# Multiplayer!
 
 	game = True
 	waddle = None
@@ -313,7 +321,7 @@ class RoomHandler (object):
 						self.details[Arcade] += 1
 
 					elif _id > 990 or _id in MULTIPLAYER_GAMES:
-						roomObj = Multiplayer(self, _id, key, name, maxu, member, jump, item)
+						roomObj = (Multiplayer if _id not in MULTIPLAYER_GAMES else MULTIPLAYER_GAMES[_id])(self, _id, key, name, maxu, member, jump, item)
 						self.details[Multiplayer] += 1
 					else:
 						roomObj = Game(self, _id, key, name, max, member, jump, item)
