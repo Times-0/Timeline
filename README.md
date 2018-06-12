@@ -30,7 +30,7 @@ Timeline is a free, open-source project. You can always support this by funding 
   - [BCrypt](https://pypi.python.org/pypi/bcrypt/)
   - [lxml](http://lxml.de/installation.html)
   - [numpy](http://www.numpy.org/)
-  - OPTIONAL : [colorlog](https://github.com/borntyping/python-colorlog)
+  - OPTIONAL: [colorlog](https://github.com/borntyping/python-colorlog)
   - A Python MySQL Connector. (Timeline uses MySQLdb by default, you can change this in Database/\_\_init\_\_.py : 31)
   
 # Extras
@@ -38,7 +38,7 @@ Timeline is a free, open-source project. You can always support this by funding 
 - [Timid](https://github.com/Times-0/Timid) - Automated AS3 CPPS Setup utility, which does the hard work of creating CPPS for you!
 
 You can use the following to add more features and customization to your CPPS:
-  - [FindFour AI](https://github.com/Times-0/Timeline-FindFourAI/) - An intelligent, human like bot, with whom you can play FindFour matches with.
+  - [FindFour AI](https://github.com/Times-0/Timeline-FindFourAI/) - An intelligent, human-like bot, with whom you can play FindFour matches with.
   - [Commands](https://github.com/Times-0/Timeline/blob/master/Timeline/Plugins/Commands) - Comes with Timeline by default. Enables users to use shortcut commands with the chat system.
   
 *Note: There maybe many other plugins not listed in the above list, the above are ones officially tested and found to be working and 100% legit*
@@ -104,4 +104,4 @@ Timeline is almost complete, covering support for all features present in native
 - Card Jitsu Fire (Multiplayer-Waddle)  \[AS3] *todo as2*
 
 # Support
-If you have any issue, found any bug or error or issue, or want to suggest some improvemnt, you are free to open an issue or request a pull request.
+If you have any issue, found any bug or error or issue, or want to suggest some improvement, you are free to open an issue or request a pull request.
