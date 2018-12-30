@@ -133,9 +133,6 @@ class Membership(object):
     def __int__(self):
         return self.__repr__()
 
-    def __int__(self):
-        return self.__repr__()
-
     def __bool__(self):
         return self.__repr__() > 0
 

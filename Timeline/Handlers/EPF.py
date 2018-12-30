@@ -61,7 +61,7 @@ def handleAddEPFItem(client, _id):
 	if not item.is_epf:
 		return client.send('e', 402)
 
-	if item in client['inventory']:
+	if client['RefreshHandler'].inInventory(item):
 		return client.send('e', 400)
 
 	if client['epf'].p < item.cost:
@@ -70,7 +70,7 @@ def handleAddEPFItem(client, _id):
 	client['epf'].p -= item.cost
 	client.dbpenguin.epf = '{}%{}'.format(client['epf'].p, client['epf'].t)
 
-	client['inventory'].append(item)
+	client.addItem(item, 'Add EPF Item')
 
 	client.dbpenguin.save()
 	client.send('epfai', client.epfai.p)

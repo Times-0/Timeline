@@ -12,6 +12,9 @@ from twisted.enterprise import adbapi
 from twistar.registry import Registry
 from twistar.dbconfig.mysql import ReconnectingMySQLConnectionPool
 
+from Timeline.Database.DB import Penguin, Igloo, Avatar, Currency, Ninja, Asset, Ban, CareItem, Friend, Request, \
+    Ignore, Inventory, Mail, Membership, MusicTrack, Puffle, Stamp, StampCover, IglooFurniture, IglooLike, Coin
+
 class DBManagement(object):
     
     def __init__(self, user, passd, db):
@@ -28,6 +31,10 @@ class DBManagement(object):
         user, db = self.db_data
         self.logger.info("Starting MySQL DB Pool... @{0}:{1}".format(*self.db_data))
         try:
+            Registry.register(Penguin, Igloo, Avatar, Currency, Ninja, Asset, Ban, CareItem, Friend, Request, Ignore,
+                              Inventory, Mail, Membership, MusicTrack, Puffle, Stamp, StampCover, Coin)
+            Registry.register(Igloo, IglooFurniture, IglooLike)
+
             Registry.DBPOOL = ReconnectingMySQLConnectionPool('MySQLdb', user=user, passwd=passd, db=db, cp_reconnect=True)
             self.conn = True
     

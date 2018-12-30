@@ -5,7 +5,7 @@ from importlib import import_module
 
 PermissionError = type('PermissionError', (Exception,), {})
 PLUGINS_LOADED = list()
-PLUGIN_ABSTRACT_OBJECTS = list()
+PLUGIN_OBJECTS = list()
 
 def extend(base, plugin):
     if not hasattr(base, '_extend'):
@@ -80,6 +80,6 @@ def loadPluginObjects():
 
         exists = sum(k.name == plugin.name and k.developer == plugin.developer and (k.version == plugin.version or k.version == 0 or plugin.version == 0) for k in Abstraction.getAllPlugins()) > 0
         if not exists:
-            plugin()
+            PLUGIN_OBJECTS.append(plugin())
 
 from Timeline.Utils.Plugins.IPlugin import IPlugin, RequirementsManager, IExtender, IPluginAbstractMeta

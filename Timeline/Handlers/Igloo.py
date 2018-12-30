@@ -2,412 +2,394 @@ from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVE
 from Timeline import Username, Password, Inventory
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
 from Timeline.Utils.Crumbs.Items import Pin, Award
-from Timeline.Utils.Igloo import Igloo, PenguinIglooItem, PenguinFurnitureItem, PenguinFloorItem, PenguinLocationItem
 from Timeline.Server.Room import Igloo as IglooRoom
+from Timeline.Database.DB import Igloo, IglooFurniture, Coin, Asset, IglooLike
 
 from twisted.internet.defer import inlineCallbacks, returnValue
+
+from twistar.registry import Registry
 
 from collections import deque
 import logging, json
 from time import time
 
 @GeneralEvent.on('onClientDisconnect')
+@inlineCallbacks
 def handleLockPenguinIgloo(client):
-	if client['igloo'] is not None:
-		client['igloo'].opened = False
-		client['iglooHandler'].currentIgloo.locked = True
+    if client['igloo'] is not None:
+        client['igloo'].opened = False
+        client['currentIgloo'].locked = True
 
-		yield client['iglooHandler'].currentIgloo.save()
+        yield client['currentIgloo'].save()
 
 @PacketEventHandler.onXT('s', 'g#gm', WORLD_SERVER)
 @inlineCallbacks
 def handleGetPlayerIgloo(client, _id):
-	iglooRoom = yield client['iglooHandler'].createPenguinIgloo(_id)
-	if iglooRoom == None:
-		return
+    iglooRoom = yield client['RefreshHandler'].initPenguinIglooRoom(_id)
+    if iglooRoom == None:
+        return
 
-	igloo = yield Igloo.find(iglooRoom._id)
-	likes = 0
-	if igloo.likes != '' and igloo.likes != None:
-		j = sum([i['count'] for i in json.loads(igloo.likes)])
+    igloo = yield Igloo.find(iglooRoom._id)
+    likes = yield igloo.get_likes_count()
+    furnitures = yield igloo.get_furnitures_string()
 
-	details = [igloo.id, 1, 0, int(bool(igloo.locked)), igloo.music, igloo.floor, igloo.location, igloo.type, likes, igloo.furniture]
+    details = [igloo.id, 1, 0, int(bool(igloo.locked)), igloo.music, igloo.floor, igloo.location, igloo.type, likes, furnitures]
 
-	client.send('gm', _id, ':'.join(map(str, details)))
+    client.send('gm', _id, ':'.join(map(str, details)))
 
 @PacketEventHandler.onXT('s', 'g#aloc', WORLD_SERVER)
 @inlineCallbacks
 def handleBuyLocation(client, _id):
-	location = client.engine.iglooCrumbs.getLocationById(_id)
-	if location is None:
-		returnValue(client.send('e', 402))
+    location = client.engine.iglooCrumbs.getLocationById(_id)
+    if location is None:
+        returnValue(client.send('e', 402))
 
-	if client['iglooHandler'].hasLocation(_id):
-		returnValue(client.send('e', 400))
+    if client['RefreshHandler'].hasAsset(_id, 'l'):
+        returnValue(client.send('e', 400))
 
-	if int(client['coins'] + 1) < location.cost:
-		returnValue(client.send('e', 401))
+    if int(client['coins'] + 1) < location.cost:
+        returnValue(client.send('e', 401))
 
-	item = PenguinLocationItem(location.id, location.name, location.igloo, location.cost)
-	item.date = int(time())
+    location_db = IglooFurniture(penguin_id = client['id'], item = _id, type = 'l')
+    yield location_db.save()
 
-	client['iglooHandler'].locations.append(item)
-	client.dbpenguin.locations = ','.join(map(lambda x: '|'.join(map(str, [x.id, x.date])), client['iglooHandler'].locations))
-	yield client.dbpenguin.save()
-
-	client['coins'] -= location.cost
-	client.send('aloc', _id, client['coins'])
+    client['coins'] -= location.cost
+    yield Coin(penguin_id = client['id'], transaction = -location.cost, comment = "Spent money on buying location. "
+                                                                                  "Location: {}".format(_id)).save()
+    client['RefreshHandler'].forceRefresh()
 
 
 @PacketEventHandler.onXT('s', 'g#gail', WORLD_SERVER)
 @inlineCallbacks
 def getIglooLayoutList(client, _id):
-	if not isinstance(client['room'], IglooRoom) or not _id == (client['room'].ext_id - 1000):
-		returnValue(None)
+    if not isinstance(client['room'], IglooRoom) or not _id == (client['room'].ext_id - 1000):
+        returnValue(None)
 
-	iglooLayouts = list()
-	igloos = yield Igloo.find(where = ['owner = ?', _id])
+    iglooLayouts = list()
+    igloos = client['data'].igloos
 
-	total_likes = 0
-	igloo_likes = list()
+    total_likes = 0
+    igloo_likes = list()
 
-	ix = 0
+    for i in xrange(len(igloos)):
+        igloo = igloos[i].igloo
+        furnitures = yield igloo.get_furnitures_string()
+        likes = yield igloo.get_likes_count()
 
-	for i in igloos:
-		locked = True
-		ix += 1
-		if i.id == client['igloo']._id:
-			locked = i.locked
+        total_likes += likes
 
-		likes = sum([i['count'] for i in json.loads(i.likes)])
-		total_likes += likes
+        details = [int(igloo.id), i + 1, 0, int(igloo.locked) if igloo.id != client['currentIgloo'].id else False,
+                   int(igloo.music), int(igloo.floor), int(igloo.location),
+                   int(igloo.type), likes, furnitures]
 
-		details = [i.id, ix, 0, int(locked), i.music, i.floor, i.location, i.type, likes, i.furniture]
-		iglooLayouts.append(':'.join(map(str, details)))
-		igloo_likes.append('|'.join(map(str, [i.id, likes])))
+        iglooLayouts.append(':'.join(map(str, details)))
+        igloo_likes.append('|'.join(map(str, [int(igloo.id), likes])))
 
-	client.send('gail', _id, 0, *iglooLayouts)
-	client.send('gaili', total_likes, ','.join(igloo_likes))
+
+    client.send('gail', _id, 0, *iglooLayouts)
+    client.send('gaili', total_likes, ','.join(igloo_likes))
 
 @PacketEventHandler.onXT('s', 'g#uic', WORLD_SERVER)
 @inlineCallbacks
 def updateIglooConfiguration(client, _id, _type, floor, location, music, furnitures):
-	furniture_string = ','.join(map(lambda x: '|'.join(map(str, x)), furnitures))
-	fbyid = {}
-	for f in furnitures:
-		furn = f[0]
+    if client['currentIgloo'].id != _id or (not client['RefreshHandler'].hasAsset(floor, 'fl') and floor != 0) or \
+            (not client['RefreshHandler'].hasAsset(location, 'l') and location != 1) or \
+            (not client['RefreshHandler'].hasAsset(_type, 'i') and _type != 1):
+        return
 
-		if not client['iglooHandler'].hasFurniture(furn):
-			return
+    furniture_string = ','.join(map(lambda x: '|'.join(map(str, x)), furnitures))
+    furnCount = {i[0]: 0 for i in furnitures}
 
-		fbyid[furn] = fbyid[furn] + 1 if furn in fbyid else 1
+    yield client['currentIgloo'].iglooFurnitures.clear()
 
-		if fbyid[furn] > client['iglooHandler'].getFurniture(furn).max or fbyid[furn] > client['iglooHandler'].getFurniture(furn).quantity:
-			return
+    for furn in furnitures:
+        furn_id, x, y, rotate, frame = furn
+        furniture_db = client['RefreshHandler'].getAsset(furn_id, 'f')
+        if furniture_db is None:
+            return
 
-	if not client['igloo']._id == _id:
-		return # ban?
+        furnCount[furn_id] += 1
+        furniture_config = client.engine.iglooCrumbs.getFurnitureById(furn_id)
 
-	if not client['iglooHandler'].hasFloor(floor) or (not client['iglooHandler'].hasLocation(location) and location != 1):
-		return
+        if furnCount[furn_id] > furniture_db.quantity or furnCount[furn_id] > furniture_config.max:
+            return
 
-	igloo = client['iglooHandler'].currentIgloo
-	igloo.type = _type
-	igloo.floor = floor
-	igloo.location = location
-	igloo.music = music
-	igloo.furniture = furniture_string
+    # set furnitures
+    client['RefreshHandler'].skip()
+    yield client['currentIgloo'].updateFurnitures(furnitures)
+    yield client['RefreshHandler'].forceRefresh()
 
-	likes = sum([i['count'] for i in json.loads(str(igloo.likes))])
+    igloo = client['currentIgloo']
+    igloo.type = _type
+    igloo.floor = floor
+    igloo.location = location
+    igloo.music = music
 
-	yield igloo.save()
+    furn_str = yield igloo.get_furnitures_string()
 
-	details = [igloo.id, 1, 0, int(bool(igloo.locked)), igloo.music, igloo.floor, igloo.location, igloo.type, likes, igloo.furniture]
-	client['igloo'].send('uvi', client['id'], ':'.join(map(str, details)))
+    likes = yield igloo.get_likes_count()
+
+    yield igloo.save()
+
+    details = [int(igloo.id), 1, 0, int(bool(igloo.locked)), int(igloo.music), int(igloo.floor), int(igloo.location),
+               int(igloo.type), likes, furn_str]
+    client['igloo'].send('uvi', client['id'], ':'.join(map(str, details)))
 
 @PacketEventHandler.onXT('s', 'g#af', WORLD_SERVER)
 @inlineCallbacks
 def handleBuyFurniture(client, _id, deduce_coins = True):
-	furniture = client.engine.iglooCrumbs.getFurnitureById(_id)
-	if furniture is None:
-		returnValue(client.send('e', 402))
+    furniture = client.engine.iglooCrumbs.getFurnitureById(_id)
+    if furniture is None:
+        returnValue(client.send('e', 402))
 
-	if furniture.is_member and not client['member']:
-		returnValue(client.send('e', 999))
+    if furniture.is_member and not client['member']:
+        returnValue(client.send('e', 999))
 
-	quantity = 0
-	furn = None
-	if client['iglooHandler'].hasFurniture(_id):
-		furn = client['iglooHandler'].getFurniture(_id)
-		quantity = furn.quantity
+    furn = client['RefreshHandler'].getAsset(_id, 'f')
+    quantity = furn.quantity if furn is not None else 0
 
-	if quantity > 98:
-		returnValue(client.send('e', 403))
+    if quantity > furniture.max:
+        returnValue(client.send('e', 403))
 
-	if int(client['coins'] + 1) < furniture.cost:
-		returnValue(client.send('e', 401))
+    if int(client['coins'] + 1) < furniture.cost:
+        returnValue(client.send('e', 401))
 
-	if furn is None:
-		furn = PenguinFurnitureItem(furniture.id, furniture.type, furniture.cost, furniture.name, furniture.is_member, furniture.max)
-		furn.date = int(time())
-		furn.quantity = 0
-		client['iglooHandler'].furnitures.append(furn)
+    if furn is None:
+        furn = Asset(penguin_id=client['id'], item=_id, type='f', quantity=1)
+        yield furn.save()
+    else:
+        furn.quantity = int(furn.quantity) + 1
+        furn.save()
+        client.send('af', _id, client['coins'])
 
-	furn.quantity += 1
-	client['coins'] -= furniture.cost * deduce_coins
+    yield Coin(penguin_id=client['id'], transaction= -furniture.cost * deduce_coins,
+               comment="Spent money buying furniture. Furniture: {}".format(_id)).save()
 
-	client.dbpenguin.furnitures = ','.join(map(lambda x: '|'.join(map(str, [x.id, x.date, x.quantity])), client['iglooHandler'].furnitures))
-	yield client.dbpenguin.save()
-
-	client.send('af', _id, client['coins'])
-	returnValue(True)
+    client['RefreshHandler'].forceRefresh()
 
 @PacketEventHandler.onXT('s', 'g#ag', WORLD_SERVER)
 @inlineCallbacks
 def handleBuyFloor(client, _id):
-	floor = client.engine.iglooCrumbs.getFloorById(_id)
-	if floor is None:
-		returnValue(client.send('e', 402))
+    floor = client.engine.iglooCrumbs.getFloorById(_id)
+    if floor is None:
+        returnValue(client.send('e', 402))
 
-	if client['iglooHandler'].hasFloor(_id):
-		returnValue(client.send('e', 400))
+    if client['RefreshHandler'].hasAsset(_id, 'fl'):
+        returnValue(client.send('e', 400))
 
-	if int(client['coins'] + 1) < floor.cost:
-		returnValue(client.send('e', 401))
+    if int(client['coins'] + 1) < floor.cost:
+        returnValue(client.send('e', 401))
 
-	item = PenguinFloorItem(floor.id, floor.name, floor.cost)
-	item.date = int(time())
+    item = Asset(penguin_id=client['id'], item=_id, type='fl')
+    yield item.save()
 
-	client['iglooHandler'].floors.append(item)
-	client.dbpenguin.floors = ','.join(map(lambda x: '|'.join(map(str, [x.id, x.date])), client['iglooHandler'].floors))
-	yield client.dbpenguin.save()
+    yield Coin(penguin_id=client['id'], transaction= -floor.cost,
+               comment="Spent money buying floor. Floor: {}".format(_id)).save()
 
-	client['coins'] -= floor.cost
-	client.send('ag', _id, client['coins'])
+    client['RefreshHandler'].forceRefresh()
 
 @PacketEventHandler.onXT('s', 'g#au', WORLD_SERVER)
 @inlineCallbacks
 def handleBuyIgloo(client, _id):
-	igloo = client.engine.iglooCrumbs.getIglooById(_id)
-	if igloo is None:
-		returnValue(client.send('e', 402))
+    igloo = client.engine.iglooCrumbs.getIglooById(_id)
+    if igloo is None:
+        returnValue(client.send('e', 402))
 
-	if client['iglooHandler'].hasIgloo(_id):
-		returnValue(client.send('e', 500))
+    if client['RefreshHandler'].hasAsset(_id, 'i'):
+        returnValue(client.send('e', 500))
 
-	if int(client['coins'] + 1) < igloo.cost:
-		returnValue(client.send('e', 401))
+    if int(client['coins'] + 1) < igloo.cost:
+        returnValue(client.send('e', 401))
 
-	item = PenguinIglooItem(igloo.id, igloo.name, igloo.cost)
-	item.date = int(time())
+    item = Asset(penguin_id=client['id'], item=_id, type='i')
+    yield item.save()
 
-	client['iglooHandler'].igloos.append(item)
-	client.dbpenguin.igloos = ','.join(map(lambda x: '|'.join(map(str, [x.id, x.date])), client['iglooHandler'].igloos))
-	yield client.dbpenguin.save()
+    yield Coin(penguin_id=client['id'], transaction=-igloo.cost,
+               comment="Spent money buying igloo. Igloo: {}".format(_id)).save()
 
-	client['coins'] -= igloo.cost
-	client.send('au', _id, client['coins'])
+    client['RefreshHandler'].forceRefresh()
 
 @PacketEventHandler.onXT('s', 'g#al', WORLD_SERVER, p_r = False)
 @inlineCallbacks
 def handleAddLayout(client, data):
-	igloos = yield Igloo.find(where = ['owner = ?', client['id']])
-	if len(igloos) > 6:
-		returnValue(None)
+    if len(client['data'].igloos) > 6:
+        returnValue(None)
 
-	if not client['member']:
-		returnValue(client.send('e', 999))
+    if not client['member']:
+        returnValue(client.send('e', 999))
 
-	igloo = yield Igloo(owner = client['id'], location = 1, furniture = '', likes = '[]').save()
-	yield igloo.refresh()
+    igloo = Igloo(penguin_id=client['id'])
+    yield igloo.save()
+    client['RefreshHandler'].forceRefresh()
 
-	client['iglooHandler'].append(igloo)
-	details = [igloo.id, len(igloos)+1, 0, int(bool(igloo.locked)), igloo.music, igloo.floor, igloo.location, igloo.type, 0, igloo.furniture]
-	client.send('al', client['id'], ':'.join(map(str, details)))
+    details = [igloo.id, len(client['data'].igloos)+1, 0, int(bool(igloo.locked)), igloo.music, igloo.floor,
+               igloo.location, igloo.type, 0, '']
+    client.send('al', client['id'], ':'.join(map(str, details)))
 
 @PacketEventHandler.onXT('s','g#pio', WORLD_SERVER)
 @inlineCallbacks
 def handleIsIglooOpen(client, _id):
-	iglooRoom = yield client['iglooHandler'].createPenguinIgloo(_id)
-	if iglooRoom == None:
-		return
+    iglooRoom = yield client['RefreshHandler'].initPenguinIglooRoom(_id)
+    if iglooRoom is None:
+        return
 
-	igloo = yield Igloo.find(iglooRoom._id)
-	client.send('pio', int((not bool(int(igloo.locked))) or client['moderator']))
+    client.send('pio', int(iglooRoom.opened or client['moderator']))
 
 @PacketEventHandler.onXT('s', 'g#cli', WORLD_SERVER, p_r = False)
 @inlineCallbacks
 def handleCanLike(client, data):
-	igloo_id = client['room']._id
-	igloo = yield Igloo.find(igloo_id)
-	if igloo is None:
-		returnValue(client.send('cli', int(igloo.id), 201, '{"canFuck": true, "periodicity": "Hourly", "nextFuck_msec": 0}'))
+    igloo_id = client['room']._id
+    igloo = yield Igloo.find(igloo_id)
 
-	likes = json.loads(igloo.likes)
+    if igloo is None:
+        returnValue(client.send('cli', int(igloo.id), 201, '{"canFuck": true, "periodicity": "Hourly", "nextFuck_msec": 0}'))
 
-	like_str = {'canLike' : True, 'periodicity' : 'ScheduleDaily', 'nextLike_msecs' : 0}
-	now = int(time())
+    likes = yield igloo.iglooLikes.get()
+    iglooLikes = {i.penguin_swid: i for i in likes}
 
-	for i in likes:
-		if i['id'] != client['swid']:
-			continue
+    canLike = False
+    nextLike = 0
+    if client['swid'] not in iglooLikes:
+        canLike = True
+    else:
+        like_obj = iglooLikes[client['swid']]
+        lastLike = like_obj.get_time()
+        span = (lastLike + 24*60*60) - time()
 
-		last_like = int(i['time'])
-		span = int((now - last_like)/(24*60*60))
-		
-		if not span > 0:
-			like_str['canLike'] = False
-			like_str['nextLike_msecs'] = span * 1000
+        canLike = span < 0
+        nextLike = (lastLike + 24*60*60) - time()
 
-		break
-
-	client.send('cli', int(igloo.id), 200, json.dumps(like_str))
-	returnValue(like_str['canLike'])
+    client.send('cli', int(igloo.id), 200, json.dumps({'canLike': canLike,
+                'periodicity': 'ScheduleDaily', 'nextLike_msecs': int(nextLike*1000)}))
+    returnValue(canLike)
 
 @PacketEventHandler.onXT('s', 'g#uiss', WORLD_SERVER)
 @inlineCallbacks
 def handleUpdateIglooSlotSummary(client, _id, summary):
-	if not _id in client['iglooHandler']:
-		returnValue(None)
+    igloos = client['RefreshHandler'].getIgloos()
 
-	client['iglooHandler'].currentIgloo = client['iglooHandler'].find(_id)
-	client['iglooHandler'].filterCJMats()
-	client['igloo']._id = _id
-	client.dbpenguin.igloo = client['iglooHandler'].currentIgloo.id
-	client.dbpenguin.save()
+    if _id not in igloos:
+        returnValue(None)
 
-	likes = 0
+    client['currentIgloo'] = igloos[_id].igloo
+    # client['iglooHandler'].filterCJMats() # todo: support this on new update
+    client['igloo']._id = _id
+    client.dbpenguin.igloo = client['currentIgloo'].id
+    client.dbpenguin.save()
 
-	for i in summary:
-		_i = i[0]
-		locked = int(bool(i[1]))
-		if not locked and not client['member']:
-			client.send('e', 999)
-			locked = 1
+    for i in summary:
+        igloo_id = i[0]
+        locked = int(bool(i[1]))
 
-		igloo = yield Igloo.find(_i)
-		igloo.locked = locked
-		igloo.save()
+        if not locked and not client['member']:
+            client.send('e', 999)
+            locked = 1
 
-		if _i == _id:
-			client['igloo'].opened = not locked
+        if not igloo_id in igloos:
+            return
 
-	igloo = client['iglooHandler'].currentIgloo
-	likes = sum([i['count'] for i in json.loads(str(igloo.likes))])
+        igloo = igloos[igloo_id].igloo
+        igloo.locked = int((igloo_id == _id) and locked)
+        igloo.save()
 
-	details = [igloo.id, 1, 0, int(bool(igloo.locked)), igloo.music, igloo.floor, igloo.location, igloo.type, likes, igloo.furniture]
-	client['igloo'].send('uvi', client['id'], ':'.join(map(str, details)))
+    client['igloo'].opened = not client['currentIgloo'].locked
+
+    igloo = client['currentIgloo']
+    likes = yield client['currentIgloo'].get_likes_count()
+    fur_str = yield igloo.get_furnitures_string()
+
+    details = [igloo.id, 1, 0, int(bool(igloo.locked)), int(igloo.music), int(igloo.floor), int(igloo.location),
+               int(igloo.type), likes, fur_str]
+    client['igloo'].send('uvi', client['id'], ':'.join(map(str, details)))
 
 
 @PacketEventHandler.onXT('s', 'g#gr', WORLD_SERVER, p_r = False)
 @inlineCallbacks
 def handleGetOpenIgloos(client, data):
-	open_igloos = list()
-	myLikes = 0
-	myPopl = 0
-	friends_by_id = [k[1] for k in client['friendsHandler'].friends]
+    open_igloos = list()
+    myLikes = yield client['currentIgloo'].get_likes_count()
+    myPopl = len(client['igloo'])
+    friends_by_id = map(lambda x: x.friend, client['data'].friends)
+    igloos = list(client.engine.iglooCrumbs.penguinIgloos)
 
-	for igloo in client.engine.iglooCrumbs.penguinIgloos:
-		if not igloo.opened and igloo.owner != client['id'] and igloo.owner not in friends_by_id:
-			continue
+    for igloo in igloos:
+        if not client['moderator'] and not igloo.opened \
+                and igloo.owner != client['id'] and igloo.owner not in friends_by_id:
+                continue
 
-		_id = igloo._id
-		owner = igloo.owner
+        igloo_id = igloo._id
+        owner = igloo.owner
 
-		penguin =  client.engine.getPenguinById(owner)
-		if penguin is None:
-			continue
+        penguin = client.engine.getPenguinById(owner)
+        iglooDB = yield Igloo.find(igloo_id)
 
-		_igloo = yield Igloo.find(_id)
-		if _igloo is None:
-			continue
+        if (not client['moderator'] and penguin is None) or iglooDB is None:
+            continue
 
-		likes = sum([i['count'] for i in json.loads(_igloo.likes)])
+        iglooLikes = yield iglooDB.get_likes_count()
+        open_igloos.append('|'.join(map(str, [int(penguin['id']), penguin['nickname'], iglooLikes, len(igloo), 0])))
 
-		if igloo.owner != client['id']:
-			open_igloos.append('|'.join(map(str, [int(penguin['id']), penguin['nickname'], likes, len(igloo), int(not igloo.opened)])))
-		else:
-			myLikes = likes
-			myPopl = len(igloo)
-
-
-	client.send('gr', myLikes, myPopl, *open_igloos if len(open_igloos) > 0 else '')
+    client.send('gr', myLikes, myPopl, *open_igloos)
 
 @PacketEventHandler.onXT('s', 'g#grf', WORLD_SERVER, p_r = False)
 @inlineCallbacks
 def handleGetFriendIgloos(client, data):
-	friends_by_id = [k[1] for k in client['friendsHandler'].friends]
-	friend_igloos = [igloo for igloo in client.engine.iglooCrumbs.penguinIgloos if igloo.owner in friends_by_id]
+    friends_by_id = map(lambda x: x.friend, client['data'].friends)
+    friend_igloos = [i for i in client.engine.iglooCrumbs.penguinIgloos if i.owner in friends_by_id]
 
-	availIgloos = list()
+    availIgloos = list()
 
-	for igloo in friend_igloos:
-		_igloo = yield Igloo.find(igloo._id)
-		if _igloo is None:
-			continue
+    for igloo in friend_igloos:
+        _igloo = yield Igloo.find(igloo._id)
+        if _igloo is None:
+            continue
 
-		likes = 0
-		like_json = sum([i['count'] for i in json.loads(_igloo.likes)])
+        likes = yield _igloo.get_likes_count()
 
-		availIgloos.append('|'.join(map(str, [int(igloo.owner), likes])))
+        availIgloos.append('|'.join(map(str, [int(igloo.owner), likes])))
 
-	client.send('grf', *availIgloos if len(availIgloos) > 0 else '')
+    client.send('grf', *availIgloos) if len(availIgloos) > 0 else client.send('%xt%grf%-1%')
 
 @PacketEventHandler.onXT('s', 'g#gili', WORLD_SERVER)
 @inlineCallbacks
 def handleGetIglooLikes(client, start, end):
-	igloo = yield Igloo.find(client['room']._id)
-	if igloo is None:
-		returnValue(client.send('gili', 0, 204, '{"about": "You are a pms and I know it!"}'))
+    igloo = yield Igloo.find(client['room']._id)
+    if igloo is None:
+        returnValue(client.send('gili', 0, 204, '{"about": "I don\' think you notice, I don\'t think you care.!"}'))
 
-	likes = str(igloo.likes)
-	likes = json.loads(likes)
+    likes = yield igloo.get_likes_count()
+    likesList = yield igloo.iglooLikes.get(limit = (end, start))
 
-	count = sum([i['count'] for i in likes])
+    like = {
+        'likedby': {
+            'counts': {
+                'count': int(likes),
+                'maxCount': 5000,
+                'accumCount': int(likes)
+            },
+            'IDs': map(lambda x: x.penguin_swid, likesList)
+        }
+    }
 
-	like = {
-		'likedby' : {
-			'counts' : {
-				'count' : count,
-				'maxCount' : 5000,
-				'accumCount' : count
-			},
-			'IDs' : likes[start:end]
-		}
-	}
-
-	client.send('gili', igloo.id, 200, json.dumps(like))
+    client.send('gili', igloo.id, 200, json.dumps(like))
 
 @PacketEventHandler.onXT('s', 'g#li', WORLD_SERVER, p_r = False)
 @inlineCallbacks
 def handleLikeIgloo(client, data):
-	igloo_id = client['room']._id
-	igloo = yield Igloo.find(igloo_id)
-	if igloo is None:
-		return
+    igloo_id = client['room']._id
+    igloo = yield Igloo.find(igloo_id)
+    if igloo is None:
+        return
 
-	can_like = yield handleCanLike(client, [])
-	if not can_like:
-		returnValue(None)
+    can_like = yield handleCanLike(client, [])
+    if not can_like:
+        returnValue(None)
 
-	likes = json.loads(str(igloo.likes))
-	like_details = {'id' : client['swid'], 'count' : 0, 'time' : int(time())}
-	for i in likes:
-		if i['id'] == client['swid']:
-			like_details['count'] += i['count']
-			likes.remove(i)
-			break
+    penguinIglooLike = yield igloo.iglooLikes.get(where = ['penguin_swid = ?', client['swid']], limit = 1)
+    if penguinIglooLike is None:
+        penguinIglooLike = yield IglooLike(penguin_swid=client['swid'], igloo_id=igloo_id, likes = 0).save()
 
-	like_details['count'] += 1
-	likes.insert(0, like_details)
+    penguinIglooLike.likes = int(penguinIglooLike.likes) + 1
+    yield penguinIglooLike.save()
 
-	likes = json.dumps(likes)
-	igloo.likes = likes
-	yield igloo.save()
-
-	client['room'].sendExcept(client['id'], 'lue', client['swid'], like_details['count'])
-
-	peng = client.engine.getPenguinById(igloo.owner)
-	if peng is not None:
-		if peng['iglooHandler'] is not None:
-			yield peng['iglooHandler'].currentIgloo.refresh()
+    client['room'].sendExcept(client['id'], 'lue', client['swid'], int(penguinIglooLike.likes))

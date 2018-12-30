@@ -3,6 +3,7 @@ from Timeline import Username, Password, Inventory
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
 from Timeline.Server.Room import Game, Place, Multiplayer
 from Timeline.Handlers.Games.WaddleHandler import Waddle
+from Timeline.Database.DB import Coin
 
 from twisted.internet.defer import inlineCallbacks, returnValue
 from twisted.internet import reactor
@@ -35,6 +36,7 @@ class SledRacingGame(Multiplayer):
 
 			return
 
+		Coin(player_id=client['id'], transaction=10 + client['isFirst'] * 50, comment="Coins earned by playing Sled Racing").save()
 		client['coins'] += 10 + client['isFirst'] * 50
 		client.send('zo', client['coins'])
 		
@@ -77,7 +79,7 @@ class SledRacingGame(Multiplayer):
 		client.penguin.isFirst = False
 
 		self.Playing[client['game_index']] = client
-		client.send('jz', client['game_index'], client['nickname'], client['color'], client['tube'])
+		client.send('jz', client['game_index'], client['nickname'], client['data'].avatar.color, client['tube'])
 		self.updateGame()
 
 		if None not in self.Playing[:SLED_TRACKS[self.waddle]]:
@@ -98,7 +100,7 @@ class SledRacingGame(Multiplayer):
 			if user is None:
 				continue
 			# seat|nickname|peng_color|belt
-			uzString.append('|'.join(map(str, [user['nickname'], user['color'], user['tube'], user['nickname']])))
+			uzString.append('|'.join(map(str, [user['nickname'], user['data'].avatar.color, user['tube'], user['nickname']])))
 
 		self.send('uz', len(uzString), '%'.join(uzString))
 

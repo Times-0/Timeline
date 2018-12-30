@@ -14,6 +14,7 @@ from random import choice, shuffle, sample, randint
 
 logger = logging.getLogger(TIMELINE_LOGGER)
 
+
 class Sensei(Penguin):
 	username = '$ensei'
 
@@ -25,6 +26,7 @@ class Sensei(Penguin):
 
 	def makeConnection(self, *x):
 		pass
+
 
 class CardJitsuSensei(CardJitsuGame):
 

@@ -7,7 +7,7 @@ from Timeline.Server.Constants import TIMELINE_LOGGER, PACKET_TYPE, PACKET_DELIM
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
 
 from twisted.python.rebuild import rebuild
-from twisted.internet import threads
+from twisted.internet import threads, defer
 
 from lxml.etree import fromstring as parseXML
 from lxml import etree as XML
@@ -153,9 +153,9 @@ class PacketHandler(object):
 
 	def handlePacketReceived(self, line):
 		if line == "<policy-file-request/>":
-			deferedHandler = threads.deferToThread(self.penguin.handleCrossDomainPolicy)
+			deferedHandler = defer.maybeDeferred(self.penguin.handleCrossDomainPolicy)
 		else:
-			deferedHandler = threads.deferToThread(self.parsePacket, line)
+			deferedHandler = defer.maybeDeferred(self.parsePacket, line)
 		
 		return deferedHandler
 

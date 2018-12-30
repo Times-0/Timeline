@@ -369,7 +369,7 @@ class CardJitsuGame(Multiplayer):
 		client.penguin.game = client.penguin.room = self
 
 		self.Playing[client['game_index']] = client
-		client.send('jz', client['game_index'], client['nickname'], client['color'], client['ninjaHandler'].ninja.belt)
+		client.send('jz', client['game_index'], client['nickname'], client['data'].avatar.color, client['ninjaHandler'].ninja.belt)
 		self.updateGame()
 
 		if None not in self.Playing:
@@ -407,7 +407,7 @@ class CardJitsuGame(Multiplayer):
 			if user is None:
 				continue
 			# seat|nickname|peng_color|belt
-			uzString.append('|'.join(map(str, [i, user['nickname'], user['color'], user['ninjaHandler'].ninja.belt])))
+			uzString.append('|'.join(map(str, [i, user['nickname'], user['data'].avatar.color, user['ninjaHandler'].ninja.belt])))
 
 		self.send('uz', '%'.join(uzString))
 
@@ -445,7 +445,7 @@ class CJMat(Waddle):
 		cjms = [0]*self.waddles*3 # no of players * 3
 
 		for i in range(self.waddles):
-			cjms[i + 0 * self.waddles] = clients[i]['color']
+			cjms[i + 0 * self.waddles] = clients[i]['data'].avatar.color
 			cjms[i + 1 * self.waddles] = clients[i]['ninjaHandler'].ninja.belt
 			cjms[i + 2 * self.waddles] = clients[i]['id']
 

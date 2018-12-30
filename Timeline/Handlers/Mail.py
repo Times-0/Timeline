@@ -2,7 +2,7 @@ from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVE
 from Timeline import Username, Password, Inventory
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
 from Timeline.Utils.Crumbs.Items import Pin, Award
-from Timeline.Utils.Mails import Mail
+from Timeline.Database.DB import Penguin
 
 from twisted.internet.defer import inlineCallbacks, returnValue
 
@@ -17,16 +17,16 @@ AS2 and AS3 Compatible
 @PacketEventHandler.onXT_AS2('s', 'l#mg', WORLD_SERVER, p_r = False)
 @inlineCallbacks
 def handleGetMail(client, data):
-	if client['mail'] is None:
-		returnValue(client.send('mg', -1))
+    mails = client['data'].mails
 
-	if len(client['mail']) < 1:
-		client.send('mg', '')
+    mailstr = []
+    for mail in mails:
+        nick = yield Penguin.find(mail.from_user)
+        nick = nick.nickname if nick is not None else 'Timeline Team'
 
-	else:
-		mail = yield client['mail'].str()
-		print mail, '?'
-		client.send('mg', mail)
+        mailstr.append('|'.join(map(str, [nick, int(mail.from_user), mail.description, mail.get_sent_on(), int(mail.id), int(mail.opened)])))
+
+    client.send('mg', *mailstr) if len(mailstr) > 0 else client.send('%xt%mg%-1%')
 
 '''
 AS2 and AS3 Compatible
@@ -34,13 +34,10 @@ AS2 and AS3 Compatible
 @PacketEventHandler.onXT('s', 'l#mst', WORLD_SERVER, p_r = False)
 @PacketEventHandler.onXT_AS2('s', 'l#mst', WORLD_SERVER, p_r = False)
 def handleStartMail(client, data):
-	if client['mail'] is None:
-		return client.send('mst', -1, -1)
-		
-	GeneralEvent.call('mail-start', client)
+    GeneralEvent.call('mail-start', client)
 
-	unread = len([k for k in client['mail'] if k.opened < 1])
-	client.send('mst', unread, len(client['mail']))
+    unread = len([k for k in client['data'].mails if not k.opened])
+    client.send('mst', unread, len(client['data'].mails))
 
 '''
 AS2 and AS3 Compatible
@@ -49,14 +46,12 @@ AS2 and AS3 Compatible
 @PacketEventHandler.onXT_AS2('s', 'l#ms', WORLD_SERVER)
 @inlineCallbacks
 def handleSendMail(client, to, _id):
-	if client['mail'] is None or not client.db_penguinExists(value = to):
-		returnValue(client.send('ms', client['coins'], 0))
+    to_peng = yield Penguin.find(to)
 
-	send_mail_inbox = yield Mail.find(where = ['to_user = ? and junk != 1', to])
-	if len(send_mail_inbox) > 99:
-		returnValue(client.send('ms', client['coins'], 0))
+    if to_peng is None :
+        returnValue(client.send('ms', client['coins'], 0))
 
-	client['mail'].sendMail(to, _id)
+    client['RefreshHandler'].sendMail(to, _id)
 
 '''
 AS2 and AS3 Compatible
@@ -64,10 +59,9 @@ AS2 and AS3 Compatible
 @PacketEventHandler.onXT('s', 'l#mc', WORLD_SERVER, p_r = False)
 @PacketEventHandler.onXT_AS2('s', 'l#mc', WORLD_SERVER, p_r = False)
 def handleMaildRead(client, data):
-	if client['mail'] is None:
-		returnValue(None)
-
-	client['mail'].setMailsChecked()
+    for mail in client['data'].mails:
+        mail.opened = 1
+        mail.save()
 
 '''
 AS2 and AS3 Compatible
@@ -75,10 +69,9 @@ AS2 and AS3 Compatible
 @PacketEventHandler.onXT('s', 'l#md', WORLD_SERVER)
 @PacketEventHandler.onXT_AS2('s', 'l#md', WORLD_SERVER)
 def handleDeleteMail(client, _id):
-	if client['mail'] is None:
-		returnValue(None)
-
-	client['mail'].deleteMail(_id)
+    mail = [i for i in client['data'].mails if i.id == _id][0]
+    mail.junk = 1
+    mail.save()
 
 '''
 AS2 and AS3 Compatible
@@ -86,7 +79,9 @@ AS2 and AS3 Compatible
 @PacketEventHandler.onXT('s', 'l#mdp', WORLD_SERVER, p_r = False)
 @PacketEventHandler.onXT_AS2('s', 'l#mdp', WORLD_SERVER, p_r = False)
 def handleDeleteAllFromUser(client, data):
-	if client['mail'] is None:
-		returnValue(None)
+    for mail in client['data'].mails:
+        mail.junk = 1
+        mail.save()
 
-	client['mail'].deleteAllMail()
+    client['RefreshHandler'].forceRefresh()
+

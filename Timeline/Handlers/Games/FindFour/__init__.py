@@ -1,7 +1,7 @@
 from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER
 from Timeline import Username, Password, Inventory
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
-from Timeline.Server.Room import Game, Place, Multiplayer
+from Timeline.Database.DB import Coin
 from Timeline.Handlers.Games.TableHandler import TableGame
 
 from twisted.internet.defer import inlineCallbacks, returnValue
@@ -37,9 +37,13 @@ class FindFour(TableGame):
 			self.send('cz', playerLeft['nickname'])
 
 			opponent, OIndex = (self[0], 0) if self[1] is playerLeft else (self[1], 1)
+			Coin(player_id=opponent['id'], transaction=self.Points[OIndex], comment="Coins earned by playing FindFour").save()
 			opponent['coins'] += self.Points[OIndex]
 
 		else:
+			Coin(player_id=self[0]['id'], transaction=self.Points[0], comment="Coins earned by playing FindFour").save()
+			Coin(player_id=self[1]['id'], transaction=self.Points[1], comment="Coins earned by playing FindFour").save()
+
 			self[0]['coins'] += self.Points[0]
 			self[1]['coins'] += self.Points[1]
 

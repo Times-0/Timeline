@@ -7,7 +7,7 @@ Modules : ModuleHandler handles all modules in the given dir, and takes carre of
 from Timeline.Server.Constants import TIMELINE_LOGGER
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
 from twisted.python.rebuild import rebuild
-from twisted.internet import threads
+from twisted.internet import threads, defer
 from watchdog.observers import Observer as ModuleObserver
 from watchdog.events import FileSystemEventHandler
 from collections import deque
@@ -214,10 +214,10 @@ class ModuleHandler(ModulesEventHandler):
 	def startLoadingModules(self):
 		self.modules.clear()
 
-		defer = threads.deferToThread(self.loadModules)
-		defer.addCallback(self.modulesLoaded)
-		defer.addCallback(self.autoReloadModules) #Prefer doing more research on this to get a better implementation
-		defer.addErrback(self.loadingException)
+		Defer = defer.maybeDeferred(self.loadModules)
+		Defer.addCallback(self.modulesLoaded)
+		Defer.addCallback(self.autoReloadModules) #Prefer doing more research on this to get a better implementation
+		Defer.addErrback(self.loadingException)
 
 		self.logger.info("Loading modules in: {0}".format(self.module_parent.__name__))
-		return defer
+		return Defer

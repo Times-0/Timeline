@@ -1,6 +1,4 @@
 from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER, RAINBOW_QUEST_ITEMS
-from Timeline.Utils.Puffle import Puffle
-from Timeline.Utils.Mails import Mail
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
 
 from twisted.internet.defer import inlineCallbacks, returnValue

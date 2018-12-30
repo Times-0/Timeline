@@ -1,7 +1,7 @@
 from Timeline.Server.Constants import TIMELINE_LOGGER
 from Timeline.Utils.Events import Event
 from Timeline.Utils.Events import GeneralEvent
-from Timeline.Utils.Crumbs.Postcards import Postcard
+from Timeline.Database.DB import Currency
 
 from twisted.internet.defer import inlineCallbacks, returnValue
 from twistar.dbobject import DBObject
@@ -10,9 +10,6 @@ from collections import deque
 import logging
 import time
 import json
-
-class Currency(DBObject):
-	pass
 
 class CurrencyHandler(object):
 
@@ -26,12 +23,11 @@ class CurrencyHandler(object):
 	
 	@inlineCallbacks	
 	def setup(self):
-		self.currency = yield Currency.find(where = ['pid = ?', self.penguin['id']], limit = 1)
+		self.currency = yield self.penguin.dbpenguin.currency.get()
 		
 		if self.currency is None:
-			self.currency = Currency(pid = self.penguin['id'], quest = '{}')
+			self.currency = Currency(penguin_id = self.penguin['id'], quest = '{}')
 			yield self.currency.save()
-			yield self.currency.refresh()
 
 		self.setupCurrencies()
 		self.setupQuests()

@@ -17,6 +17,10 @@ LOGIN_SERVER_ALLOWED = ['w1']
 
 AS3_PROTOCOL, AS2_PROTOCOL = 'AS3p', 'AS2p'
 
+# 47 -> all lang except ru, 111 -> all lang
+LANGUAGE = {'en': 1, 'pt': 2, 'fr': 4, 'es': 8, 'de': 32, 'ru': 64}
+EMOTES = [1, 2, 3, 33, 4, 5, 6, 7, 8, 9, 10, 11, 13, 18, 29, 24, 26, 17, 16, 28, 30, 12, 31, 32, 33, 34, 35, 36]
+
 MULTIPLAYER_GAMES = {}
 NON_BLACK_HOLE_GAMES = [900, 909, 956, 950, 963, 121]
 
@@ -34,3 +38,5 @@ PROBS = [70] + [50 for _ in range(50)] + [1 for _ in range(6)]
 FIRE_STARTER_DECK = [3, 18, 216, 222, 229, 303, 304, 314, 319]
 
 SERVER_ONLY_STAMP_GROUP = [6]
+
+AVATARS = [0, 29]

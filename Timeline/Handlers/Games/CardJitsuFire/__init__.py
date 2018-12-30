@@ -234,7 +234,7 @@ class CardJitsuGame(Multiplayer):
 			allClientSynced = sum(map(lambda x: bool(x['ir']), self.Playing)) == len(self.Playing)
 
 			if not allClientSynced or self.boardTimeoutHandler is not None:
-				return
+				return None
 
 			moveSpins = ','.join(map(str, self.moveSpins))
 			for p in self:
@@ -245,6 +245,7 @@ class CardJitsuGame(Multiplayer):
 
 			self.boardTimeoutHandler = reactor.callLater(22, self.checkGameStatus)
 
+		return True
 		
 
 	def getPlayer(self, index):
@@ -488,7 +489,7 @@ class CardJitsuGame(Multiplayer):
 		client.penguin.fire_rank = client.penguin.ir = None
 
 		self.Playing[client['game_index']] = client
-		client.send('jz', client['game_index'], client['nickname'], client['color'], client['ninjaHandler'].ninja.fire)
+		client.send('jz', client['game_index'], client['nickname'], client['data'].avatar.color, client['ninjaHandler'].ninja.fire)
 		self.updateGame()
 
 		if None not in self.Playing[:CJ_MATS[self.waddle]]:
@@ -525,7 +526,7 @@ class CardJitsuGame(Multiplayer):
 		'sz, ActiveSeatId, NicknamesDelimiteBy(,), ColorsDelimitedBy(,)[9674916 for SENSEI], PlayerEnergyDelimitedBy(,), ActiveBoardId, MyCardList, [spinAmount, MoveClockWise, MoveCounterClockWise], PlayerRanksDelimitedBy(,), PlayerScoreDelimitedBy(,)'
 		
 		Nicknames = ','.join(map(lambda x: str(x.penguin['nickname']), self.Playing))
-		Colors = ','.join(map(lambda x: str(x.penguin['color']), self.Playing))
+		Colors = ','.join(map(lambda x: str(x.penguin['data'].avatar.color), self.Playing))
 		Energies = ','.join(map(lambda x: str(x.energy), self.Playing))
 		Scores = ','.join(map(lambda x: str(x.score), self.Playing))
 		Ranks = ','.join(map(lambda x: '1', self.Playing))
@@ -597,7 +598,7 @@ class CardJitsuGame(Multiplayer):
 			if user is None:
 				continue
 			# seat|nickname|peng_color|belt
-			uzString.append('|'.join(map(str, [i, user['nickname'], user['color'], user['ninjaHandler'].ninja.fire])))
+			uzString.append('|'.join(map(str, [i, user['nickname'], user['data'].avatar.color, user['ninjaHandler'].ninja.fire])))
 
 		self.send('uz', len(uzString), '%'.join(uzString))
 
@@ -637,7 +638,7 @@ class CJMat(Waddle):
 		cjms = [0]*self.waddles*3 # no of players * 3
 
 		for i in range(self.waddles):
-			cjms[i + 0 * self.waddles] = clients[i]['color']
+			cjms[i + 0 * self.waddles] = clients[i]['data'].avatar.color
 			cjms[i + 1 * self.waddles] = clients[i]['ninjaHandler'].ninja.belt
 			cjms[i + 2 * self.waddles] = clients[i]['id']
 

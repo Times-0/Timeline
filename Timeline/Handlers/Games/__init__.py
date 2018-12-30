@@ -2,6 +2,7 @@ from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVE
 from Timeline import Username, Password, Inventory
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
 from Timeline.Server.Room import Game, Place, Multiplayer
+from Timeline.Database.DB import Coin
 
 from twisted.internet.defer import inlineCallbacks, returnValue
 from twisted.internet import reactor
@@ -11,6 +12,19 @@ import logging
 from time import time
 
 logger = logging.getLogger(TIMELINE_LOGGER)
+
+ICE_RINK_MESS = [0, 1, -1, -1]  # todo: Make ice-rink game a Multiplayer game object, and add user to it automatically
+
+'''
+ICE RINK MESS
+'''
+@PacketEventHandler.onXT('z', 'm', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXT_AS2('z', 'm', WORLD_SERVER, p_r = False)
+def handleIceRinkMess(client, data):
+    global ICE_RINK_MESS
+    ICE_RINK_MESS = map(int, data[2])[:4]
+
+    client['room'].send('zm', client['id'], *ICE_RINK_MESS)
 
 @PacketEventHandler.onXT('s', 'w#jx', WORLD_SERVER, p_r = False)
 @PacketEventHandler.onXT_AS2('s', 'w#jx', WORLD_SERVER, p_r = False)
@@ -23,6 +37,11 @@ def handleJoinGame(client, data):
 @PacketEventHandler.onXT('z', 'gz', WORLD_SERVER, p_r = False)
 @PacketEventHandler.onXT_AS2('z', 'gz', WORLD_SERVER, p_r = False)
 def handleGetGame(client, data):
+    if client['room'].ext_id == 802:
+        # ice rink mess
+        client.send('gz', *ICE_RINK_MESS)
+        return
+
     if client['game'] is None:
         return client.send('gz', '-')
 
@@ -95,6 +114,7 @@ def handleGameOver(client, data):
     if total == earned and total != 0:
         coins *= 2
 
+    Coin(player_id = client['id'], transaction = coins, comment = "Coins earned by playing game. Game: {}".format(current_game.name)).save()
     client['coins'] += coins
 
     client.send('zo', client['coins'], '|'.join(map(str, map(int, stamps))), earned, total, total)

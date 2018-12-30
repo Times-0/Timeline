@@ -418,9 +418,13 @@ class TreasureHunt(TableGame):
 			self.send('cz', playerLeft['nickname'])
 
 			opponent, OIndex = (self[0], 0) if self[1] is playerLeft else (self[1], 1)
+			Coin(player_id=opponent['id'], transaction=totalPoints, comment="Coins earned by playing Treasure Hunt").save()
 			opponent['coins'] += totalPoints
 
 		else:
+			Coin(player_id=self[0]['id'], transaction=totalPoints, comment="Coins earned by playing Treasure Hunt").save()
+			Coin(player_id=self[1]['id'], transaction=totalPoints, comment="Coins earned by playing Treasure Hunt").save()
+
 			self[0]['coins'] += totalPoints
 			self[1]['coins'] += totalPoints
 

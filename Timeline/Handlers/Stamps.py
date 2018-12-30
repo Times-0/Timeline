@@ -1,7 +1,7 @@
 from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER, SERVER_ONLY_STAMP_GROUP
 from Timeline import Username, Password, Inventory
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
-from Timeline.Database.DB import Penguin
+from Timeline.Database.DB import Penguin, StampCover, Coin, Stamp
 
 from twisted.internet.defer import inlineCallbacks, returnValue
 
@@ -16,21 +16,17 @@ AS2 and AS3 Compatible
 @PacketEventHandler.onXT_AS2('s', 'st#gsbcd', WORLD_SERVER)
 @inlineCallbacks
 def handleGetSBCoverDetails(client, _id):
-	peng = yield Penguin.find(_id)
-	if peng is None:
-		returnValue(client.send('gsbcd', '', '', '', '', '', ''))
+    peng = (yield Penguin.find(_id)) if _id != client['id'] else client.dbpenguin
+    if peng is None:
+        returnValue(client.send('gsbcd', '', '', '', '', '', ''))
 
-	cover = str(peng.cover)
-	if cover == '':
-		cover = peng.cover = '1|0|0|0'
-		peng.save()
+    colourID, highlightID, patternID, claspIconArtID = peng.cover_color, peng.cover_highlight, peng.cover_pattern, \
+                                                       peng.cover_icon
 
-	cover_details = cover.split('%')
+    pengCoverItems = yield peng.stampCovers.get()
+    rest = map(lambda x: '{i.type}|{i.stamp}|{i.x}|{i.y}|{i.rotation}|{i.depth}'.format(i=x), pengCoverItems)
 
-	cover_properties = cover_details[0].split('|')
-	colourID, highlightID, patternID, claspIconArtID = map(lambda x: int(x) if x != '' else 0, cover_properties)
-	rest = cover_details[1:]
-	client.send('gsbcd', colourID, highlightID, patternID, claspIconArtID, *rest)
+    client.send('gsbcd', colourID, highlightID, patternID, claspIconArtID, *rest)
 
 '''
 AS2 and AS3 Compatible
@@ -39,15 +35,10 @@ AS2 and AS3 Compatible
 @PacketEventHandler.onXT_AS2('s', 'st#gps', WORLD_SERVER)
 @inlineCallbacks
 def handleGetPlayerStamps(client, _id):
-	peng = yield Penguin.find(_id)
-	if peng is None:
-		returnValue(client.send('gps', _id, ''))
+    peng_stamps = (yield ((yield Penguin.find(_id))).stamps.get()) if _id != client['id'] else client['data'].stamps
+    stamps = [k.stamp for k in peng_stamps]
 
-	stamps = str(peng.stamps)
-	if stamps == '':
-		client.send('gps', _id, '')
-
-	client.send('gps', _id, '|'.join(map(lambda x: x.split(',')[0], stamps.split("|"))))
+    client.send('gps', _id, *stamps)
 
 '''
 AS2 and AS3 Compatible
@@ -55,100 +46,102 @@ AS2 and AS3 Compatible
 @PacketEventHandler.onXT('s', 'st#gmres', WORLD_SERVER, p_r = False)
 @PacketEventHandler.onXT_AS2('s', 'st#gmres', WORLD_SERVER, p_r = False)
 def handleGetRecentStamps(client, data):
-	client.send('gmres', '|'.join(map(str, client['recentStamps'])))
-	client.penguin.recentStamps = list()
+    client.send('gmres', '|'.join(map(str, client['recentStamps'])))
+    client.penguin.recentStamps = list()
 
 '''
 AS2 and AS3 Compatible
 '''
 @PacketEventHandler.onXT('s', 'st#ssbcd', WORLD_SERVER)
 @PacketEventHandler.onXT_AS2('s', 'st#ssbcd', WORLD_SERVER)
+@inlineCallbacks
 def handleSBCoverUpdate(client, color, highlight, pattern, icon, stamps):
-	coverCrumb = client.engine.stampCrumbs.cover
+    coverCrumb = client.engine.stampCrumbs.cover
 
-	if not client['member']:
-		return client.send('e', 999)
+    if not client['member']:
+        returnValue(client.send('e', 999))
 
-	if not color in coverCrumb['colors'] or not highlight in coverCrumb['highlights'] or not pattern in coverCrumb['patterns'] or not icon in coverCrumb['icons']:
-		return
+    if not color in coverCrumb['colors'] or not highlight in coverCrumb['highlights'] or not pattern in coverCrumb['patterns'] or not icon in coverCrumb['icons']:
+        returnValue(None)
 
-	stamp_string = ['|'.join(map(str, [color, highlight, pattern, icon]))]
-	stamps_used = list()
+    stamps_used = list()
+    stamps_earned = [i.stamp for i in client['data'].stamps]
 
-	for stamp in stamps:
-		item_type, item_id, x, y, rotation, depth = stamp
-		#check for item_type: currently not sure of exact values it can hold
+    for stamp in stamps:
+        item_type, item_id, x, y, rotation, depth = stamp
+        # check for item_type: currently not sure of exact values it can hold
 
-		#check if item is a stamp
-		stamp = client.engine.stampCrumbs[item_id]
-		if stamp is None:
-			#check if it's a pin and in inventory
-			item = client.engine.itemCrumbs[item_id]
-			if item is None:
-				return # doesn't exists at all!
+        # check if item is a stamp
+        stamp = client.engine.stampCrumbs[item_id]
+        if stamp is None:
+            # check if it's a pin and in inventory
+            item = client.engine.itemCrumbs[item_id]
+            if item is None:
+                returnValue(None)  # doesn't exists at all!
 
-			if not(item.type == 8 and item in client['inventory']): #pin
-				return
-			
-			stamp = item
-		else:
-			#checl for stamp earned?
-			if stamp not in client['stampHandler']:
-				return
+            if not(item.type == 8 and client['RefreshHandler'].inInventory(int(item))): #pin
+                returnValue(None)
 
-		if item_id in stamps_used:
-			return # oops!
+            stamp = item
+        else:
+            # check for stamp earned?
+            if int(stamp) not in stamps_earned:
+                returnValue(None)
 
-		stamps_used.append(item_id)
+        if item_id in stamps_used:
+            returnValue(None)  # oops!
 
-		stamp_string.append('|'.join(map(str, [item_type, int(stamp), x, y, rotation, depth])))
+        stamps_used.append(item_id)
 
-	client.dbpenguin.cover = '%'.join(stamp_string)
-	client.dbpenguin.save()
+    yield StampCover.deleteAll(where=['penguin_id=?', client['id']])
+    client.dbpenguin.cover_color, client.dbpenguin.cover_highlight, client.dbpenguin.cover_pattern, client.dbpenguin.cover_icon = color, highlight, pattern, icon
+    client.dbpenguin.save()
 
-	client.send('ssbcd', 'success')
+    stampCovers = [StampCover(penguin_id=client['id'], type=x[0], stamp=x[1], x=x[2], y=x[3], rotation=x[4], depth=x[5])
+                   for x in stamps]
+
+    [(yield x.save()) for x in stampCovers]
+
+    client.send('ssbcd', 'success')
 
 '''
 AS2 and AS3 Compatible
 '''
 @PacketEventHandler.onXT('s', 'st#sse', WORLD_SERVER)
 @PacketEventHandler.onXT_AS2('s', 'st#sse', WORLD_SERVER)
+@inlineCallbacks
 def handleStampEarned(client, _id, fromServer = False):
-	stamp = client.engine.stampCrumbs[_id]
-	if stamp is None:
-		return
+    stamp = client.engine.stampCrumbs[_id]
+    if stamp is None:
+        return
 
-	if stamp.group in SERVER_ONLY_STAMP_GROUP and not fromServer:
-		client.engine.log("warn", client['username'], "trying to manipulate Stamp System.")
-		# ban?
-		return
+    if stamp.group in SERVER_ONLY_STAMP_GROUP and not fromServer:
+        client.engine.log("warn", client['username'], "trying to manipulate Stamp System.")
+        # ban?
+        return
 
-	if stamp in client['stampHandler']:
-		return # lol
+    stamps = [x.stamp for x in client['data'].stamps]
 
-	#You earned a stamp, earn a penny now B-)
-	client['coins'] += 1
-	client['stampHandler'].append(stamp)
+    if int(stamp) in stamps:
+        return # lol
 
-	stamps = str(client.dbpenguin.stamps).split('|') if client.dbpenguin.stamps != '' else list()
-	stamps.append('{},{}'.format(int(stamp), int(time())))
+    #You earned a stamp, earn a penny now B-)
+    client['coins'] += 1
+    yield Coin(penguin_id=client['id'], transaction=1,
+               comment="Earned money by earning stamp. Stamp: {}".format(stamp)).save()
+    yield Stamp(penguin_id=client['id'], stamp=int(stamp)).save()
 
-	client.dbpenguin.stamps = '|'.join(stamps)
-	client.dbpenguin.save()
-
-	client.penguin.recentStamps.append(stamp)
-
-	client.send('aabs', int(stamp))
+    client['recentStamps'].append(stamp)
 
 '''
 Handler to award user stamp, if he's in same room as a mascot. 
 '''
 @GeneralEvent.on("mascot-joined-room")
 def handleAwardMascotStamp(room, mascot_name, penguins):
-	availableMascotStamps = room.roomHandler.engine.stampCrumbs.getStampsByGroup(6)
-	mascotStamps = {str(stamp.name).strip():stamp.id for stamp in availableMascotStamps}
-	mascotToSearch = str(mascot_name).strip()
+    availableMascotStamps = room.roomHandler.engine.stampCrumbs.getStampsByGroup(6)
+    mascotStamps = {str(stamp.name).strip():stamp.id for stamp in availableMascotStamps}
+    mascotToSearch = str(mascot_name).strip()
 
-	if mascotToSearch in mascotStamps:
-		stampId = mascotStamps[mascotToSearch]
-		[handleStampEarned(client, stampId, True) for client in penguins]
+    if mascotToSearch in mascotStamps:
+        stampId = mascotStamps[mascotToSearch]
+        [handleStampEarned(client, stampId, True) for client in penguins]
