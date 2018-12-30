@@ -2,8 +2,8 @@ from Timeline.Utils.Plugins.IPlugin import IPlugin
 
 from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
-from Timeline.Database.DB import Penguin
-from Timeline.Server.Penguin import Penguin as Bot
+from Timeline.Server.Constants import AS2_PROTOCOL, AS3_PROTOCOL
+from Timeline.Utils.Plugins import PLUGIN_OBJECTS
 
 from twisted.internet.defer import inlineCallbacks, returnValue
 
@@ -35,6 +35,19 @@ class Commands(IPlugin):
     def setup(self):
         GeneralEvent.on('command=jr', self.JoinRoomByExtId)
 
+    @staticmethod
+    def onCommand(command, protocol = AS3_PROTOCOL, function = None):
+        command_ext = 'command[{}]={}'.format(protocol, command)
+        
+        commandPlugin = [i for i in PLUGIN_OBJECTS if isinstance(i, Commands)][-1]
+        commandPlugin.__commands__.append(command) if command not in commandPlugin.__commands__ else None
+
+        return GeneralEvent.on(command_ext, function=function)
+
+    @staticmethod
+    def onCommandAS2(command):
+        return Commands.onCommand(command, AS2_PROTOCOL)
+
     def JoinRoomByExtId(self, client, param):
         try:
             _id = int(param[0])
@@ -59,5 +72,7 @@ class Commands(IPlugin):
 
         if command in __commands__:
             client.penguin.muted = True
-            client.penguin.muted_for_command = True
+            client.penguin.muted_for_command = True if client['muted_for_command'] is None \
+                else client['muted_for_command']
             GeneralEvent('command={}'.format(command), client, params)
+            GeneralEvent('command[{}]={}'.format(client.Protocol, command), client, params)

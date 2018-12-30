@@ -24,7 +24,7 @@ class LoggerPlugin(IExtender):
         self.engine.log("info", "New client connection:", self.client)
 
     def connectionLost(self, reason):
-        self.engine.log("info", self.getPortableName(), "Disconnected")
+        self.engine.log("info", self.getPortableName(), "Disconnected", "Reason:", reason)
 
     def lineReceived(self, line):
         me = self.getPortableName()

@@ -36,9 +36,11 @@ GeneralEvent.on('command=ac', self.AddCoinsToTheUser)
 Now that you have a function `AddCoinsToTheUser`, you must define it, add that function in the same class :-).
 For example,
 ```py
+from Timeline.Database.DB import Coin
+
 def AddCoinsToTheUser(self, client, params): # The parameters are exact and doesn't change
     coins = int(params[0])
-    client['coins'] += coins
+    Coin(player_id=client['id'], transaction=coins, comment="Coins earned by playing Command").save()
 ```
 </details>
 
@@ -53,6 +55,8 @@ from Timeline.Utils.Plugins.IPlugin import IPlugin, IPluginAbstractMeta, Require
 from Timeline.Utils.Plugins import extend
 
 from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER
+from Timeline.Database.DB import Coin
+
 import logging
 
 class TestPlugin(IPlugin):
@@ -79,7 +83,7 @@ class TestPlugin(IPlugin):
 
      def handleAddCoins(self, client, params):
         coins = int(params[0])
-        coins['coins'] += coins
+        Coin(player_id=client['id'], transaction=coins, comment="Coins earned by playing Command").save()
     
 ```
 
