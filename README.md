@@ -2,6 +2,17 @@
 AS2 & AS3 CPPS Emulator, written in Python.
 Timeline is built heavily on Twisted and is even-driven, most of the methods are Deferred too!
 
+## Important Update Notice (From Timeline v>= 7)
+From the **version 7 of Timeline**, there is a strict implementation, forcing you to follow a database convention, in order to make it easy to upgrade to newer database sturcture without any chaos. All new database, using new database structure should follow the nomenclature: **database name should end with `line`**. Example, `timeline`, `waddle-line`, `waddleupline`, and so on.
+
+Everyone who started using v7, and want to migrate data from older version, are requested to use the python script `DatabasePort.py` to port all your old data into the new database structure.
+
+**Note** It is recommended to run the script as **sudo** (on UNIX server). ie, `sudo python DatabasePort.py`, in-order to have an error free, and smooth experience.
+
+**Of all the chaos what do you yet?** *You get a sweet, charm, more flexible, server, which has __on-the air, real-time updation of data__. And everyone's favourite __CJ Fire v/s Sensei__. What more you think could suffice this? Oh yeah, some bugs and filaments are cleaned up too :~)*
+
+*Oh and, **upgrade Twisted** module if you haven't already :~D*
+
 ## AS2 and AS3 Cross-Compatibility
 **The flexibility of Timeline, makes sure it's cross-compatible with both AS2 and AS3 clients.** 
 
@@ -30,8 +41,10 @@ Timeline is a free, open-source project. You can always support this by funding 
   - [BCrypt](https://pypi.python.org/pypi/bcrypt/)
   - [lxml](http://lxml.de/installation.html)
   - [numpy](http://www.numpy.org/)
-  - OPTIONAL : [colorlog](https://github.com/borntyping/python-colorlog)
+  - [colorlog](https://github.com/borntyping/python-colorlog)
   - A Python MySQL Connector. (Timeline uses MySQLdb by default, you can change this in Database/\_\_init\_\_.py : 31)
+  - mysql-connector-python : `pip install mysql-connector-python`
+  - mysql-python
   
 # Extras
 - [Register for Timeline](https://github.com/Times-0/Register/) - Official Register/signup utility for Timeline. This comes in with, email verify tool builtin (both email checkup and account authentication).
@@ -50,10 +63,10 @@ You can edit `Start.py` to change `Handlers` module scope, `TCP` IP/Port endpoin
 
 Make sure you run **MySQL** and **Redis** server before starting the server.
 
-You can query/run **database.sql** to build tables in your db.
+Please run `DatabasePort.py` to create tables in your database. It also auto recreated db for you, you just need a spare databse beforehand. (ie, old dbname as spare db, new db name as the one you want to create)
 
 # Default
-* Default **database**          : **times-cp**
+* Default **database**          : **timeline**
 * Default **user**              : *username:* **test**, *password:* **password**
 * Default **crumbs** directory  : **./configs/crumbs/**
 
@@ -102,6 +115,7 @@ Timeline is almost complete, covering support for all features present in native
 - Card Jitsu (Multiplayer-Waddle)       \[AS3] *todo as2*
 - Card Jitsu v/s Sensei (Single Player) \[AS3] *todo as2*
 - Card Jitsu Fire (Multiplayer-Waddle)  \[AS3] *todo as2*
+- Card Jitsu Fire v/s Sensei           \[AS3] *todo as2*
 
 # Support
 If you have any issue, found any bug or error or issue, or want to suggest some improvemnt, you are free to open an issue or request a pull request.
