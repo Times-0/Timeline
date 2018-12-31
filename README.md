@@ -65,6 +65,23 @@ Make sure you run **MySQL** and **Redis** server before starting the server.
 
 Please run `DatabasePort.py` to create tables in your database. It also auto recreated db for you, you just need a spare databse beforehand. (ie, old dbname as spare db, new db name as the one you want to create)
 
+# Installing mysql-python (MySQLdb)
+Who hadn't had trouble installing MySQLdb (MySQL-python) package for Python on Windows!
+
+If you are on UNIX environment (ie Ubuntu, Linux, etc), the following should work just fine
+```
+sudo pip install MySQL-python
+```
+But, the same in Windows, should be a lot messy, so instead try executing the following command instead. Before that, move the command console into the directory in which you have installed Timeline (eg: `cd C:\Users\Times\Desktop\Timeline-master`
+```
+pip install MySQL_python-1.2.5-cp27-none-win_amd64.whl
+```
+if that didn't work, try this
+```
+pip install MySQL_python-1.2.5-cp27-none-win32.whl
+```
+That's it. All the connectors are baked. :~)
+
 # Default
 * Default **database**          : **timeline**
 * Default **user**              : *username:* **test**, *password:* **password**
