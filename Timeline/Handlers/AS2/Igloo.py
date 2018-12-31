@@ -39,7 +39,8 @@ def handleGetOpenIgloos(client, data):
 
 @PacketEventHandler.onXT_AS2('s', 'g#go', WORLD_SERVER, p_r = False)
 def handleGetPlayerIgloos(client, data):
-    client.send('go', '|'.join(map(str, client['iglooHandler'].igloos)))
+    igloos = client['RefreshHandler'].getAssetsByType('i')
+    client.send('go', '|'.join(map(str, igloos)))
 
 @PacketEventHandler.onXT_AS2('s', 'g#af', WORLD_SERVER)
 def handleBuyFurnitureAS2(client, _id):
@@ -55,29 +56,31 @@ def handleBuyIglooAS2(client, _id):
 
 @PacketEventHandler.onXT_AS2('s', 'g#gf', WORLD_SERVER, p_r = False)
 def handleGetFurnitires(client, data):
-    client.send('gf', *(map(lambda f: '{}|{}'.format(int(f), f.quantity), client['iglooHandler'].furnitures)))
+    client.send('gf', *(map(lambda f: '{}|{}'.format(int(f.item), f.quantity), client['RefreshHandler'].getAssetsByType('f'))))
 
 @PacketEventHandler.onXT_AS2('s', 'g#um', WORLD_SERVER)
 def handleActivateIgloo(client, music):
-    if client['iglooHandler'].currentIgloo is None:
+    if client['currentIgloo'] is None:
         return
 
-    client['iglooHandler'].currentIgloo.music = music
-    client['iglooHandler'].currentIgloo.save()
+    client['currentIgloo'].music = music
+    client['currentIgloo'].save()
 
 @PacketEventHandler.onXT_AS2('s', 'g#ao', WORLD_SERVER)
 def handleSetIgloo(client, igloo):
-    if client['iglooHandler'].currentIgloo is None or not client['iglooHandler'].hasIgloo(igloo):
+    if client['currentIgloo'] is None or not client['RefreshHandler'].hasAsset(igloo, 'i'):
         return
 
-    client['iglooHandler'].currentIgloo.type = igloo
-    client['iglooHandler'].currentIgloo.save()
+    client['currentIgloo'].type = igloo
+    client['currentIgloo'].save()
 
 @PacketEventHandler.onXT_AS2('s', 'g#ur', WORLD_SERVER)
 def handleSaveFurnitureConfiguration(client, furns):
+    igloo = client['currentIgloo']
     updateIglooConfiguration(client, igloo.id, igloo.type, igloo.floor, igloo.location, igloo.music, furns)
 
 @PacketEventHandler.onXT_AS2('s', 'g#cr', WORLD_SERVER, p_r = False)
 @PacketEventHandler.onXT_AS2('s', 'g#or', WORLD_SERVER, p_r = False)
 def handleLockAndOpenIgloo(client, data):
-    client['iglooHandler'].currentIgloo.locked = int(data[1][-2] == 'c')
+    client['currentIgloo'].locked = int(data[1][-2] == 'c')
+

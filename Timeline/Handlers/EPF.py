@@ -15,7 +15,7 @@ AS2 and AS3 Compatible
 @PacketEventHandler.onXT('s', 'f#epfga', WORLD_SERVER, p_r = False)
 @PacketEventHandler.onXT_AS2('s', 'f#epfga', WORLD_SERVER, p_r = False)
 def handleGetEPFStatus(client, data):
-	client.send('epfga', int(bool(client['epf'])))
+	client.send('epfga', 0)#int(bool(client['epf'])))
 
 '''
 AS2 and AS3 Compatible
@@ -23,7 +23,7 @@ AS2 and AS3 Compatible
 @PacketEventHandler.onXT('s', 'f#epfsa', WORLD_SERVER, p_r = False)
 @PacketEventHandler.onXT_AS2('s', 'f#epfsa', WORLD_SERVER, p_r = False)
 def handlePromoteAgent(client, data):
-	if client['epf']:
+	if 1:#client['epf']:
 		return
 
 	client['epf'].e = True
@@ -38,7 +38,7 @@ AS2 and AS3 Compatible
 @PacketEventHandler.onXT('s', 'epfgr', WORLD_SERVER, p_r = False)
 @PacketEventHandler.onXT_AS2('s', 'epfgr', WORLD_SERVER, p_r = False)
 def handleGetEPFP(client, data):
-	client.send('epfgr', client['epf'].p, client['epf'].t)
+	client.send('epfgr', 0, 0)#client['epf'].p, client['epf'].t)
 
 '''
 AS2 and AS3 Compatible
@@ -55,6 +55,7 @@ AS2 and AS3 Compatible
 @PacketEventHandler.onXT_AS2('s', 'f#epfai', WORLD_SERVER)
 def handleAddEPFItem(client, _id):
 	item = client.engine.itemCrumbs[_id]
+	return # :P
 	if item is None:
 		return client.send('e', 402)
 

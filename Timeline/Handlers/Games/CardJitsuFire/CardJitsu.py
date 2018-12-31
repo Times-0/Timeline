@@ -30,6 +30,9 @@ def handleJoinSenseiCJ(client, data):
     if client['room'].ext_id != 953:
         return
 
+    if 997 not in CJ_MATS:
+        CJ_MATS[997] = 2
+
     gameMat = CJMat(ROOM_HANDLER, 997, "JitsuMat", "Card Jitsu Mat", 3, False, False, None)
     gameMat.waddle = 997
     gameMat.game = CardJitsuFireSenseiGame

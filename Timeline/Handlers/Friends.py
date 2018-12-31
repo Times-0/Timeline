@@ -19,13 +19,6 @@ def handleStopFriendLoopReflush(client):
         friend = client.engine.getPenguinById(friend.id)
         friend.send('fo', '{}|0'.format(client['swid'])) if friend is not None else 0
 
-@GeneralEvent.on('joined-room')
-def handlePenguinRoomSwap(client, rid):
-    friends = list(client['data'].friends)
-    for friend in friends:
-        friend = client.engine.getPenguinById(friend.id)
-        friend.send('fo', '{}|1|{}|{}'.format(client['swid'], client['room'].name, True)) if friend is not None else 0
-
 
 @PacketEventHandler.onXT('s', 'u#bf', WORLD_SERVER, p_r=False)
 @PacketEventHandler.onXT_AS2('s', 'u#bf', WORLD_SERVER, p_r=False)

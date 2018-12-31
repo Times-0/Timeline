@@ -2,7 +2,7 @@ from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVE
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
 from Timeline.Handlers.Igloo import handleBuyFurniture
 from Timeline.Handlers.Item import handleGetCurrencies
-from Timeline.Database.DB import Puffle, Coin, CareItem
+from Timeline.Database.DB import Puffle, Coin, CareItem, Mail
 
 from twisted.internet.defer import inlineCallbacks, returnValue
 
