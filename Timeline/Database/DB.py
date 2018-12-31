@@ -120,6 +120,7 @@ class Membership(DBObject):
 
 
 class MusicTrack(DBObject):
+    shared = False
     pass
 
 
