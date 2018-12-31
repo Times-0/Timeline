@@ -44,7 +44,7 @@ Timeline is a free, open-source project. You can always support this by funding 
   - [colorlog](https://github.com/borntyping/python-colorlog)
   - A Python MySQL Connector. (Timeline uses MySQLdb by default, you can change this in Database/\_\_init\_\_.py : 31)
   - mysql-connector-python : `pip install mysql-connector-python`
-  - mysql-python
+  - mysql-python, Ref: [Installing MySQL-Python](#installing-mysql-python-mysqldb)
   
 # Extras
 - [Register for Timeline](https://github.com/Times-0/Register/) - Official Register/signup utility for Timeline. This comes in with, email verify tool builtin (both email checkup and account authentication).
