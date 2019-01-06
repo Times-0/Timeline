@@ -74,7 +74,8 @@ class Ninja(DBObject):
 
 
 class Asset(DBObject):
-    pass
+    def getPurchasedTimestamp(self):
+        return int(time.mktime(self.purchased.timetuple()))
 
 
 class Ban(DBObject):

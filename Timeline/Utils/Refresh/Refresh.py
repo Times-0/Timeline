@@ -88,6 +88,7 @@ class Refresh(RefreshHandler, Functions):
             reactor.callFromThread(self.cacheHandlers[item], items_added, items_removed, items_o)
 
         yield self.cacheHandlers['igloos']()
+        GeneralEvent('Refresh-Cache', self)  # Refresh cache data for things other than those in here
 
         if forced:
             reactor.callFromThread(self.RefreshManagerLoop.stop) if self.RefreshManagerLoop.running else None

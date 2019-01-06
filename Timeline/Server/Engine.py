@@ -86,7 +86,7 @@ class Engine(Factory, ExtensibleObject):
         users = list(self.users)
         for peng in users:
             if peng['id'] == _id:
-                return peng.selfRefer
+                return peng.ref
 
         return None
 
@@ -102,7 +102,7 @@ class Engine(Factory, ExtensibleObject):
 
     @inlineCallbacks
     def disconnect(self, client):
-        GeneralEvent('onClientRemove', client.selfRefer)
+        GeneralEvent('onClientRemove', client.ref)
 
         if client in self.users:
             self.users.remove(client)

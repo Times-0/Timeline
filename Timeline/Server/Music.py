@@ -124,7 +124,7 @@ class MusicEngine(list):
             t.shared = False
 
             t.save()
-            self.redis.server.hmset('music:sharing', {int(t) : 0})
+            self.redis.server.hmset('music:sharing', {t.id : 0})
 
     def init(self, penguin):
         tracks = self.getTracksByPenguin(penguin, penguin.engine)

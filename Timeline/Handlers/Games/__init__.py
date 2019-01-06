@@ -102,9 +102,9 @@ def handleGameOver(client, data):
             client.engine.log('warn', "Game exploitation,", current_game.name, ':', score)
         return
 
-    stamps = client['recentStamps']
-    g_stamps = client.engine.stampCrumbs.getStampsByGroup(current_game.stamp_id)
-    e_stamps = list(set(client['stampHandler']).intersection(g_stamps))
+    stamps = map(int, client['recentStamps'])
+    g_stamps = map(int, client.engine.stampCrumbs.getStampsByGroup(current_game.stamp_id))
+    e_stamps = list(set(map(lambda x: int(x.stamp), client['data'].stamps)).intersection(g_stamps))
 
     stamps = list(set(stamps).intersection(g_stamps))
 
@@ -117,7 +117,9 @@ def handleGameOver(client, data):
     Coin(player_id = client['id'], transaction = coins, comment = "Coins earned by playing game. Game: {}".format(current_game.name)).save()
     client['coins'] += coins
 
-    client.send('zo', client['coins'], '|'.join(map(str, map(int, stamps))), earned, total, total)
+    client.send('zo', client['coins'], '|'.join(map(str, stamps)), earned, total, total)
+    GeneralEvent("Game-Over", client, score, current_game)
+    
     client['room'].remove(client)
 
     for room in client['prevRooms'][::-1]:

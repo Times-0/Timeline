@@ -1,6 +1,7 @@
-from Timeline.Server.Constants import TIMELINE_LOGGER
+from Timeline.Server.Constants import TIMELINE_LOGGER, AS3_PROTOCOL
 from Timeline.Utils.Events import Event
 from Timeline.Utils.Events import GeneralEvent
+from Timeline.Handlers.AS2.Puffle import getAS2PuffleString
 
 from twisted.internet.defer import inlineCallbacks, returnValue, Deferred
 from twisted.internet.task import LoopingCall
@@ -123,7 +124,9 @@ class RefreshHandler(object):
             self.penguin.send('mr', nickname, int(mail.from_user), int(mail.type), mail.description, mail.get_sent_on()
                               , int(mail.id), int(mail.opened))
 
-        mails = [((yield i.refresh()), i)[-1] for i in list(originalMails.union(mailArrived) - mailBurnt)]
+        self.cache.mails = list(originalMails.union(mailArrived) - mailBurnt)
+
+        mails = [((yield i.refresh()), i)[-1] for i in self.cache.mails]
         self.cache.mails = [i for i in mails if not i.junk]
 
         if len(self.cache.mails) < 1 and len(originalMails) > 0:
@@ -137,7 +140,10 @@ class RefreshHandler(object):
 
     def handlePuffles(self, adoptedPuffles, puffleToWoods, puffleHostaged):
         for puffle in adoptedPuffles:
-            self.penguin.send('pn', self.penguin['coins'], puffle)
+            self.penguin.send('pn',
+                              self.penguin['coins'],
+                              puffle if self.penguin.Protocol == AS3_PROTOCOL else
+                              getAS2PuffleString(self.penguin, [puffle]))
 
         for puffle in puffleToWoods:
             self.penguin['igloo'].send('prp', int(puffle.id))

@@ -19,6 +19,7 @@ from Timeline.Utils.Refresh import PenguinObject
 from Timeline.Utils.Plugins.Abstract import ExtensibleObject
 
 from twisted.protocols.basic import LineReceiver
+from twisted.protocols.policies import TimeoutMixin
 from twisted.internet import threads
 from twisted.internet.defer import Deferred, inlineCallbacks, returnValue
 
@@ -29,7 +30,7 @@ import time
 from math import ceil
 import weakref
 
-class LR(LineReceiver):
+class LR(LineReceiver, TimeoutMixin):
     def makeConnection(self, transport):
         pass
 
@@ -49,6 +50,7 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
     '''
 
     delimiter = chr(0)
+    TIMEOUT = 70  # idle timeout 70 seconds
 
     def __init__(self, engine):
         super(Penguin, self).__init__()
@@ -82,33 +84,33 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
         self.penguin.room = None
         self.penguin.prevRooms = list()
 
-        self.selfRefer = weakref.proxy(self)
+        self.ref = weakref.proxy(self)
 
         # Initiate Packet Handler
-        self.PacketHandler = PacketHandler(self.selfRefer)
-        self.CryptoHandler = Crypto(self.selfRefer)
+        self.PacketHandler = PacketHandler(self.ref)
+        self.CryptoHandler = Crypto(self.ref)
 
     def initialize(self):
-        self.penguin.nickname = Nickname(self.dbpenguin.nickname, self.selfRefer)
+        self.penguin.nickname = Nickname(self.dbpenguin.nickname, self.ref)
         self.penguin.swid = self.dbpenguin.swid
 
-        self.penguin.RefreshHandler = Refresh(self)
+        self.penguin.RefreshHandler = Refresh(self.ref)
 
         self.penguin.moderator = int(self.dbpenguin.moderator)
         self.penguin.stealth_mode = self['moderator'] == 2
         self.penguin.mascot_mode = self['moderator'] == 3
 
         self.penguin.x = self.penguin.y = self.penguin.frame = 0
-        self.penguin.age = Age(self.dbpenguin.create, self.selfRefer)
+        self.penguin.age = Age(self.dbpenguin.create, self.ref)
         self.penguin.muted = False
 
-        self.penguin.cache = Cache(self.selfRefer)
-        self.penguin.ninjaHandler = NinjaHandler(self.selfRefer)
-        self.penguin.currencyHandler = CurrencyHandler(self.selfRefer)
+        self.penguin.cache = Cache(self.ref)
+        self.penguin.ninjaHandler = NinjaHandler(self.ref)
+        self.penguin.currencyHandler = CurrencyHandler(self.ref)
 
-        self.engine.musicHandler.init(self.selfRefer)
+        self.engine.musicHandler.init(self.ref)
 
-        GeneralEvent('onBuildClient', self.selfRefer)
+        GeneralEvent('onBuildClient', self.ref)
 
 
     def checkPassword(self, password):
@@ -253,6 +255,8 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
         If you want to override this function, raise NotImplementedError
         '''
 
+        self.resetTimeout()  # reset idle-timeout ticks
+
         try:
             super(Penguin, self).lineReceived(line)
         except NotImplementedError:
@@ -303,20 +307,19 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 
         # decentralize and make disconnection more flexible
         if self.engine.type == WORLD_SERVER and self.penguin.id != None:
-            #self.engine.roomHandler.removeFromAnyRoom(self.selfRefer) # needs some fix b4 further usage on-disconnect
-
             # sending self just to make sure it doesn't throw weak-reference error
             if self['RefreshHandler'] is not None:
                 self['RefreshHandler'].RefreshManagerLoop.stop() if self['RefreshHandler'].RefreshManagerLoop.running else 0
 
-                del self['RefreshHandler'].penguin # remove reference
                 yield self.engine.redis.server.srem("users:{}".format(self.engine.id), self['swid'])
 
-            yield GeneralEvent('onClientDisconnect', self)
+            yield GeneralEvent('onClientDisconnect', self.ref)
+            del self.penguin.RefreshHandler
 
         yield self.engine.redis.server.delete("online:{}".format(self['id']))
 
         yield self.engine.disconnect(self)
+
         self.cleanConnectionLost.callback(True)
 
     def makeConnection(self, transport):
@@ -325,4 +328,4 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
         self.connectionMade = True
 
         self.send("<cross-domain-policy><allow-access-from domain='*' to-ports='{0}' /></cross-domain-policy>".format(self.engine.port))
-
+        self.setTimeout(self.TIMEOUT)

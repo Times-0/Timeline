@@ -31,7 +31,7 @@ def handleJoinServer(client, _id, passd, lang):
 
     client.initialize()
     yield client['RefreshHandler'].CacheInitializedDefer
-    GeneralEvent.call("penguin-logged", client.selfRefer)
+    GeneralEvent.call("penguin-logged", client.ref)
 
     # 47 -> all lang except russian, 111 -> all incl russian; russian lang is deprecated and no longer exists
     # to get support for any lang, use bitmask = LANG1_BITMASK ^ LANG2_BITMASK ^ ...
@@ -46,10 +46,10 @@ def handleJoinServer(client, _id, passd, lang):
 
     member = int(client['member']) if int(client['member']) > 0 else 0
     if client.Protocol == AS3_PROTOCOL:
-        client.send('lp', client, client['coins'], 0, 1024, int(time() * 1000), client['age'], 0, client['age'], member, '', client['cache'].playerWidget, client['cache'].mapCategory, client['cache'].igloo)
+        client.send('lp', client, client['coins'], 0, 1440, int(time() * 1000), client['age'], 0, client['age'], member, '', client['cache'].playerWidget, client['cache'].mapCategory, client['cache'].igloo)
     elif client.Protocol == AS2_PROTOCOL:
         # #user_str%coins%issafe%egg%time%age%banned%minplay%memdays
-        client.send('lp', client, client['coins'], 0, 1024, int(time() * 1000), client['age'], 0, int(client['age'])/60, member, 0)
+        client.send('lp', client, client['coins'], 0, 1440, int(time() * 1000), client['age'], 0, int(client['age'])/60, member, 0)
     
     client.engine.roomHandler.joinRoom(client, 'dojo', 'name') # TODO Check for max-users limit
 

@@ -18,7 +18,7 @@ class FindFour(TableGame):
 	def __init__(self, rh, table_id, base_room):
 		self.table = table_id
 		self.room = rh.getRoomByExtId(base_room)
-		
+
 		super(FindFour, self).__init__(rh, self.room.id, "FindFour", "FindFour Game", self.room.max, False, False, None)
 
 		self.reset()

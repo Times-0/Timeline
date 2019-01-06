@@ -71,9 +71,9 @@ class NinjaHandler(object):
         self.elementalWins['f']['progress'] = (self.elementalWins['f']['won'] * 100.0 / (self.nOfWins(self.ninja.fire + 1) if self.ninja.fire != 4 else self.elementalWins['f']['won'] / 90.0)) if self.ninja.fire < 5 else 100
 
     def handleEarnedStamps(self, stampGroup = 38):
-        stamps = self.penguin['recentStamps']
-        g_stamps = self.penguin.engine.stampCrumbs.getStampsByGroup(stampGroup)
-        e_stamps = list(set(self.penguin['stampHandler']).intersection(g_stamps))
+        stamps = map(int, self.penguin['recentStamps'])
+        g_stamps = map(int, self.penguin.engine.stampCrumbs.getStampsByGroup(stampGroup))
+        e_stamps = list(set(map(lambda x: int(x.stamp), self.penguin['data'].stamps)).intersection(g_stamps))
 
         stamps = list(set(stamps).intersection(g_stamps))
 
@@ -97,7 +97,7 @@ class NinjaHandler(object):
             self.ninja.fire = int(self.ninja.fire) + 1
             self.penguin.send('zm', 'nr', 'f', self.ninja.fire)
 
-            [(yield self.penguin.addItem(i, 'Increase Fire Rank')) for i in self.fire_items[self.ninja.fire]]
+            yield self.penguin.addItem(self.fire_items[self.ninja.fire], 'Increase Fire Rank')
 
         self.ninja.save()
 
