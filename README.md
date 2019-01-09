@@ -2,7 +2,15 @@
 AS2 & AS3 CPPS Emulator, written in Python.
 Timeline is built heavily on Twisted and is even-driven, most of the methods are Deferred too!
 
-## Important Update Notice (From Timeline v>= 7)
+# Real-time Message Filter \[Perspective API]
+**Timeline v7.1** or later, supports real-time filtering of messages, based on toxicity in the content of speech. Using the Google's intelligent AI based _Perspective API_, it's now made possible to have more child-friendly environment.
+
+The **Perspective API Key** provided by default is just for **testing/development/educational** purpose. Please **don't** use the same key for your **production server**. You **must** get yourself **whitelisted** from Google, and get yourself **a key for your server**. 
+
+Visit this [Quickstart Guide to Perspective](https://github.com/conversationai/perspectiveapi/blob/master/quickstart.md) to get yourself a key. _Don't worry, you'll mostly get whitelisted within a day_. 
+Look into [Timeline > Handlers > Messages # Line 76](https://github.com/Times-0/Timeline/blob/master/Timeline/Handlers/Messages.py#L76) for more details, on how to effectively use your key.
+
+## Important Upgrade Notice (From Timeline v>= 7)
 From the **version 7 of Timeline**, there is a strict implementation, forcing you to follow a database convention, in order to make it easy to upgrade to newer database sturcture without any chaos. All new database, using new database structure should follow the nomenclature: **database name should end with `line`**. Example, `timeline`, `waddle-line`, `waddleupline`, and so on.
 
 Everyone who started using v7, and want to migrate data from older version, are requested to use the python script `DatabasePort.py` to port all your old data into the new database structure.
