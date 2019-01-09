@@ -16,6 +16,11 @@ PENDING = {}
 @GeneralEvent.on('penguin-logged')
 def setPuffleDigRest(client):
     client.penguin.lastDig = time()
+    client.penguin.lastDigOC = time()
+
+    client.send('pgu', *client['data'].puffles) if len(client['data'].puffles) > 0 \
+        else client.send('%xt%pgu%-1%')
+
 
 @GeneralEvent.on('onClientDisconnect')
 def handleMakePuffleHomeAlone(client):
@@ -130,7 +135,6 @@ def handleGetPuffles(client, _id, isBackyard):
 
 @PacketEventHandler.onXT('s', 'p#pgmps', WORLD_SERVER, p_r = False)
 def handleGetMyPuffle(client, data):
-    client['puffleHandler'].refreshPuffleHealth()
     #ID, Food, Play, Rest, Clean
 
     puffles = ['{x.id}|{x.food}|{x.play}|{x.rest}|{x.clean}'.format(x=i) for i in client['data'].puffles]
@@ -253,7 +257,7 @@ def handleAddPuffleItem(client, _id):
 
 @PacketEventHandler.onXT('s', 'p#phg', WORLD_SERVER, p_r = False)
 def handleGetStatus(client, data):
-    client.send('phg', int(client['data'] is not None))
+    client.send('phg', 1)
 
 @PacketEventHandler.onXT('s', 'p#puphi', WORLD_SERVER)
 def handleHatUpdate(client, puffle, hat):

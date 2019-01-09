@@ -60,7 +60,7 @@ def MutePlayerCommand(client, reason):
 
 @GeneralEvent.on('kick-player')
 def KickPlayerCommand(client, reason):
-    client.engine.log('info', "Penguin Kicked: %s", reason)
+    client.engine.log('info', "Penguin", client['nickname'],"Kicked:", reason)
     client.canRecvPacket = client.ReceivePacketEnabled = False
 
     client.send('moderatormessage', 3)

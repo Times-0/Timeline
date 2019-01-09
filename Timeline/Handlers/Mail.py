@@ -24,7 +24,7 @@ def handleGetMail(client, data):
         nick = yield Penguin.find(mail.from_user)
         nick = nick.nickname if nick is not None else 'Timeline Team'
 
-        mailstr.append('|'.join(map(str, [nick, int(mail.from_user), mail.description, mail.get_sent_on(), int(mail.id), int(mail.opened)])))
+        mailstr.append('|'.join(map(str, [nick, int(mail.from_user), int(mail.type), mail.description, mail.get_sent_on(), int(mail.id), int(mail.opened)])))
 
     client.send('mg', *mailstr) if len(mailstr) > 0 else client.send('%xt%mg%-1%')
 

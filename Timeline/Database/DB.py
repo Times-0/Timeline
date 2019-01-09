@@ -130,7 +130,7 @@ class Puffle(DBObject):
 
     def __str__(self):
         # puffle id|type|sub_type|name|adoption|food|play|rest|clean|hat|x|y|is_walking
-        return '|'.join(map(str, [int(self.id), int(self.type), int(self.subtype) if int(self.subtype) != 0 else '',
+        return '|'.join(map(str, [int(self.id), int(self.type), self.subtype if int(self.subtype) != 0 else '',
                                   self.name, self.adopt(), int(self.food), int(self.play), int(self.rest),
                                   int(self.clean), int(self.hat), int(self.x), int(self.y), int(self.walking)]))
 

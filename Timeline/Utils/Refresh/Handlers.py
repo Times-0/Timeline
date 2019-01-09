@@ -69,7 +69,7 @@ class RefreshHandler(object):
             self.penguin.send('fb', '|'.join(map(str, data)))
 
         for friend in friendRemoved:
-            self.penguin.send('frf', friend.swid)
+            self.penguin.send('frf', friend.friend)
 
         for friend in originalFriends:
             friendObj = (yield Penguin.find(where=['swid = ?', friend.friend], limit=1))

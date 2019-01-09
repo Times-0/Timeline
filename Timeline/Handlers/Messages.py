@@ -8,6 +8,8 @@ from collections import deque
 import logging
 from time import time
 
+logger = logging.getLogger(TIMELINE_LOGGER)
+
 '''
 AS2 and AS3 Compatible
 '''
@@ -41,7 +43,7 @@ def handleSendMessage(client, _id, message):
     if not client['id'] == _id:
         return
 
-    message = message.strip(' ').replace('|', '\|')
+    message = message.strip(' ').replace('|', '\\|')
 
     GeneralEvent.call('before-message', client, message)
 
@@ -52,6 +54,58 @@ def handleSendMessage(client, _id, message):
     if client['stealth_mode'] or client['mascot_mode']:
         return
 
+    toxic = Toxicity(message)
+    if toxic > 60:
+        # wow toxic...
+        if toxic > 90:
+            # he's a racist, ban him
+            GeneralEvent('ban-player', client, 0, 'Rude. Toxicity [{}] message: {}'.format(toxic, message), type=3, ban_type=610)
+        elif toxic > 80:
+            # Kick'em 
+            GeneralEvent('kick-player', client, 'Rude. Toxicity [{}] message: {}'.format(toxic, message))
+        else:
+            GeneralEvent('mute-player', client, 'Rude. Toxicity [{}] message: {}'.format(toxic, message))
+
+        return
+
+
     client['room'].send('sm', _id, message)
 
     GeneralEvent.call('after-message', client, message)
+
+'''
+Uses Google' Perspective API to check Toxicity of a text.
+Visit: https://github.com/conversationai/perspectiveapi/blob/master/quickstart.md
+and get your Perspective API key.
+'''
+PERSPECTIVE_API_KEY = 'AIzaSyD9XvjmhqsWlWR_5bhqeBWa6Eo9kRgqdXU'  # for testing purpose only. Get yourself a key from google.
+TOXICITY_FILTER = 60 # filter texts with toxicity more than 60%
+API_ACTIVE = False
+TOXIC_FILTER = 'SEVERE_TOXICITY' # use TOXICITY to filter any TOXIC message
+try:
+    from googleapiclient import discovery
+    service = discovery.build('commentanalyzer', 'v1alpha1', developerKey=PERSPECTIVE_API_KEY)
+    API_ACTIVE = True
+except Exception, e:
+    logger.error("Unable to setup Prespective API. Error: %s", e)
+
+def Toxicity(text):
+    if not API_ACTIVE:
+        logger.info("Perspective API not active. Message not filtered.")
+        return 0
+
+    try:
+        analyze_request = {'comment': { 'text': text}, 'requestedAttributes': {TOXIC_FILTER: {}} }
+        response = service.comments().analyze(body=analyze_request).execute()
+
+        toxicity = round(100 * float(response['attributeScores'][TOXIC_FILTER]['summaryScore']['value']))
+        
+        logger.info("Perspective API: Message filtered. Toxicity [%s]. Message [%s]", str(toxicity), text)
+
+        return toxicity
+
+    except Exception, e:
+        print 'Error,', e
+        logger.info("Unable to filter message via Perspective API. Message not filtered.")
+
+    return 0

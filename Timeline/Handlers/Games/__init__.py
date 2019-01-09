@@ -114,10 +114,11 @@ def handleGameOver(client, data):
     if total == earned and total != 0:
         coins *= 2
 
-    Coin(player_id = client['id'], transaction = coins, comment = "Coins earned by playing game. Game: {}".format(current_game.name)).save()
+    client.send('zo', client['coins'] + coins, '|'.join(map(str, stamps)), earned, total, total)
     client['coins'] += coins
 
-    client.send('zo', client['coins'], '|'.join(map(str, stamps)), earned, total, total)
+    Coin(penguin_id = client['id'], transaction = coins, comment = "Coins earned by playing game. Game: {}".format(current_game.name)).save()
+
     GeneralEvent("Game-Over", client, score, current_game)
     
     client['room'].remove(client)
