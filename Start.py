@@ -26,6 +26,7 @@ from twisted.internet.defer import inlineCallbacks, returnValue
 from twisted.python import log
 
 import logging
+from logging.handlers import TimedRotatingFileHandler
 import os, sys, signal
 import subprocess
 import gc
@@ -62,6 +63,8 @@ def InitiateColorLogger(name='Timeline'):
     Timeline_logger.addHandler(Timeline_stream)
 
     Timeline_logger.setLevel(logging.DEBUG)
+    handler = TimedRotatingFileHandler('./logs/TimelineLogs.log', when="d", interval=1)
+    Timeline_logger.addHandler(handler)
 
     Timeline_logger.debug("Timeline Logger::Initiated")
 
@@ -76,8 +79,10 @@ def InitiateLogger(name="Timeline"):
     LogFormat = logging.Formatter("%(asctime)s [%(levelname)s]\t : %(message)s", "%H:%M")
     Timeline_stream.setFormatter(LogFormat)
     Timeline_logger.addHandler(Timeline_stream)
-
     Timeline_logger.setLevel(logging.DEBUG)
+
+    handler = TimedRotatingFileHandler('./logs/TimelineLogs.log', when="d", interval=1)
+    Timeline_logger.addHandler(handler)
 
     Timeline_logger.debug("Timeline Logger::Initiated")
 
@@ -108,32 +113,16 @@ print \
     ----------------------------------------------
     > AS3 + AS2 CPPS Emulator. Written in Python
     > Developer : Dote
-    > Version   : 7 production stable (AS2 + AS3) [Cross-compatible]
-    > Updates   : [+] Complete Database overhaul
-                  [+] Complete avatar support (In-game transformation)
-                  [+] Language support
-                  [+] Mascot messages
-                  [+] Friends handler overhaul
-                  [+] Mail handler overhaul
-                  [+] Puffle handler overhaul
-                  [+] Stamps handler overhaul
-                  [+] Cache Implementation
-                  [+] Game: Fire Sensei
-                  [+] Game: CJ, Fire, CJ Sensei Cleanup
-                  [+] Fix for round redis bug
-                  [+] Automation script to identify and convert
-                      old Database Structure to new one.
-                      Force strict naming nomenclature.
-                  [+] Logs coins history
-                  [+] Event to auto-create commands, if not exists
-                  [+] AS2/AS3 explicit restricted commands
-                  [+] Ice-rink mess
-                  [*] Thanks for patience. 
-                        This includes auto-update plugin, 
-                        in order to enhance and support the new
-                        database overhaul. 
-                        Embrace it, ^_^
-    
+    > Version   : 7.1 production stable (AS2 + AS3) [Cross-compatible]
+    > Updates   : [+] Timeline v7 - Fixes
+                  [+] Message Filter - Based on Toxicity
+                      [Using Google' Perspective API]
+                      * Please get yourself whitelisted from
+                        Google and get a API Key.
+                        The key provided is only for
+                        testing, development and educational
+                        purpose.
+
                   [!] Redemption server
                   [!] Redemption server type, handlers
                   [!] Redemption Database
@@ -153,7 +142,7 @@ print \
 TimelineLogger = InitiateColorLogger()  # InitiateLogger()
 
 # Checking database, databas details once set cannot be change during runtime
-DBMS = DBM(user = "root", passd = "", db = "line")
+DBMS = DBM(user = "root", passd = "", db = "timeline")
 
 if not DBMS.conn:
     sys.exit()
