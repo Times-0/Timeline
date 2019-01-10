@@ -83,7 +83,7 @@ class TestPlugin(IPlugin):
 
      def handleAddCoins(self, client, params):
         coins = int(params[0])
-        Coin(player_id=client['id'], transaction=coins, comment="Coins earned by playing Command").save()
+        Coin(penguin_id=client['id'], transaction=coins, comment="Coins earned by !AC Command").save()
     
 ```
 
