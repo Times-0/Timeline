@@ -56,6 +56,7 @@ Timeline is a free, open-source project. You can always support this by funding 
   
 # Extras
 - [Register for Timeline](https://github.com/Times-0/Register/) - Official Register/signup utility for Timeline. This comes in with, email verify tool builtin (both email checkup and account authentication).
+- [Friends list](https://github.com/Times-0/Friends) HTML-based original CP styled Friends list.
 - ~~[Timid](https://github.com/Times-0/Timid) - Automated AS3 CPPS Setup utility, which does the hard work of creating CPPS for you!~~
 
 You can use the following to add more features and customization to your CPPS:
