@@ -329,6 +329,14 @@ CREATE TABLE IF NOT EXISTS `penguins` (
 ) ;
 -- --------------------------------------------------------
 --
+-- Dumping data for table `penguins`
+--
+
+INSERT INTO `penguins` (`id`, `username`, `password`, `swid`, `nickname`, `email`, `hash`, `create`, `last_update`, `moderator`, `igloo`, `search_msg`, `cover_color`, `cover_highlight`, `cover_pattern`, `cover_icon`) VALUES
+(103, 'test', '5f4dcc3b5aa765d61d8327deb882cf99', '{3ed9b6d7-fd16-11e8-aad3-00f48d43ccb2}', 'Peanut', 'peanutlabs@bill.com', '', '2017-02-21 18:30:00', '2018-12-13 05:56:51', 1, 26, NULL, 2, 4, 4, 2);
+
+-- --------------------------------------------------------
+--
 -- Triggers `penguins`
 --
 DROP TRIGGER IF EXISTS `penguins_OnInsert`;
@@ -337,8 +345,6 @@ CREATE TRIGGER `penguins_OnInsert` BEFORE INSERT ON `penguins` FOR EACH ROW IF N
 	SET NEW.`swid` = CONCAT('{', uuid(), '}');
 END IF
 ;
-
-CREATE TRIGGER `penguins_AfterUpdate` AFTER UPDATE ON `penguins` FOR 
 
 -- --------------------------------------------------------
 
@@ -636,8 +642,13 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `IMPORT_INVENTORY_FROM_CP_STRUCT` ()
             	SET total = total + x;
             	LEAVE loop_label ;
 			END IF;
-            
+
+          SELECT id INTO @inv_id FROM `timeline`.`inventories` WHERE `penguin_id` = @id AND `item` = str;
+          IF @inv_id IS NULL THEN
             INSERT IGNORE INTO `timeline`.`inventories` (`penguin_id`, `item`, `comments`) VALUES (@id, str, "Imported from old CP-Styled database");
+          ELSE
+            UPDATE `timeline`.`inventories` SET `quantity` = `quantity` + 1 WHERE `id` = @inv_id;
+          END IF;
             
 			SET X = X + 1 ;
 		END WHILE ;
