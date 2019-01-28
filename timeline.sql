@@ -641,14 +641,10 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `IMPORT_INVENTORY_FROM_CP_STRUCT` ()
             IF str IS NULL THEN 
             	SET total = total + x;
             	LEAVE loop_label ;
-			END IF;
+			     END IF;
+           INSERT IGNORE INTO `timeline`.`inventories` (`penguin_id`, `item`, `comments`) VALUES (@id, str, "Imported from old CP-Styled database");
 
-          SELECT id INTO @inv_id FROM `timeline`.`inventories` WHERE `penguin_id` = @id AND `item` = str;
-          IF @inv_id IS NULL THEN
-            INSERT IGNORE INTO `timeline`.`inventories` (`penguin_id`, `item`, `comments`) VALUES (@id, str, "Imported from old CP-Styled database");
-          ELSE
-            UPDATE `timeline`.`inventories` SET `quantity` = `quantity` + 1 WHERE `id` = @inv_id;
-          END IF;
+          
             
 			SET X = X + 1 ;
 		END WHILE ;
