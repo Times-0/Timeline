@@ -2,6 +2,8 @@
 AS2 & AS3 CPPS Emulator, written in Python.
 Timeline is built heavily on Twisted and is even-driven, most of the methods are Deferred too!
 
+**Timeline docs now live at** https://times-0.github.io/
+
 # Real-time Message Filter \[Perspective API]
 **Timeline v7.1** or later, supports real-time filtering of messages, based on toxicity in the content of speech. Using the Google's intelligent AI based _Perspective API_, it's now made possible to have more child-friendly environment.
 
