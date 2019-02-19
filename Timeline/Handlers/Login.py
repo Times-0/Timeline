@@ -5,14 +5,36 @@ Login.py handles the incoming XML Packet used to login to server. Packets may no
 from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER, AS3_PROTOCOL, AS2_PROTOCOL
 from Timeline import Username, Password, Nickname
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
-from Timeline.Database.DB import Friend
+from Timeline.Database.DB import Friend, Penguin
 
 from twisted.internet.defer import inlineCallbacks, returnValue
 
 from collections import deque
 import logging
+import traceback
+
+import firebase_admin  # pip install firebase-admin
+from firebase_admin import auth
+from firebase_admin import credentials
 
 logger = logging.getLogger(TIMELINE_LOGGER)
+
+
+'''
+Initializing Firebase. **Make sure to use your own Firebase configs**
+'''
+FIREBASE_INIT = False
+try:
+    try:
+        FIREBASE_APP = firebase_admin.get_app()
+        FIREBASE_INIT = True
+    except:
+        cred = credentials.Certificate("./configs/timeline-0002-firebase-adminsdk-agm6t-4e08582005.json")
+        FIREBASE_APP = firebase_admin.initialize_app(cred)
+        FIREBASE_INIT = True
+except Exception, e:
+    traceback.print_exc()
+
 
 '''
 AS2 and AS3 Compatible
@@ -48,19 +70,36 @@ AS2 and AS3 Compatible
 @PacketEventHandler.onXML_AS2('login', LOGIN_SERVER)
 @inlineCallbacks
 def HandlePrimaryPenguinLogin(client, user, passd):
-    exist = yield client.db_penguinExists('username', user)
+    if user == '$fire' and FIREBASE_INIT:
+        #firebase
+        idToken = passd
+        try:
+            userData = auth.verify_id_token(idToken, check_revoked=True)
+            userData = auth.get_user(userData['uid'])
+            client.penguin.firebase_user = userData
+        except:
+            traceback.print_exc()
+            client.send('e', 101)
+            returnValue(client.disconnect())
+
+    exist = (yield client.db_penguinExists('username', user)) if user != '$fire' else True
 
     if not exist:
         client.send("e", 101)
         returnValue(client.disconnect())
 
-    client.penguin.username = user
+    if user == '$fire' and FIREBASE_INIT:
+        client.penguin.swid = userData.custom_claims.get('swid')
+    else:
+        client.penguin.username = user
+
 
     yield client.db_init()
 
     client.penguin.username = Username(client.dbpenguin.username, client)
     client.penguin.password = Password(client.dbpenguin.password, client)
-    if not client.checkPassword(passd):
+    
+    if not client.checkPassword(passd) and (user != '$fire' or not FIREBASE_INIT):
         client.send('e', 101)
         returnValue(client.disconnect())
 
@@ -140,6 +179,8 @@ def HandleWorldPenguinLogin(client, nickname, _id, swid, password, confirmHash, 
     if not exist:
         client.send("e", 101)
         returnValue(client.disconnect())
+
+    print confirmHash, loginkey
 
     client.penguin.nickname = Nickname(nickname, client)
     client.penguin.password = password
