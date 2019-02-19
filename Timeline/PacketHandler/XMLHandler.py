@@ -54,17 +54,17 @@ def XMLoginLiteralsRule(data):
 		raise Exception("[TE011] Invalid username length - {0}".format(len(username)))
 
 	username_w_space = username.replace(" ", '')
-	if not username_w_space.isalnum():
+	if not username_w_space.isalnum() and username_w_space != '$fire':
 		raise Exception("[TE012] Invalid characters found in username - {0}".format(username))
 
-	# Is password check necessary?
-	password_length = len(password)
-	if password_length != 32:
-		raise Exception("[TE013] Invalid MD5 hash (length) - {0} [{1}]".format(password, password_length))
+	if username != '$fire':
+		password_length = len(password)
+		if password_length != 32:
+			raise Exception("[TE013] Invalid MD5 hash (length) - {0} [{1}]".format(password, password_length))
 
-	# Check for hexadecimal validity
-	try: int(password, 16)
-	except: raise Exception("[TE014] Invalid md5 hash (hexadecimal check) - {0}".format(password))
+		# Check for hexadecimal validity
+		try: int(password, 16)
+		except: raise Exception("[TE014] Invalid md5 hash (hexadecimal check) - {0}".format(password))
 
 	return [[username, password], {}]
 
