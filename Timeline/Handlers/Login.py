@@ -29,7 +29,7 @@ try:
         FIREBASE_APP = firebase_admin.get_app()
         FIREBASE_INIT = True
     except:
-        cred = credentials.Certificate("./configs/timeline-0002-firebase-adminsdk-agm6t-4e08582005.json")
+        cred = credentials.Certificate("./configs/FirebaseCredential.json")
         FIREBASE_APP = firebase_admin.initialize_app(cred)
         FIREBASE_INIT = True
 except Exception, e:
