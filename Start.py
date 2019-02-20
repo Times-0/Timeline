@@ -113,9 +113,18 @@ print \
     ----------------------------------------------
     > AS3 + AS2 CPPS Emulator. Written in Python
     > Developer : Dote
-    > Version   : 7.1 production stable (AS2 + AS3) [Cross-compatible]
+    > Version   : 7.2 production stable (AS2 + AS3) [Cross-compatible]
     > Updates   : [+] Timeline v7 - Fixes
-                  [+] Message Filter - Based on Toxicity
+                  [+] Firebase, autologin Integration 
+                      [Using Google' Firebase System]
+                      * Please follow docs at 
+                        https://times-0.github.io, and
+                        setup Firebase credentials before
+                        proceeding, only if you want to activate
+                        this feature.
+                      * Usage is optional, but recommended
+
+                  [&] Message Filter - Based on Toxicity
                       [Using Google' Perspective API]
                       * Please get yourself whitelisted from
                         Google and get a API Key.
@@ -123,18 +132,16 @@ print \
                         testing, development and educational
                         purpose.
 
-                  [!] Redemption server
-                  [!] Redemption server type, handlers
-                  [!] Redemption Database
                   [!] nx-cache : First time user login and first time tutorials
                   [!] Activation expiry message
                   [!] Dynamic AS2+AS3 Engine, supports both AS2 + AS3 clients at once.
                         ! Coming soon, Patience :~)
+                        & Pinned intel
                   [-] Bugs and Glitches
     _______________________________________________
     * Make sure to download the new version of Timeline-Signup (Register)
     script, that supports the new `line` based database structure.
-    * Make sure to download the new `Avatar-line.py`, from Avatar branch, 
+    * Make sure to download the new `Avatar.py`, from Avatar branch, 
     so that your avatar supports the new `line` based database structure.
     """
 
