@@ -4,7 +4,12 @@ Timeline is built heavily on Twisted and is even-driven, most of the methods are
 
 **Timeline docs now live at** https://times-0.github.io/
 
-# Real-time Message Filter \[Perspective API]
+# Firebase Integration
+**Timeline v7.2** or later supports the integrated Firebase, autologin system. To use this, make sure you have compatible client setup already. You can visit docs for detailed guide on how to setup Firebase login system. 
+
+_This integration is optional, yet recommended. No data loss, or account loss will be experienced during this integration. Any account not using firebase, will be automatically converted upon login_
+
+## Real-time Message Filter \[Perspective API]
 **Timeline v7.1** or later, supports real-time filtering of messages, based on toxicity in the content of speech. Using the Google's intelligent AI based _Perspective API_, it's now made possible to have more child-friendly environment.
 
 The **Perspective API Key** provided by default is just for **testing/development/educational** purpose. Please **don't** use the same key for your **production server**. You **must** get yourself **whitelisted** from Google, and get yourself **a key for your server**. 
