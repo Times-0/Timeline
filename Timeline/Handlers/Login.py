@@ -82,7 +82,7 @@ def HandlePrimaryPenguinLogin(client, user, passd):
             client.send('e', 101)
             returnValue(client.disconnect())
 
-    exist = (yield client.db_penguinExists('username', user)) if user != '$fire' else True
+    exist = (yield client.db_penguinExists('username', user)) if user != '$fire' and FIREBASE_INIT else True
 
     if not exist:
         client.send("e", 101)
@@ -179,8 +179,6 @@ def HandleWorldPenguinLogin(client, nickname, _id, swid, password, confirmHash, 
     if not exist:
         client.send("e", 101)
         returnValue(client.disconnect())
-
-    print confirmHash, loginkey
 
     client.penguin.nickname = Nickname(nickname, client)
     client.penguin.password = password
