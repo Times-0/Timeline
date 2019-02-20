@@ -32,6 +32,8 @@ try:
         cred = credentials.Certificate("./configs/FirebaseCredential.json")
         FIREBASE_APP = firebase_admin.initialize_app(cred)
         FIREBASE_INIT = True
+
+    logger.info("Firebase initiated")
 except Exception, e:
     traceback.print_exc()
 
@@ -99,7 +101,7 @@ def HandlePrimaryPenguinLogin(client, user, passd):
     client.penguin.username = Username(client.dbpenguin.username, client)
     client.penguin.password = Password(client.dbpenguin.password, client)
     
-    if not client.checkPassword(passd) and (user != '$fire' or not FIREBASE_INIT):
+    if (client['password']=='firebase' and user != '$fire') or (not client.checkPassword(passd) and (user != '$fire' or not FIREBASE_INIT)):
         client.send('e', 101)
         returnValue(client.disconnect())
 
