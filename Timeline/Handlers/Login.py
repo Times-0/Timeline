@@ -75,6 +75,8 @@ def HandlePrimaryPenguinLogin(client, user, passd):
     if user == '$fire' and FIREBASE_INIT:
         #firebase
         idToken = passd
+        exist = True
+
         try:
             userData = auth.verify_id_token(idToken, check_revoked=True)
             userData = auth.get_user(userData['uid'])
@@ -84,7 +86,8 @@ def HandlePrimaryPenguinLogin(client, user, passd):
             client.send('e', 101)
             returnValue(client.disconnect())
 
-    exist = (yield client.db_penguinExists('username', user)) if user != '$fire' and FIREBASE_INIT else True
+    else:  
+        exist = yield client.db_penguinExists('username', user)
 
     if not exist:
         client.send("e", 101)
