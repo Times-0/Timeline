@@ -75,18 +75,16 @@ def HandlePrimaryPenguinLogin(client, user, passd):
     if user == '$fire' and FIREBASE_INIT:
         #firebase
         idToken = passd
-        exist = True
-
         try:
             userData = auth.verify_id_token(idToken, check_revoked=True)
             userData = auth.get_user(userData['uid'])
             client.penguin.firebase_user = userData
+            exist = True
         except:
             traceback.print_exc()
             client.send('e', 101)
             returnValue(client.disconnect())
-
-    else:  
+    else:
         exist = yield client.db_penguinExists('username', user)
 
     if not exist:
@@ -206,7 +204,12 @@ def HandleWorldPenguinLogin(client, nickname, _id, swid, password, confirmHash, 
         client.send('e', 3)
         returnValue(client.disconnect())
 
-    details = yield client.engine.redis.getPlayerKey(client.penguin.id)
+    # check if player is jumping
+    isJumping = yield client.redis.server.exists('player-jump:{}'.format(client.dbpenguin.id))
+    key = 'jump-conf:{}' if isJumping else 'conf:{}'
+    
+    details = yield client.engine.redis.server.get(key.format(client.dbpenguin.id))
+
     if not details:
         client.send('e', 101)
         returnValue(client.disconnect())
@@ -216,6 +219,11 @@ def HandleWorldPenguinLogin(client, nickname, _id, swid, password, confirmHash, 
         returnValue(client.disconnect())
 
     yield client.engine.redis.server.delete("conf:{}".format(client.penguin.id))
+
+    # support for Server Jumping
+    if not isJumping:
+        yield client.engine.redis.server.set("jump-conf:{0}".format(client.dbpenguin.id), details, 24*60*60)  # player can jump server for next 24 hours
+
     yield client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {
         'server' : client.engine.id,
         'place'  : 0,
