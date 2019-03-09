@@ -4,7 +4,10 @@ Timeline is built heavily on Twisted and is even-driven, most of the methods are
 
 **Timeline docs now live at** https://times-0.github.io/
 
-# Firebase Integration
+# Server Jumping
+**Timeline v7.3** or later supports In-game Server Jumping feature. To use this make sure you have setup your client already. You can visit docs for detailed guide on adding Server Jumping feature to the client.
+
+## Firebase Integration
 **Timeline v7.2** or later supports the integrated Firebase, autologin system. To use this, make sure you have compatible client setup already. You can visit docs for detailed guide on how to setup Firebase login system. 
 
 _This integration is optional, yet recommended. No data loss, or account loss will be experienced during this integration. Any account not using firebase, will be automatically converted upon login_
@@ -117,6 +120,7 @@ TimelineLogger = InitiateLogger()
 # Features
 Timeline is almost complete, covering support for all features present in native CP and any classical CPPS. Below is an adaptive list briefing such features:
 - Login                 \[AS2, AS3]
+- Server Jumping        \[AS3]
 - Inventory             \[AS2, AS3]
 - Purchasing            \[AS2, AS3]
 - Clothing              \[AS2, AS3]
