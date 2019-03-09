@@ -8,10 +8,27 @@ from twisted.internet.defer import inlineCallbacks, returnValue
 
 from collections import deque
 import logging
-from time import time
+from time import time, sleep
 import random
 
 logger = logging.getLogger(TIMELINE_LOGGER)
+
+
+'''
+AS2 and AS3 Compatible
+'''
+@PacketEventHandler.onXT('s', 'q#sj', WORLD_SERVER, p_r=False)
+@PacketEventHandler.onXT_AS2('s', 'q#sj', WORLD_SERVER, p_r=False)
+@inlineCallbacks
+def handleJumpServerInit(client, data):
+    client.penguin.jumping = True
+    client['room'].send('sjf', client['id'])
+
+    key = (client.CryptoHandler.random(10) + "-" + client.CryptoHandler.random(10)).encode('hex')
+    yield client.engine.redis.server.set("conf:{0}".format(client['id']), key, 15*60)  # player can jump server for next 15 mins
+
+    client.send('sj', int(data[2][0] == 'jumpline'), client.CryptoHandler.bcrypt(key))
+
 
 '''
 AS2 and AS3 Compatible
@@ -52,6 +69,7 @@ def handleJoinServer(client, _id, passd, lang):
         client.send('lp', client, client['coins'], 0, 1440, int(time() * 1000), client['age'], 0, int(client['age'])/60, member, 0)
     
     client.engine.roomHandler.joinRoom(client, 'dojo', 'name') # TODO Check for max-users limit
+
 
 @GeneralEvent.on('onClientDisconnect')
 def handleRemoveClient(client):

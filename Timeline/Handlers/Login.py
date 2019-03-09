@@ -119,7 +119,6 @@ def HandlePrimaryPenguinLogin(client, user, passd):
     fkey = client.CryptoHandler.md5(key)
 
     client.engine.redis.server.set("conf:{0}".format(client.dbpenguin.id), key, 15*60)
-
     world = list()
 
     w, wu = yield client.engine.redis.getWorldServers()
@@ -199,15 +198,15 @@ def HandleWorldPenguinLogin(client, nickname, _id, swid, password, confirmHash, 
         returnValue(0)
     a = yield client.engine.redis.server.ping()
     print a
+
+
     isLoggedIn = yield client.engine.redis.isPenguinLoggedIn(client.penguin.id)
     if isLoggedIn:
         client.send('e', 3)
         returnValue(client.disconnect())
 
-    # check if player is jumping
-    isJumping = yield client.redis.server.exists('player-jump:{}'.format(client.dbpenguin.id))
-    key = 'jump-conf:{}' if isJumping else 'conf:{}'
-    
+    key = 'conf:{}'
+
     details = yield client.engine.redis.server.get(key.format(client.dbpenguin.id))
 
     if not details:
@@ -219,10 +218,6 @@ def HandleWorldPenguinLogin(client, nickname, _id, swid, password, confirmHash, 
         returnValue(client.disconnect())
 
     yield client.engine.redis.server.delete("conf:{}".format(client.penguin.id))
-
-    # support for Server Jumping
-    if not isJumping:
-        yield client.engine.redis.server.set("jump-conf:{0}".format(client.dbpenguin.id), details, 24*60*60)  # player can jump server for next 24 hours
 
     yield client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {
         'server' : client.engine.id,
