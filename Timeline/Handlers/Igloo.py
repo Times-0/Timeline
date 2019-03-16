@@ -272,7 +272,8 @@ def handleUpdateIglooSlotSummary(client, _id, summary):
         returnValue(None)
 
     client['currentIgloo'] = igloos[_id].igloo
-    # client['iglooHandler'].filterCJMats() # todo: support this on new update
+    client['RefreshHandler'].setupCJMats()
+    
     client['igloo']._id = _id
     client.dbpenguin.igloo = client['currentIgloo'].id
     client.dbpenguin.save()
