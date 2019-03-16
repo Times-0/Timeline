@@ -169,6 +169,7 @@ class Refresh(RefreshHandler, Functions):
             self.cache.igloos.append(iglooCache)
 
         self.penguin.penguin.currentIgloo = self.getIgloos()[self.penguin.dbpenguin.igloo].igloo
+        self.setupCJMats()
 
         membership = yield database_penguin.memberships.get(orderby = 'expires desc', limit = 1)
         if membership is None:
