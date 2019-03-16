@@ -105,3 +105,24 @@ class Functions(object):
         iglooRoom._id = int(igloo.id)
 
         returnValue(iglooRoom)
+        
+    def setupCJMats(self):
+        CardJitsuWaddleId = 200
+        currentIgloo = self.getIgloos()[self.penguin['currentIgloo'].id]
+        igloo_room = self.penguin['igloo']
+        mats_in_igloo = [k for k in currentIgloo.iglooFurnitures if k.furn_id == 786]
+
+        for i in range(len(mats_in_igloo)):
+            wid = CardJitsuWaddleId+i
+            
+            WADDLES = self.penguin.engine.roomHandler.ROOM_CONFIG.WADDLES
+            if self.penguin['igloo'].id not in WADDLES:
+                WADDLES[self.penguin['igloo'].id] = list()
+
+            Mat = CJMat(self.penguin.engine.roomHandler, wid, "JitsuMat", "Card Jitsu Mat", 3, False, False, None)
+            Mat.waddle = wid
+            Mat.room = self.penguin['igloo']
+
+            WADDLES[self.penguin['igloo'].id].append(Mat)
+
+            self.logger.info("Added CardJitsu-Mat [%s] to %s's igloo.", wid, self.penguin['nickname'])
