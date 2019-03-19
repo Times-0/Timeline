@@ -122,8 +122,19 @@ class Membership(DBObject):
 
 class MusicTrack(DBObject):
     shared = False
-    pass
 
+    def __len__(self):
+        return self.length
+
+    def __str__(self, withNotes = False):
+        if not withNotes:
+            return '|'.join(map(str, [self.id, self.name, int(self.shared), self.likes]))
+
+        return '%'.join(map(str, [self.id, self.name, int(self.shared), self.notes, self.hash, self.likes]))
+
+    def __int__(self):
+        return self.id
+    
 
 class Puffle(DBObject):
     state = x = y = 0
