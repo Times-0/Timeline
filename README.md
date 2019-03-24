@@ -4,7 +4,14 @@ Timeline is built heavily on Twisted and is even-driven, most of the methods are
 
 **Timeline docs now live at** https://times-0.github.io/
 
-# Server Jumping
+# AS2 + AS3 Cross-compatible Server
+**Timeline v7.4+** supports AS2+AS3 cross compatible server. What this means for you is that, you run a single server that can accept both AS2 and AS3 clients, both at the same time 
+
+*Note: There still needs some fix for certain packets that differ from AS2 to AS3, this will be looked into in the near future*
+
+Default server is now a cross-compatible AS2+AS3 server.
+
+## Server Jumping
 **Timeline v7.3** or later supports In-game Server Jumping feature. To use this make sure you have setup your client already. You can visit docs for detailed guide on adding Server Jumping feature to the client.
 
 ## Firebase Integration
