@@ -15,7 +15,7 @@ WORLD_SERVER = 'WS'
 
 LOGIN_SERVER_ALLOWED = ['w1']
 
-AS3_PROTOCOL, AS2_PROTOCOL = 'AS3p', 'AS2p'
+AS3_PROTOCOL, AS2_PROTOCOL, CROSS_PROTOCOL = 'AS3p', 'AS2p', 'AS3p+AS2p'
 
 # 47 -> all lang except ru, 111 -> all lang
 LANGUAGE = {'en': 1, 'pt': 2, 'fr': 4, 'es': 8, 'de': 32, 'ru': 64}
