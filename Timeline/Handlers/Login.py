@@ -75,7 +75,7 @@ AS2+AS3 Cross Server
 @PacketEventHandler.onXML('login', LOGIN_SERVER, server_protocol=CROSS_PROTOCOL)
 @inlineCallbacks
 def HandleCrossLogin(client, user, passd):
-    exist = yield client.db_penguinExists('username', user)
+    exists = yield client.db_penguinExists('username', user)
 
     if user == '$fire':
         # AS3 Protocol
