@@ -2,7 +2,7 @@
 Timeline - An AS3 CPPS emulator, written by dote, in python. Extensively using Twisted modules and is event driven.
 Login.py handles the incoming XML Packet used to login to server. Packets may not necessarily be `login packet`
 '''
-from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER, AS3_PROTOCOL, AS2_PROTOCOL
+from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER, AS3_PROTOCOL, AS2_PROTOCOL, CROSS_PROTOCOL
 from Timeline import Username, Password, Nickname
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
 from Timeline.Database.DB import Friend, Penguin
@@ -43,6 +43,8 @@ AS2 and AS3 Compatible
 '''
 @PacketEventHandler.onXML('verChk', LOGIN_SERVER)
 @PacketEventHandler.onXML('verChk', WORLD_SERVER)
+@PacketEventHandler.onXML('verChk', WORLD_SERVER, server_protocol=CROSS_PROTOCOL)
+@PacketEventHandler.onXML('verChk', LOGIN_SERVER, server_protocol=CROSS_PROTOCOL)
 @PacketEventHandler.onXML_AS2('verChk', LOGIN_SERVER)
 @PacketEventHandler.onXML_AS2('verChk', WORLD_SERVER)
 def APIVersionCheck(client, version):
@@ -59,11 +61,58 @@ AS2 and AS3 Compatible
 '''
 @PacketEventHandler.onXML('rndK', LOGIN_SERVER, p_r = False)
 @PacketEventHandler.onXML('rndK', WORLD_SERVER, p_r = False)
+@PacketEventHandler.onXML('rndK', WORLD_SERVER, server_protocol=CROSS_PROTOCOL, p_r = False)
+@PacketEventHandler.onXML('rndK', LOGIN_SERVER, server_protocol=CROSS_PROTOCOL, p_r = False)
 @PacketEventHandler.onXML_AS2('rndK', LOGIN_SERVER, p_r = False)
 @PacketEventHandler.onXML_AS2('rndK', WORLD_SERVER, p_r = False)
 def GetPenguinRandomKey(client, body):
     client.send(client.PacketHandler.buildXML({"msg" : {'t' : 'sys', 'body' : {'action' : 'rndK', 'r' : '-1', 'k' : list([client.CryptoHandler.randomKey]) } } }))
 
+
+'''
+AS2+AS3 Cross Server
+'''
+@PacketEventHandler.onXML('login', LOGIN_SERVER, server_protocol=CROSS_PROTOCOL)
+@inlineCallbacks
+def HandleCrossLogin(client, user, passd):
+    exist = yield client.db_penguinExists('username', user)
+
+    if user == '$fire':
+        # AS3 Protocol
+        client.Protocol = AS3_PROTOCOL
+        client.CryptoHandler.salt = "a1ebe00441f5aecb185d0ec178ca2305Y(02.>'H}t\":E1_root"
+
+        returnValue((yield HandlePrimaryPenguinLogin(client, user, passd)))
+
+    if not exists:
+        client.send('e', 101)
+        returnValue(client.disconnect())
+
+    client.penguin.username = user
+    yield client.db_init()
+    client.penguin.password = client.dbpenguin.password.upper()
+
+    client.Protocol = AS2_PROTOCOL # test as2
+    client.CryptoHandler.salt = "Y(02.>'H}t\":E1" # test as2
+
+    print passd, client['password'], client.CryptoHandler.loginHash()
+
+    if not client.checkPassword(passd):
+        # AS3 protocol, because AS2 Failed
+        client.Protocol = AS3_PROTOCOL
+        client.CryptoHandler.salt = "a1ebe00441f5aecb185d0ec178ca2305Y(02.>'H}t\":E1_root"
+
+    returnValue((yield HandlePrimaryPenguinLogin(client, user, passd)))
+
+
+'''
+AS2+AS3 Cross Server
+'''
+@PacketEventHandler.onXML('login', WORLD_SERVER, server_protocol=CROSS_PROTOCOL)
+def HandleCrossLogin(client, isAS3, *args, **kwargs):
+    client.Protocol = AS3_PROTOCOL if isAS3 else AS2_PROTOCOL
+
+    return (HandleWorldPenguinLogin if isAS3 else HandleWorldPenguinLoginAS2)(client, *args, **kwargs)
 
 '''
 AS2 and AS3 Compatible
