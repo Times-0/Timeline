@@ -2,7 +2,7 @@
 Timeline - An AS3 CPPS emulator, written by dote, in python. Extensively using Twisted modules and is event driven.
 This packet handler file implements XML Handlers - apiChk, rndK, login
 '''
-from Timeline.Server.Constants import TIMELINE_LOGGER, PACKET_TYPE, PACKET_DELIMITER, LOGIN_SERVER, WORLD_SERVER, LOGIN_SERVER_ALLOWED
+from Timeline.Server.Constants import TIMELINE_LOGGER, PACKET_TYPE, PACKET_DELIMITER, LOGIN_SERVER, WORLD_SERVER, LOGIN_SERVER_ALLOWED, CROSS_PROTOCOL
 from Timeline.Utils.Events import PacketEventHandler
 
 from twisted.internet import threads
@@ -26,6 +26,8 @@ Rule : Version = int version, else error.
 '''
 @PacketEventHandler.XMLPacketRule('verChk', LOGIN_SERVER)
 @PacketEventHandler.XMLPacketRule('verChk', WORLD_SERVER)
+@PacketEventHandler.XMLPacketRule('verChk', LOGIN_SERVER, server_protocol=CROSS_PROTOCOL)
+@PacketEventHandler.XMLPacketRule('verChk', WORLD_SERVER, server_protocol=CROSS_PROTOCOL)
 @PacketEventHandler.XMLPacketRule_AS2('verChk', LOGIN_SERVER)
 @PacketEventHandler.XMLPacketRule_AS2('verChk', WORLD_SERVER)
 def XMLVersionCheckRule(data):
@@ -39,6 +41,7 @@ AS2 and AS3 Compatible
 '''
 @PacketEventHandler.XMLPacketRule('login', LOGIN_SERVER)
 @PacketEventHandler.XMLPacketRule_AS2('login', LOGIN_SERVER)
+@PacketEventHandler.XMLPacketRule('login', LOGIN_SERVER, server_protocol=CROSS_PROTOCOL)
 def XMLoginLiteralsRule(data):
 	login = data.find("login")
 
@@ -67,6 +70,23 @@ def XMLoginLiteralsRule(data):
 		except: raise Exception("[TE014] Invalid md5 hash (hexadecimal check) - {0}".format(password))
 
 	return [[username, password], {}]
+
+@PacketEventHandler.XMLPacketRule('login', WORLD_SERVER, server_protocol=CROSS_PROTOCOL)
+def XMLWorldLiteralAS2_AS3(data):
+	login = data.find('login')
+	nick = login.find('nick').text.strip()
+
+	if '|' in nick:
+		# AS3
+		data = XMLWorldLiteralsRule(data)
+		data[0].insert(0, True)
+	else:
+		# AS2
+		data = XMLWorldLiteralsRuleAS2(data)
+		data[0].insert(0, False)
+
+	return data
+
 
 '''
 AS2 Specific World server login rules
