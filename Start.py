@@ -220,6 +220,9 @@ def main():
     LoginServer = Engine(Penguin, Constants.LOGIN_SERVER, 1, "Login", server_protocol=Constants.CROSS_PROTOCOL)
     Gravity = Engine(Penguin, Constants.WORLD_SERVER, 100, "Gravity", server_protocol=Constants.CROSS_PROTOCOL)
 
+    LoginServer.run('127.0.0.1', 6112)
+    Gravity.run('127.0.0.1', 9875)
+
     SERVERS += [LoginServer, Gravity]
 
 
