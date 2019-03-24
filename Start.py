@@ -113,9 +113,15 @@ print \
     ----------------------------------------------
     > AS3 + AS2 CPPS Emulator. Written in Python
     > Developer : Dote
-    > Version   : 7.2 production stable (AS2 + AS3) [Cross-compatible]
-    > Updates   : [+] Timeline v7 - Fixes
-                  [+] Firebase, autologin Integration 
+    > Version   : 7.4 production stable (AS2 + AS3) [Cross-compatible]
+    > Updates   : [+] AS2 + AS3 Cross Compatibility on single server
+                      * You can now create a server that accepts both AS2,
+                        and AS3 Client both at the same time :~)
+                        No separate AS2 and AS3 servers anymore!!    
+                  [&] Server Jumping
+                      * Please follow https://times-0.github.com/docs/mediaserver.html#ServerJump
+                        and setup client dependency (jumpline.swf) to get this working
+                  [&] Firebase, autologin Integration 
                       [Using Google' Firebase System]
                       * Please follow docs at 
                         https://times-0.github.io, and
@@ -209,23 +215,12 @@ def main():
 
     The type of server *must* be sent to Engine as a parameter!
     '''
-    LoginServer = Engine(Penguin, Constants.LOGIN_SERVER, 1, "Login")
-    Gravity = Engine(Penguin, Constants.WORLD_SERVER, 100, "Gravity")
+    # CROSS_PROTOCOL = Accepts both AS2 + AS3 under one roof
 
-    '''
-    Example of running AS2 Server. Note the server_protocol paramater in the Engine contruction.
-    '''
+    LoginServer = Engine(Penguin, Constants.LOGIN_SERVER, 1, "Login", server_protocol=Constants.CROSS_PROTOCOL)
+    Gravity = Engine(Penguin, Constants.WORLD_SERVER, 100, "Gravity", server_protocol=Constants.CROSS_PROTOCOL)
 
-    AS2LoginServer = Engine(Penguin, Constants.LOGIN_SERVER, 2, "Login AS2", server_protocol=Constants.AS2_PROTOCOL)
-    GravityAS2 = Engine(Penguin, Constants.WORLD_SERVER, 101, "Gravity AS2", server_protocol=Constants.AS2_PROTOCOL)
-
-    LoginServer.run('127.0.0.1', 6112)
-    AS2LoginServer.run('127.0.0.1', 6113)
-
-    Gravity.run('127.0.0.1', 9875)
-    GravityAS2.run('127.0.0.1', 9876)
-
-    SERVERS += [LoginServer, Gravity, AS2LoginServer, GravityAS2]
+    SERVERS += [LoginServer, Gravity]
 
 
 LoadPlugins(Plugins)
