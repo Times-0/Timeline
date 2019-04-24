@@ -134,7 +134,7 @@ class MusicTrack(DBObject):
 
     def __int__(self):
         return self.id
-    
+
 
 class Puffle(DBObject):
     state = x = y = 0
@@ -150,7 +150,7 @@ class Puffle(DBObject):
 
     def updatePuffleStats(self, engine):
         care_history = json.loads(self.lastcare)
-        now = int(time.time())
+        now = time.time()
 
         if care_history is None or len(care_history) < 1 or bool(int(self.backyard)) or self.walking:
             care_history['food'] = care_history['play'] = care_history['bath'] = now
@@ -181,12 +181,9 @@ class Puffle(DBObject):
         if remaining % < 2 : move puffle to pet store, delete puffle, send a postcard, sue 1000 coins as penalty
         '''
 
-        fed_percent = int(
-            (food * max_food / 100 - ((now - last_fed) * 0.05 * max_food / (24 * 60 * 60))) * 100 / max_food)
-        play_percent = int(
-            (play * max_play / 100 - ((now - last_played) * 0.05 * max_play / (24 * 60 * 60))) * 100 / max_play)
-        clean_percent = int(
-            (clean * max_clean / 100 - ((now - last_bathed) * 0.05 * max_clean / (24 * 60 * 60))) * 100 / max_clean)
+        fed_percent = fed_percent - 5 * ((now - last_fed)/86400) # delta_food = -5% per day
+        play_percent = play_percent - 5 * ((now - last_played)/86400) # delta_play = -5% per day
+        clean_percent = clean_percent - 10 * ((now - last_bathed)/86400) # delta_clean = -10% per day
 
         total_percent = (fed_percent + play_percent + clean_percent) / 3.0
 
@@ -200,7 +197,19 @@ class Puffle(DBObject):
             return
 
         if fed_percent < 10:
-            Mail(penguin_id=self.penguin_id, from_user=0, type=110, description=str(self.name)).save()
+            pid = self.penguin_id
+            pname = self.name
+            def sendMail(mail):
+                if mail is not None:
+                    sent = mail.sent_on
+                    delta = (time.time() - sent)/3600/12
+                    if delta < 1:
+                        return
+
+                Mail(penguin_id=pid, from_user=0, type=110, description=str(pname)).save()
+
+
+            last_mail = Mail.find(where=['penguin_id = ? AND type = 110 AND description = ?', self.penguin_id, self.name], orderby='sent_on DESC', limit=1).addCallback(sendMail)
 
         self.food = fed_percent
         self.play = play_percent
