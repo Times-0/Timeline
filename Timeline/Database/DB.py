@@ -181,9 +181,9 @@ class Puffle(DBObject):
         if remaining % < 2 : move puffle to pet store, delete puffle, send a postcard, sue 1000 coins as penalty
         '''
 
-        fed_percent = fed_percent - 5 * ((now - last_fed)/86400) # delta_food = -5% per day
-        play_percent = play_percent - 5 * ((now - last_played)/86400) # delta_play = -5% per day
-        clean_percent = clean_percent - 10 * ((now - last_bathed)/86400) # delta_clean = -10% per day
+        fed_percent = food - 5 * ((now - last_fed)/86400) # delta_food = -5% per day
+        play_percent = play - 5 * ((now - last_played)/86400) # delta_play = -5% per day
+        clean_percent = clean - 10 * ((now - last_bathed)/86400) # delta_clean = -10% per day
 
         total_percent = (fed_percent + play_percent + clean_percent) / 3.0
 
