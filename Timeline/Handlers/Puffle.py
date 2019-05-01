@@ -77,6 +77,7 @@ def handlePuffleDig(client, data):
 
     if dig == 0:
         coinsDug = int(10 * randint(1, 40))
+        Coin(penguin_id=client['id'], transaction=coinsDug, comment="Coins earned by puffle dig. Puffle: {}".format(client['walkingPuffle'].id)).save()
         client['coins'] += coinsDug
 
         returnValue(client['room'].send('puffledig', client['id'], client['walkingPuffle'].id, 0, 0, coinsDug, 0, 0))
@@ -95,6 +96,7 @@ def handlePuffleDig(client, data):
             if tryDigging is True:
                 returnValue(client['room'].send('puffledig', client['id'], client['walkingPuffle'].id, 2, dug, 1, 0, 0))
 
+        Coin(penguin_id=client['id'], transaction=600, comment="Coins earned by puffle dig. Puffle: {}".format(client['walkingPuffle'].id)).save()
         client['coins'] += 600
         returnValue(client['room'].send('puffledig', client['id'], client['walkingPuffle'].id, 0, 0, 600, 0, 0))
 
@@ -110,7 +112,7 @@ def handlePuffleDig(client, data):
 
                 returnValue(client['room'].send('puffledig', client['id'], client['walkingPuffle'].id, 3, dug, 1, 0, 0))
 
-        client['coins'] += 500
+        Coin(penguin_id=client['id'], transaction=500, comment="Coins earned by puffle dig. Puffle: {}".format(client['walkingPuffle'].id)).save()
         returnValue(client['room'].send('puffledig', client['id'], client['walkingPuffle'].id, 0, 0, 500, 0, 0))
 
     elif dig == 4:
