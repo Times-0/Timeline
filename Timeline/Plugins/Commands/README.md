@@ -40,7 +40,7 @@ from Timeline.Database.DB import Coin
 
 def AddCoinsToTheUser(self, client, params): # The parameters are exact and doesn't change
     coins = int(params[0])
-    Coin(player_id=client['id'], transaction=coins, comment="Coins earned by playing Command").save()
+    Coin(penguin_id=client['id'], transaction=coins, comment="Coins earned by playing Command").save()
 ```
 </details>
 
