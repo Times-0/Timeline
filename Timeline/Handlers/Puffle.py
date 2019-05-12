@@ -153,7 +153,7 @@ def handlePuffleWalk(client, puffle, isWalking, sendPacket = True):
     puffle = puffleById[puffle]
 
     if client['walkingPuffle'] is not None:
-        if client['puffleHandler'].walkingPuffle.id is puffle.id and isWalking:
+        if client['walkingPuffle'].id is puffle.id and isWalking:
             return None
 
         client['walkingPuffle'].walking = 0
