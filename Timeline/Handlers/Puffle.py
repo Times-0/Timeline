@@ -87,7 +87,7 @@ def handlePuffleDig(client, data):
 
     elif dig == 2:
         diggables = DIGGABLE_FURN
-        if client['puffleHandler'].walkingPuffle.id == 11:
+        if client['walkingPuffle'].id == 11:
             diggables += GOLD_DIGGABLE_FURN
 
         shuffle(diggables)
@@ -268,8 +268,6 @@ def handleHatUpdate(client, puffle, hat):
 
     careItems = yield client.dbpenguin.careItems.get()
     careItemsById = {i.id: i for i in careItems}
-
-    item = client['puffleHandler'].getPuffleItem(hat)
 
     if puffle is None or (item is None and hat != 0) or hat not in careItemsById:
         return
