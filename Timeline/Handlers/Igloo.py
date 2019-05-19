@@ -50,7 +50,7 @@ def handleBuyLocation(client, _id):
     if int(client['coins'] + 1) < location.cost:
         returnValue(client.send('e', 401))
 
-    location_db = IglooFurniture(penguin_id = client['id'], item = _id, type = 'l')
+    location_db = Asset(penguin_id = client['id'], item = _id, type = 'l')
     yield location_db.save()
 
     client['coins'] -= location.cost
