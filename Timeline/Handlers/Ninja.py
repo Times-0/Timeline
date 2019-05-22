@@ -69,7 +69,8 @@ def handleBuyPowerCard(client, data):
     cardsBought = list()
     availablePowerCards = [k for k in client.engine.cardCrumbs.cards if k.power > 0]
     cards = list(sample(availablePowerCards, 3))
-
+    
+    Coin(penguin_id=client['id'], transaction= -1500, comment="Bought [3] CJ Power Cards: {}".format(''.join(map(repr, cards))).save()
     client['coins'] -= 1500
     client.send('bpc', ','.join(map(str, map(int, cards))), client['coins'])
 
