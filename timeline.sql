@@ -322,9 +322,10 @@ CREATE TABLE IF NOT EXISTS `penguins` (
   `cover_highlight` int(11) DEFAULT '0',
   `cover_pattern` int(11) DEFAULT '0',
   `cover_icon` int(11) DEFAULT '0',
+  `agent` INT(1) NOT NULL DEFAULT '0',
+  `epf` VARCHAR(50) NOT NULL DEFAULT '0%0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `swid` (`swid`),
-  UNIQUE KEY `igloo` (`igloo`),
   UNIQUE KEY `username` (`username`)
 ) ;
 -- --------------------------------------------------------
