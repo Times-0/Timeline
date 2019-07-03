@@ -119,6 +119,7 @@ CREATE TABLE IF NOT EXISTS `epfcoms` (
   PRIMARY KEY (`id`)
 ) ;
 
+INSERT INTO `epfcoms` (`id`, `mascot`, `message`, `time`) VALUES (NULL, '1', 'Squad! welcome to the Elite Penguin Force. This is powered by Timeline.', CURRENT_TIMESTAMP);
 -- --------------------------------------------------------
 
 --
