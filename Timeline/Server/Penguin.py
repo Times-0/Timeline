@@ -93,6 +93,9 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
     def initialize(self):
         self.penguin.nickname = Nickname(self.dbpenguin.nickname, self.ref)
         self.penguin.swid = self.dbpenguin.swid
+        
+        #TODO: figure out why the hell EPF even exists.
+        self.penguin.epf = EPFAgent(self.dbpenguin.agent, str(self.dbpenguin.epf), self.ref)
 
         self.penguin.RefreshHandler = Refresh(self.ref)
 
