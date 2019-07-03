@@ -4,6 +4,12 @@ Timeline is built heavily on Twisted and is even-driven, most of the methods are
 
 **Timeline docs now live at** https://times-0.github.io/
 
+## EPF update
+After persistent request, the EPF with no real reason for it's existance is being revived. You asked it, so edit your database by executing the below SQL
+```sql
+ALTER TABLE `penguins` ADD `agent` INT(1) NOT NULL DEFAULT '0' AFTER `cover_icon`, ADD `epf` VARCHAR(50) NOT NULL DEFAULT '0%0' AFTER `agent`;
+```
+
 # AS2 + AS3 Cross-compatible Server
 **Timeline v7.4+** supports AS2+AS3 cross compatible server. What this means for you is that, you run a single server that can accept both AS2 and AS3 clients, both at the same time 
 
