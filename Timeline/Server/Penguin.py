@@ -29,6 +29,7 @@ import logging
 import time
 from math import ceil
 import weakref
+import datetime as dt
 
 class LR(LineReceiver, TimeoutMixin):
     def makeConnection(self, transport):
@@ -75,7 +76,7 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 
         # Some XT packets are sent before J#JS to make sure client is alive, just to make sure to ignore it ;)
         # ('category', 'handler', 0 or 1 : execute : don't execute)
-        self.ignorableXTPackets = [('s', 'j#js', 1), ('s', 'p#getdigcooldown', 0), ('s', 'u#h', 0), ('s', 'f#epfgf', 0)]
+        self.ignorableXTPackets = [('s', 'j#js', 1), ('s', 'p#getdigcooldown', 0), ('s', 'u#h', 0), ('s', 'f#epfgf', 0), ('l', 'login', 1)]
 
         self.penguin = PenguinObject()
         self.penguin.name = None
@@ -93,7 +94,7 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
     def initialize(self):
         self.penguin.nickname = Nickname(self.dbpenguin.nickname, self.ref)
         self.penguin.swid = self.dbpenguin.swid
-        
+
         #TODO: figure out why the hell EPF even exists.
         self.penguin.epf = EPFAgent(self.dbpenguin.agent, str(self.dbpenguin.epf), self.ref)
 
@@ -118,6 +119,23 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 
     def checkPassword(self, password):
         return self.CryptoHandler.loginHash() == password
+
+    def activationStatus(self):
+        activation_data = self.dbpenguin.hash
+        activation_pending = ';' in activation_data
+
+        if not activation_pending:
+            return None
+
+        expires = self.dbpenguin.create + dt.timedelta(days=7)
+        expired = dt.datetime.now() > expires
+        hours_left = ((expires - dt.datetime.now()).total_seconds())/3600
+
+        if expired:
+            self.send('loginMustActivate', 0, None, None, self.dbpenguin.email)
+            self.disconnect()
+
+        return '{}|7|{}'.format(hours_left, hours_left)
 
     @inlineCallbacks
     def banned(self):
@@ -317,7 +335,8 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
                 yield self.engine.redis.server.srem("users:{}".format(self.engine.id), self['swid'])
 
             yield GeneralEvent('onClientDisconnect', self.ref)
-            del self.penguin.RefreshHandler
+            if self['RefreshHandler'] is not None:
+                del self.penguin.RefreshHandler
 
         yield self.engine.redis.server.delete("online:{}".format(self['id']))
 
