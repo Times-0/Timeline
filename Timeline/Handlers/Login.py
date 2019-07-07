@@ -95,8 +95,6 @@ def HandleCrossLogin(client, user, passd):
     client.Protocol = AS2_PROTOCOL # test as2
     client.CryptoHandler.salt = "Y(02.>'H}t\":E1" # test as2
 
-    print passd, client['password'], client.CryptoHandler.loginHash()
-
     if not client.checkPassword(passd):
         # AS3 protocol, because AS2 Failed
         client.Protocol = AS3_PROTOCOL
@@ -185,7 +183,12 @@ def HandlePrimaryPenguinLogin(client, user, passd):
         player_data = "{}|{}|{}|{}|NULL|{}|2".format(client.dbpenguin.id, client.dbpenguin.swid, client.dbpenguin.nickname, client.CryptoHandler.bcrypt(key), language)
         email = client.dbpenguin.email[0] + '***@' + client.dbpenguin.email.split('@')[1]
 
-        client.send('l', player_data, confh, fkey, world, email)
+        preactivate_data = client.activationStatus()
+
+        login_data = [player_data, confh, fkey, world, email]
+        login_data.append(preactivate_data) if preactivate_data is not None else None
+
+        client.send('l', *login_data)
 
     elif client.Protocol == AS2_PROTOCOL:
         friendsDB = yield Friend.find(where = ['penguin_id = ?', client.dbpenguin.swid])
