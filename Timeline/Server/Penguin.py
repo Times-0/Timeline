@@ -121,7 +121,7 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
         return self.CryptoHandler.loginHash() == password
 
     def activationStatus(self):
-        activation_data = self.dbpenguin.hash
+        activation_data = self.dbpenguin.hash or ''
         activation_pending = ';' in activation_data
 
         if not activation_pending:
