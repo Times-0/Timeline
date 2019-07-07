@@ -4,6 +4,9 @@ Timeline is built heavily on Twisted and is even-driven, most of the methods are
 
 **Timeline docs now live at** https://times-0.github.io/
 
+# Mandatory account activation
+Timeline v7.5+ makes it mandatory to activate your account. New registered penguin get a trial period of **7 days**, within which the user **must activate** their account using the provided **email**. If not, they won't be able to login after 7 days of register, unless account activated (unlike Disney' policy of deleting your account instead)
+
 ## EPF update
 After persistent request, the EPF with no real reason for it's existance is being revived. You asked it, so edit your database by executing the below SQL
 ```sql
