@@ -114,7 +114,9 @@ print \
     > AS3 + AS2 CPPS Emulator. Written in Python
     > Developer : Dote
     > Version   : 7.4 production stable (AS2 + AS3) [Cross-compatible]
-    > Updates   : [+] AS2 + AS3 Cross Compatibility on single server
+    > Updates   : [+] Pre activation checks [Activation mandatory now]
+                      
+                  [&] AS2 + AS3 Cross Compatibility on single server
                       * You can now create a server that accepts both AS2,
                         and AS3 Client both at the same time :~)
                         No separate AS2 and AS3 servers anymore!!    
