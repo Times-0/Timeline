@@ -71,21 +71,27 @@ class RefreshHandler(object):
         for friend in friendRemoved:
             self.penguin.send('frf', friend.friend)
 
-        for friend in originalFriends:
+        for friend in self.cache.friends:
             friendObj = (yield Penguin.find(where=['swid = ?', friend.friend], limit=1))
             if friendObj is None:
                 friend.delete()
                 continue
 
-            friendOnline = (yield self.penguin.engine.redis.server.hmget("online:{}".format(int(friendObj.id)),
-                                                                         ['place_name']))
+            friendOnline, roomId, worldId = (yield self.penguin.engine.redis.server.hmget("online:{}".format(int(friendObj.id)),
+                                                                         ['place_name', 'place', 'world']))
             if not self.penguin['moderator'] and friendObj.moderator == 2:
                 friendOnline = None
 
-            friendOnline = friendOnline[0] if friendOnline is not None \
-                else 'N/A'
 
-            self.penguin.send('fo', '|'.join(map(str, [friend.friend, int(friendOnline != 'N/A'), friendOnline, 0])))
+            friendOnline = friendOnline if friendOnline is not None \
+                else 'N/A'
+            friend.onlinePresence = {
+                'online_status': friendOnline != 'N/A',
+                'roomId': roomId,
+                'worldId': worldId
+            }
+
+            self.penguin.send('fo', '|'.join(map(str, [friend.friend, (roomId or 0), friendOnline, friendObj.id, (worldId or -1)])))
 
     @inlineCallbacks
     def handleRequests(self, newRequests, removedRequests, originalRequests):

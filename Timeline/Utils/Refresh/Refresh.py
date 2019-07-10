@@ -116,6 +116,7 @@ class Refresh(RefreshHandler, Functions):
                 continue
 
             friend.friend_id = friendObj.id
+            friend.onlinePresence = {'online_status': False}
             data = [int(friendObj.id), friendObj.nickname, friendObj.swid, friend.bff]
             friends_data.append('|'.join(map(str, data)))
 

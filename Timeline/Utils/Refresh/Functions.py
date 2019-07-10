@@ -105,7 +105,7 @@ class Functions(object):
         iglooRoom._id = int(igloo.id)
 
         returnValue(iglooRoom)
-        
+
     def setupCJMats(self):
         CardJitsuWaddleId = 200
         currentIgloo = self.getIgloos()[self.penguin['currentIgloo'].id]
