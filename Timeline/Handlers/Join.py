@@ -10,8 +10,35 @@ from collections import deque
 import logging
 from time import time, sleep
 import random
+import json
 
 logger = logging.getLogger(TIMELINE_LOGGER)
+
+
+@PacketEventHandler.onXT('s', 'j#gji', WORLD_SERVER, p_r=False)
+def handleGetJumpInfo(client, data):
+    JumpInfo = {}
+    online_friends = [i for i in client['data'].friends if i.onlinePresence['online_status']]
+    for i in online_friends:
+        data = i.onlinePresence
+        if data['worldId'] not in JumpInfo:
+            JumpInfo[data['worldId']] = {'r':[], 'o':[], 'c':[], 'w':data['worldId']}
+
+        if data['roomId'] not in JumpInfo[data['worldId']]['r']:
+            JumpInfo[data['worldId']]['r'].append(data['roomId'])
+
+        JumpInfo[data['worldId']]['o'].append(i.penguin_id + 1000)
+
+    offline_friends = set(client['data'].friends) - set(online_friends)
+    if client.engine.id not in JumpInfo:
+        JumpInfo[client.engine.id] = {'r':[], 'o':[], 'c':[], 'w':client.engine.id}
+
+    for i in offline_friends:
+        JumpInfo[client.engine.id]['c'].append(i.penguin_id + 1000)
+
+    Jump_data = json.dumps(JumpInfo.values())
+    client.send('gji', Jump_data)
+
 
 
 '''
@@ -43,7 +70,7 @@ def handleJoinServer(client, _id, passd, lang):
 
     # User logged in!
     yield client.engine.redis.server.hincrby('server:{}'.format(client.engine.id), 'population', 1)
-    yield client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'joined' : 1})
+    yield client.engine.redis.server.hmset("online:{}".format(client.penguin.id), {'joined' : 1, 'world': client.engine.id})
     yield client.engine.redis.server.sadd("users:{}".format(client.engine.id), client['swid'])
 
     client.initialize()

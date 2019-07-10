@@ -287,7 +287,7 @@ def handleUpdateIglooSlotSummary(client, _id, summary):
             locked = 1
 
         if not igloo_id in igloos:
-            return
+            continue
 
         igloo = igloos[igloo_id].igloo
         igloo.locked = int((igloo_id == _id) and locked)

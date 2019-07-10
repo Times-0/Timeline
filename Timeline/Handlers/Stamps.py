@@ -36,9 +36,9 @@ AS2 and AS3 Compatible
 @inlineCallbacks
 def handleGetPlayerStamps(client, _id):
     peng_stamps = (yield ((yield Penguin.find(_id))).stamps.get()) if _id != client['id'] else client['data'].stamps
-    stamps = [k.stamp for k in peng_stamps]
+    stamps = [str(k.stamp) for k in peng_stamps]
 
-    client.send('gps', _id, *stamps)
+    client.send('gps', _id, '|'.join(stamps))
 
 '''
 AS2 and AS3 Compatible

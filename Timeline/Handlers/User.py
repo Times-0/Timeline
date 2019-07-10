@@ -16,6 +16,17 @@ logger = logging.getLogger(TIMELINE_LOGGER)
 def handlePlayerSliding(client, slide):
     client['room'].send('followpath', client['id'], slide)
 
+@PacketEventHandler.onXT('s', 'u#pbn', WORLD_SERVER, p_r=False)
+@inlineCallbacks
+def handleGetPlayerByName(client, data):
+    name = str(data[2][0])
+    penguin = yield client.db_getPenguin('nickname = ?', name)
+    if penguin is None:
+        client.send('pbn', 0)
+    else:
+        client.send('pbn', penguin.swid, penguin.id, penguin.nickname)
+
+
 @PacketEventHandler.onXT('s', 'u#pbi', WORLD_SERVER)
 @inlineCallbacks
 def handleGetPlayerById(client, _id):
@@ -86,7 +97,7 @@ def handleGetPlayerBySWID(client, data):
     if penguin is None:
         returnValue(0)
 
-    client.send('pbs', penguin.username, penguin.id)
+    client.send('pbs', penguin.nickname, penguin.id)
 
 '''
 AS2 and AS3 Compatible

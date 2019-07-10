@@ -86,4 +86,3 @@ def handleGetCOM(client, data):
 	Messages = yield EPFCom.find(limit = 10, orderby = 'time DESC')
 
 	client.send('epfgm', 0, *map(str, Messages))
-
