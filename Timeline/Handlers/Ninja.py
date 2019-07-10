@@ -1,7 +1,7 @@
 from Timeline.Server.Constants import TIMELINE_LOGGER, LOGIN_SERVER, WORLD_SERVER
 from Timeline import Username, Password, Inventory
 from Timeline.Utils.Events import Event, PacketEventHandler, GeneralEvent
-from Timeline.Database.DB import Penguin, Ninja
+from Timeline.Database.DB import Penguin, Ninja, Coin
 
 from twisted.internet.defer import inlineCallbacks, returnValue
 
@@ -69,7 +69,7 @@ def handleBuyPowerCard(client, data):
     cardsBought = list()
     availablePowerCards = [k for k in client.engine.cardCrumbs.cards if k.power > 0]
     cards = list(sample(availablePowerCards, 3))
-    
+
     Coin(penguin_id = client['id'], transaction = -1500, comment = "Money spent on buying [3] CJ Power Card. Item: {}".format(','.join(map(repr, cards)))).save()
     
     client['coins'] -= 1500
