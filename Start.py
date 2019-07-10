@@ -113,8 +113,14 @@ print \
     ----------------------------------------------
     > AS3 + AS2 CPPS Emulator. Written in Python
     > Developer : Dote
-    > Version   : 7.4 production stable (AS2 + AS3) [Cross-compatible]
-    > Updates   : [+] Pre activation checks [Activation mandatory now]
+    > Version   : 7.6 production stable (AS2 + AS3) [Cross-compatible]
+    > Updates   : [+] Disney' Friends list + Friends Server Jumping
+                      * You need the Disney Friend extension utility
+                        (disney-friends.swf dependency) to bring list back to life
+                      * You need pre-existing Server Jumping utility (jumpline.swf)
+                        read below for further info on it, to use server jumping feature
+
+                  [+] Pre activation checks [Activation mandatory now]
                       
                   [&] AS2 + AS3 Cross Compatibility on single server
                       * You can now create a server that accepts both AS2,
@@ -141,14 +147,12 @@ print \
                         purpose.
 
                   [!] nx-cache : First time user login and first time tutorials
-                  [!] Activation expiry message
-                  [!] Dynamic AS2+AS3 Engine, supports both AS2 + AS3 clients at once.
                         ! Coming soon, Patience :~)
                         & Pinned intel
                   [-] Bugs and Glitches
     _______________________________________________
-    * Make sure to download the new version of Timeline-Signup (Register)
-    script, that supports the new `line` based database structure.
+    * Make sure to download the new Register (Register-CP)
+    script, with CP Styled register and activation.
     * Make sure to download the new `Avatar.py`, from Avatar branch, 
     so that your avatar supports the new `line` based database structure.
     """
