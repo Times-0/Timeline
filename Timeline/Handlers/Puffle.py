@@ -340,6 +340,9 @@ def handleAdopt(client, _type, name, sub_type, sendPuffleAdopt = True):
         PENDING[client['id']].remove(name)
         client.send('e', 999)
         returnValue(None)
+    
+    if client['coins'] < coins:
+        returnValue(client.send('e', 401))
 
     now = int(time())
     care = '{"food" : {now},"play" : {now},"bath" : {now}}'.replace('{now}', str(now))
