@@ -85,9 +85,8 @@ Timeline is a free, open-source project. You can always support this by funding 
   
 # Extras
 - [Timeflex Webserver](https://github.com/Times-0/TimeFlex) and a brand new [automated login system](https://times-0.github.io/member)
-- [Register for Timeline](https://github.com/Times-0/Register/) - Official Register/signup utility for Timeline. This comes in with, email verify tool builtin (both email checkup and account authentication).
-- [Friends list](https://github.com/Times-0/Friends) HTML-based original CP styled Friends list.
-- ~~[Timid](https://github.com/Times-0/Timid) - Automated AS3 CPPS Setup utility, which does the hard work of creating CPPS for you!~~
+- [Register for Timeline](https://github.com/Times-0/Register-cp/) - Official Register/signup utility for Timeline. This comes in with, email verify tool builtin (both email checkup and account authentication).
+- [Friends list](https://github.com/Times-0/Friends-cp) HTML-based original CP styled Friends list.
 
 You can use the following to add more features and customization to your CPPS:
   - [FindFour AI](https://github.com/Times-0/Timeline-FindFourAI/) - An intelligent, human like bot, with whom you can play FindFour matches with.
