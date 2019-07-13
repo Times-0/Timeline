@@ -113,6 +113,8 @@ class Membership(object):
         self.enum = int(self.mdays > 0)
         if self.mdays == 7:
             self.enum = 2
+           
+        self.mrem = (e - e.now()).days if self.enum else 0
 
     def __repr__(self):            
         return self.mdays
