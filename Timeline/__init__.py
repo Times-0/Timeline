@@ -105,27 +105,17 @@ class EPFAgent(object):
 
 class Membership(object):
 
-    def __new__(self, d, c):
-        x = time.time() < time.mktime(d.timetuple())
-        return super(Membership, self).__new__(self, x)
-
     def __init__(self, d, c):
-        self.d = time.mktime(d.timetuple())
-        self.c = c
+        self.e = m.expires
+        self.r = m.redeemed_on
 
-        self.rank = int(bool(self))
-        months = int(int(self) * 0.03285) * int(bool(self))
-        if months > 0:
-            if months > 24:
-                self.rank = 5
-            else:
-                self.rank = int(ceil(months / 6.0))
+        self.mdays = (e-r).days if self.e > self.e.now() else 0
+        self.enum = int(self.mdays > 0)
+        if self.mdays == 7:
+            self.enum = 2
 
-    def __repr__(self):
-        if time.time() > self.d:
-            return 0
-            
-        return int(ceil((self.d - time.time())/(60*60*24.0)))
+    def __repr__(self):            
+        return self.mdays
 
     def __str__(self):
         return str(self.__repr__())
