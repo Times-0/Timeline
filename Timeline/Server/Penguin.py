@@ -242,8 +242,8 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
             self['y'],				# Cached coordinates
             self['frame'],
 
-            self['member'].rank,    # Member/Player rank
-            int(self['member']),	# Membership days remaining
+            self['member'].enum,    # MemberEnum : 0 - non member, 1-member, 2-trial
+            int(self['member']),	# net membership days
 
             self['data'].avatar.avatar,			# avatar id
             None,
