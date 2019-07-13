@@ -129,7 +129,7 @@ class Penguin(PenguinDB, ExtensibleObject, LR):
 
         expires = self.dbpenguin.create + dt.timedelta(days=7)
         expired = dt.datetime.now() > expires
-        hours_left = ((expires - dt.datetime.now()).total_seconds())/3600
+        hours_left = ceil(((expires - dt.datetime.now()).total_seconds())/3600)
 
         if expired:
             self.send('loginMustActivate', 0, None, None, self.dbpenguin.email)
