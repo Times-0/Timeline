@@ -88,7 +88,7 @@ def handleJoinServer(client, _id, passd, lang):
 
     client.canRecvPacket = True # Start receiving XT Packets
 
-    member = int(client['member']) if int(client['member']) > 0 else 0
+    member = client['member'].mrem
     if client.Protocol == AS3_PROTOCOL:
         client.send('lp', client, client['coins'], 0, 1440, int(time() * 1000), client['age'], 0, int(client['age'])-1, member or '', '', client['cache'].playerWidget, client['cache'].mapCategory, client['cache'].igloo)
     elif client.Protocol == AS2_PROTOCOL:
