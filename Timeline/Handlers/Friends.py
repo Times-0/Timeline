@@ -138,8 +138,8 @@ AS2 and AS3 Compatible
 def handleRemoveFriend(client, data):
     swid = data[2][0]
 
-    friend = yield Friend.find(where=['penguin_swid = ? AND friend = ?', swid, client['swid']])
-    me = yield Friend.find(where=['penguin_swid = ? AND friend = ?', client['swid'], swid])
+    friend = yield Friend.find(where=['penguin_swid = ? AND friend = ?', swid, client['swid']], limit=1)
+    me = yield Friend.find(where=['penguin_swid = ? AND friend = ?', client['swid'], swid], limit=1)
 
     friend.delete() if friend is not None else 0
     me.delete() if me is not None else 0
