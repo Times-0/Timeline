@@ -105,15 +105,15 @@ class EPFAgent(object):
 
 class Membership(object):
 
-    def __init__(self, d, c):
-        self.e = m.expires
-        self.r = m.redeemed_on
+    def __init__(self, m, c):
+        e = m.expires
+        r = m.redeemed_on
 
-        self.mdays = (e-r).days if self.e > self.e.now() else 0
+        self.mdays = (e-r).days if e > e.now() else 0
         self.enum = int(self.mdays > 0)
         if self.mdays == 7:
             self.enum = 2
-           
+
         self.mrem = (e - e.now()).days if self.enum else 0
 
     def __repr__(self):            
