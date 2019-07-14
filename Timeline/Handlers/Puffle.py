@@ -341,7 +341,7 @@ def handleAdopt(client, _type, name, sub_type, sendPuffleAdopt = True):
         client.send('e', 999)
         returnValue(None)
     
-    if client['coins'] < coins:
+    if client['coins'] < cost:
         returnValue(client.send('e', 401))
 
     now = int(time())
