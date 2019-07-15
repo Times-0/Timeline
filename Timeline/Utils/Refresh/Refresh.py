@@ -182,7 +182,7 @@ class Refresh(RefreshHandler, Functions):
                            expires=Registry.getDBAPIClass("TimestampFromTicks")(trialExpiry),
                            comments='Redeemed 7-day auto free trial membership. - Timeline Server').save()
 
-        self.penguin.penguin.member = MembershipHandler(membership.expires, self.penguin)
+        self.penguin.penguin.member = MembershipHandler(membership, self.penguin)
         self.cache.avatar = yield database_penguin.avatar.get()
         if self.cache.avatar is None:
             self.cache.avatar = yield Avatar(penguin_id=self.penguin['id']).save()
