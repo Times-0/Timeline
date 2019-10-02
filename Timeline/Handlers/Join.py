@@ -95,7 +95,7 @@ def handleJoinServer(client, _id, passd, lang):
         # #user_str%coins%issafe%egg%time%age%banned%minplay%memdays
         client.send('lp', client, client['coins'], 0, 1440, int(time() * 1000), client['age'], 0, int(client['age'])/60, member, 0)
     
-    client.engine.roomHandler.joinRoom(client, 'dojo', 'name') # TODO Check for max-users limit
+    client.engine.roomHandler.joinRoom(client, 'town', 'name') # TODO Check for max-users limit
 
 
 @GeneralEvent.on('onClientDisconnect')
