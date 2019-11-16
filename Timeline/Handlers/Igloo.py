@@ -327,8 +327,13 @@ def handleGetOpenIgloos(client, data):
         if (not client['moderator'] and penguin is None) or iglooDB is None:
             continue
 
+        if penguin is None:
+        	nickname = (yield Penguin.find(where=['id=?', owner], limit=1)).nickname
+        else:
+        	nickname = penguin['nickname']
+
         iglooLikes = yield iglooDB.get_likes_count()
-        open_igloos.append('|'.join(map(str, [int(penguin['id']), penguin['nickname'], iglooLikes, len(igloo), 0])))
+        open_igloos.append('|'.join(map(str, [owner, nickname, iglooLikes, len(igloo), 0])))
 
     client.send('gr', myLikes, myPopl, *open_igloos)
 
