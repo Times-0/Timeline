@@ -98,7 +98,7 @@ DROP TABLE IF EXISTS `currencies`;
 CREATE TABLE IF NOT EXISTS `currencies` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `penguin_id` int(11) DEFAULT NULL,
-  `GOLDEN_NUGGETS` int(11) NOT NULL,
+  `GOLDEN_NUGGETS` int(11) DEFAULT 0,
   `quest` text NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `penguin` (`penguin_id`)
