@@ -162,7 +162,8 @@ def setupDatabase():
     
     time.sleep(1)
     logger.info("Commiting to MySQL")
-    
+    # bitches stop irking me, this procedure is done once for all
+    '''
     logger.info('About to start import old-db set to new one...')
 
     PROCEDURES = ['IMPORT_INVENTORY_FROM_CP_STRUCT' , 'IMPORT_PENGUIN_FROM_CP_STRUCT', 'IMPORT_ASSETS_FROM_CP_STRUCT',
@@ -236,6 +237,7 @@ def setupDatabase():
     Start_PY.write(''.join(Start_RAW))
 
     Start_PY.close()
+    '''
     logger.info("Done :D")
 
     logger.info("All done, all clear, all set!")
