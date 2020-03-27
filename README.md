@@ -62,7 +62,7 @@ For detailed information, [visit here](https://aureus.pw/topic/1619-timeline-sta
 Visit the official test server, where you can see, test and try all features of current version of Timeline, in real time: https://timeline.valid22.pw
 
 # Contribution
-Timeline is a free, open-source project. You can always support this by funding through [PayPal](https://www.paypal.me/valid22).
+Timeline is a free, open-source project. 
 
 # Requirements
 * Software:
