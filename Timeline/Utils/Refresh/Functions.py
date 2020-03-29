@@ -2,6 +2,7 @@ from Timeline.Server.Constants import TIMELINE_LOGGER
 from Timeline.Utils.Events import Event
 from Timeline.Utils.Events import GeneralEvent
 from Timeline.Server.Room import Igloo as IglooRoom
+from Timeline.Handlers.Games.CardJitsu import CJMat
 from Timeline.Database.DB import Igloo, Penguin, Mail, Coin
 
 from twisted.internet.defer import inlineCallbacks, returnValue, Deferred
