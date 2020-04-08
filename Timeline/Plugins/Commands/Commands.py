@@ -72,7 +72,6 @@ class Commands(IPlugin):
 
         if command in __commands__:
             client.penguin.muted = True
-            client.penguin.muted_for_command = True if client['muted_for_command'] is None \
-                else client['muted_for_command']
+            client.penguin.muted_for_command = client['muted_for_command'] is not True
             GeneralEvent('command={}'.format(command), client, params)
             GeneralEvent('command[{}]={}'.format(client.Protocol, command), client, params)
