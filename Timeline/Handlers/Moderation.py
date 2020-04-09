@@ -55,6 +55,7 @@ def GetPenguin(engine, client, identify = 'id'):
 def MutePlayerCommand(client, reason):
     client.engine.log('info', "Penguin %suted: %s", "Un-m" if client['mutes'] else 'M', reason)
     client.penguin.muted = not client['muted']
+    client.penguin.muted_for_command = False if client['muted'] else None
 
     client.send('moderatormessage', 2)
 
