@@ -84,9 +84,10 @@ Timeline is a free, open-source project.
   - mysql-python, Ref: [Installing MySQL-Python](#installing-mysql-python-mysqldb)
   
 # Extras
-- [Timeflex Webserver](https://github.com/Times-0/TimeFlex) and a brand new [automated login system](https://times-0.github.io/member)
+- [Websocket Extension - Timeline.sock](https://github.com/Times-0/Timeline.sock) - A simple mixin which makes timeline compatible with Websocket connections.
 - [Register for Timeline](https://github.com/Times-0/Register-cp/) - Official Register/signup utility for Timeline. This comes in with, email verify tool builtin (both email checkup and account authentication).
 - [Friends list](https://github.com/Times-0/Friends-cp) HTML-based original CP styled Friends list.
+- [Timeflex Webserver](https://github.com/Times-0/TimeFlex) and a brand new [automated login system](https://times-0.github.io/member)
 
 You can use the following to add more features and customization to your CPPS:
   - [FindFour AI](https://github.com/Times-0/Timeline-FindFourAI/) - An intelligent, human like bot, with whom you can play FindFour matches with.
