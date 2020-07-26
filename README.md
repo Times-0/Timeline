@@ -1,6 +1,6 @@
 # Timeline
 AS2 & AS3 CPPS Emulator, written in Python.
-Timeline is built heavily on Twisted and is even-driven, most of the methods are Deferred too!
+Timeline is built heavily on Twisted and is even-driven.
 
 **Timeline docs now live at** https://times-0.github.io/
 
