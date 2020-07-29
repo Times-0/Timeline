@@ -310,7 +310,7 @@ CREATE TABLE IF NOT EXISTS `penguins` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(12) NOT NULL,
   `password` text NOT NULL,
-  `swid` char(38) NOT NULL,
+  `swid` char(38) NULL,
   `nickname` varchar(20) NOT NULL,
   `email` varchar(50) NOT NULL,
   `hash` text,
