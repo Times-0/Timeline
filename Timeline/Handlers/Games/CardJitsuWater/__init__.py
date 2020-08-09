@@ -70,7 +70,7 @@ class WaterRow(object):
 
 	def generate_cells(self):
 		# id => row_col
-		self.cells = [WaterCell(int("{}{}".format(self.index, i)), randint(0, 3) if not self.force_empty_init else WaterCell.ELEMENT_EMPTY, randint(0, WaterCell.ELEMENT_VALUE_MAX/2)) for i in range(self.n_col)]
+		self.cells = [WaterCell(int("{}{}".format(self.index, i)), randint(0, 2) if not self.force_empty_init else WaterCell.ELEMENT_EMPTY, randint(0, WaterCell.ELEMENT_VALUE_MAX/2)) for i in range(self.n_col)]
 
 	def __str__(self):
 		return ",".join(map(str, self.cells))
@@ -172,9 +172,7 @@ class CardJitsuGame(Multiplayer):
 		self.GameCols  = 3 + self.noPlaying  # 5 + (n - 2)
 
 		self.initiateGameVector()
-		#self.initiatePlayerPosition()
 		self.initiatePlayerCards()
-		self.initiateVelocity()
 
 		self.boardReadyTickHandler = task.LoopingCall(self.initiateGameStart)
 		self.boardReadyTick = 60
@@ -199,20 +197,23 @@ class CardJitsuGame(Multiplayer):
 				self.gameOver()
 
 	def initiateGameVector(self):
-		self.GameBoard = []
+		self.GameBoard = deque()
+		self.RowCount = 0
+
 		[self.generateRow(empty=True) for i in range(2)]
-		[self.generateRow() for i in range(7)]
+		[self.generateRow() for i in range(4)]
 
-		[self.getCell(7, i*2).penguinJump(self.Playing[i]) for i in range(self.noPlaying)]
-
+		self.initiateVelocity()
 		self.send_zm("bi", self.GameCols, self.serializeBoard())
+
+		[self.getCell(1, i*2).penguinJump(self.Playing[i]) for i in range(self.noPlaying)]
 
 	def initiatePlayerPosition(self):
 		pi_data = []
 		available_pos = range(self.GameCols)
 		for p in self.Playing:
 			cellId = p['water_cell'].id
-			row, col = cellId/10, cellId%10
+			row, col = 4, cellId%10
 
 			pi_data.append("|".join([str(p['game_index']), p['nickname'], str(p['data'].avatar.color), "{},{}".format(col, row)]))
 
@@ -227,6 +228,17 @@ class CardJitsuGame(Multiplayer):
 
 			self.send_zm_client(peng, "ci", '|'.join(map(str, self.GameCards[index])))
 
+	def velocityUpdateVector(self, vel, f=50):		
+		vel = np.array(vel)
+
+		a = np.linalg.norm(vel) / 1000.0
+		b = 1000.0 / f
+		vel *= a / vel.max()
+		b = np.linalg.norm(vel) / b
+		vel *= b / vel.max()
+
+		return vel
+
 	def setVelocity(self):
 		# slope = y/x = 1/2
 		# multiplier = 0.5
@@ -234,14 +246,45 @@ class CardJitsuGame(Multiplayer):
 		self.GameVelocity += self.GameVelocityDelta
 		VelocityVector = (self.GameVelocity / self.GameVelocitySlope, self.GameVelocity)
 
+		'''
+		R: y = 0.5x + 186
+		T: y = -2x + 1226
+		int: (416, 394) => R(9)
+
+		time = (Y - y) / updateF  * 0.05
+		'''
+		updateFreq = self.velocityUpdateVector(VelocityVector)[1]
+		posDelta = 394 - self.GameBoardPosition
+
+		if posDelta <= 0:
+			self.cycleRow()
+			self.GameBoardPosition = 278
+
+		self.GameBoardPosition += updateFreq * 100
+
+
 		self.send_zm("bv", *VelocityVector)
 		self.send_zm("cv", *self.CardVelocity)
 
+	def cycleRow(self):
+		dropped, drop_row = self.generateRow()
+		if dropped:
+			players_in_row = [drop_row[i].penguin for i in range(self.GameCols) if drop_row[i].penguin is not None]
+
+			self.send_zm(":".join(map(lambda p: 'pk&{}'.format(p['game_index']), players_in_row)))
+			[self.gameOver(p) for p in players_in_row]
+
+		self.send_zm("br", self.GameBoard[-1])
+
+
 	def initiateVelocity(self):
 		self.GameVelocityDelta = 200 # update y component
-		self.GameVelocity = 3000 - self.GameVelocityDelta # initial velocity
+		self.GameVelocity = 6000 - self.GameVelocityDelta # initial velocity
 		self.GameVelocitySlope = 0.5 # dy / dx
 		self.CardVelocity = np.array((0, 1000))
+
+		self.GameBoardPosition = 278 # R(8)
+		self.GameBoardRowDestroyTime = -1
 
 		self.VelocityLoop = task.LoopingCall(self.setVelocity)
 
@@ -276,12 +319,15 @@ class CardJitsuGame(Multiplayer):
 		return '|'.join(map(str, self.GameBoard))
 
 	def generateRow(self, empty = False):
-		index = min(7, len(self.GameBoard))
-		row = WaterRow(self.GameCols, index, is_empty = empty)
+		self.RowCount += 1
+		row = WaterRow(self.GameCols, self.RowCount, is_empty = empty)
+
+		if len(self.GameBoard) > self.MAX_BOARD_ROWS:
+			return True, self.GameBoard.popleft()
 
 		self.GameBoard.append(row)
-		if len(self.GameBoard) > self.MAX_BOARD_ROWS:
-			self.GameBoard.pop(0)
+
+		return False, None
 
 	def updateGame(self):
 		uzString = list()
