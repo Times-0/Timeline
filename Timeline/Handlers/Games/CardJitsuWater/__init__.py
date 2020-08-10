@@ -512,7 +512,10 @@ class CardJitsuGame(Multiplayer):
 		return '{}%{}'.format(CJ_MATS[self.waddle], len([k for k in self.Playing if k is not None]))
 
 	def onRemove(self, client):
-		client.penguin.game_board_ready = client.penguin.game_index = client.penguin.game = client.penguin.room = None
+		if client['water_cell'] is not None:
+			client['water_cell'].penguin = None
+            
+		client.penguin.water_cell = client.penguin.game_board_ready = client.penguin.game_index = client.penguin.game = client.penguin.room = None
 		client.penguin.waddling = client.penguin.playing = False
 
 		self.gameOver(client)
