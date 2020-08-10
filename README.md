@@ -173,6 +173,7 @@ Timeline is almost complete, covering support for all features present in native
 - Card Jitsu v/s Sensei (Single Player) \[AS3] *todo as2*
 - Card Jitsu Fire (Multiplayer-Waddle)  \[AS3] *todo as2*
 - Card Jitsu Fire v/s Sensei           \[AS3] *todo as2*
+- Card Jitsu Water (Multiplayer-Waddle)  \[AS3] *todo as2*
 
 # Support
 If you have any issue, found any bug or error or issue, or want to suggest some improvemnt, you are free to open an issue or request a pull request.
