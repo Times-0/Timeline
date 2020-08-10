@@ -102,8 +102,7 @@ def LoadPlugins(module):
     loadPluginObjects()
 
 
-print \
-    """
+print """
      _______
     |__   __|
        | |  #   _ _     __  ||  #  __     __  py 
@@ -113,14 +112,16 @@ print \
     ----------------------------------------------
     > AS3 + AS2 CPPS Emulator. Written in Python
     > Developer : Dote
-    > Version   : 7.6 production stable (AS2 + AS3) [Cross-compatible]
-    > Updates   : [+] Disney' Friends list + Friends Server Jumping
+    > Version   : 7.7 production stable (AS2 + AS3) [Cross-compatible]
+    > Updates   : [+] CardJitsu Water and Water ninja progress
+
+                  [&] Disney' Friends list + Friends Server Jumping
                       * You need the Disney Friend extension utility
                         (disney-friends.swf dependency) to bring list back to life
                       * You need pre-existing Server Jumping utility (jumpline.swf)
                         read below for further info on it, to use server jumping feature
 
-                  [+] Pre activation checks [Activation mandatory now]
+                  [&] Pre activation checks [Activation mandatory now]
                       
                   [&] AS2 + AS3 Cross Compatibility on single server
                       * You can now create a server that accepts both AS2,
@@ -155,7 +156,7 @@ print \
     script, with CP Styled register and activation.
     * Make sure to download the new `Avatar.py`, from Avatar branch, 
     so that your avatar supports the new `line` based database structure.
-    """
+"""
 
 # Example of starting the logger!
 TimelineLogger = InitiateColorLogger()  # InitiateLogger()
