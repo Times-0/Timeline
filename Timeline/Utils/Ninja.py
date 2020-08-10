@@ -27,7 +27,7 @@ class NinjaHandler(object):
         self.wonMatchCount = 0
         self.progress = 0 # in percentage %
 
-        self.elementalWins = {'f' : {'won': 0, 'progress': 0}}
+        self.elementalWins = {'f' : {'won': 0, 'progress': 0}, 'w' : {'won': 0, 'progress': 0}}
 
         self.setup()
 
@@ -64,11 +64,14 @@ class NinjaHandler(object):
 
     def setElementalMatches(self):
         f_matches = self.ninja.fire_matches
-        if f_matches == None or f_matches == '':
-            return
+        if f_matches != None and f_matches != '':
+            self.elementalWins['f']['won'] = len(f_matches.split(','))
+            self.elementalWins['f']['progress'] = (self.elementalWins['f']['won'] * 100.0 / (self.nOfWins(self.ninja.fire + 1) if self.ninja.fire != 4 else self.elementalWins['f']['won'] / 90.0)) if self.ninja.fire < 5 else 100
 
-        self.elementalWins['f']['won'] = len(f_matches.split(','))
-        self.elementalWins['f']['progress'] = (self.elementalWins['f']['won'] * 100.0 / (self.nOfWins(self.ninja.fire + 1) if self.ninja.fire != 4 else self.elementalWins['f']['won'] / 90.0)) if self.ninja.fire < 5 else 100
+        w_matches = self.ninja.water_matches
+        if w_matches != None and f_matches != '':
+            self.elementalWins['w']['won'] = len(w_matches.split(','))
+            self.elementalWins['w']['progress'] = (self.elementalWins['w']['won'] * 100.0 / (self.nOfWins(self.ninja.water + 1) if self.ninja.water != 5 else self.elementalWins['w']['won'] / 90.0)) if self.ninja.water < 6 else 100
 
     def handleEarnedStamps(self, stampGroup = 38):
         stamps = map(int, self.penguin['recentStamps'])
@@ -100,6 +103,26 @@ class NinjaHandler(object):
             yield self.penguin.addItem(self.fire_items[self.ninja.fire], 'Increase Fire Rank')
 
         self.ninja.save()
+
+    def addWaterWin(self, noOfPlayer):
+        self.ninja.water_matches = "{},{}".format(self.ninja.water_matches, noOfPlayer)
+
+        self.elementalWins['w']['won'] += 1
+        self.elementalWins['w']['progress'] = (self.elementalWins['w']['won'] * 100.0 / (
+            self.nOfWins(self.ninja.water + 1) if self.ninja.water != 5 else self.elementalWins['w'][
+                                                                               'won'] / 90.0)) if self.ninja.water < 6 \
+            else 100
+
+        progress = False
+        if self.elementalWins['w']['progress'] > 99 and self.ninja.water < 5:
+            self.ninja.water = int(self.ninja.water) + 1
+            self.penguin.addItem(self.fire_items[self.ninja.water], 'Increase Fire Rank')
+            progress = True
+
+
+        self.ninja.save()
+
+        return progress, self.ninja.water
 
     def promoteToBlackBelt(self):
         if self.ninja.belt > 9:
