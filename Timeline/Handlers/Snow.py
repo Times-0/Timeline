@@ -10,13 +10,18 @@ import logging
 logger = logging.getLogger(TIMELINE_LOGGER)
 
 class SnowRoom(Game):
-    # Multiplayer!
-
     game = True
     waddle = None
 
+    @inlineCallbacks
+    def generate_cjs_loginKey(self, client):
+        key = (client.CryptoHandler.random(10) + "-" + client.CryptoHandler.random(10)).encode('hex')
+        
+        yield client.engine.redis.server.set("mp_session:{0}".format(client['swid']), key, 5*60) # authenticate for next 5 mins
+        client.send('mpsk', client.CryptoHandler.bcrypt(key), 'smart')
+
     def onAdd(self, client):
-        super(SnowRoom, self).onAdd(client)
+        self.generate_cjs_loginKey(client).addCallback(lambda *x: super(SnowRoom, self).onAdd(client))
 
 
 MULTIPLAYER_GAMES[996] = SnowRoom
