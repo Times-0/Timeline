@@ -203,7 +203,7 @@ class CardJitsuGame(Multiplayer):
 					cell_win = ((3 + cj_vaules[card.element] - (i.type+1)) % 3 - 1) if i.type != WaterCell.ELEMENT_EMPTY else -1
 					if cell_win < 1:
 						i.type = cell.type if i.type == WaterCell.ELEMENT_EMPTY else i.type
-						i.updateValue(value_del * (-1 if cell_win == -1 else 1))
+						i.updateValue(card.value * (-1 if cell_win == -1 else 1))
 
 				cells.insert(0, cell)
 				self.send_zm('pt', client['game_index'], '{}-{}'.format(cj_vaules[card.element]-1, cell.id), '|'.join(map(str, cells)))
