@@ -47,7 +47,7 @@ class WaterCell(object):
 		self.penguin.penguin.water_cell = self
 
 	def canJump(self):
-		return self.type == self.ELEMENT_EMPTY and self.penguin is None
+		return self.type != self.ELEMENT_OBSTACLE and self.penguin is None
 
 	def updateValue(self, dv):
 		self.value = max(0, min(self.value + dv, self.ELEMENT_VALUE_MAX))
