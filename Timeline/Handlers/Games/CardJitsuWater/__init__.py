@@ -477,18 +477,18 @@ class CardJitsuGame(Multiplayer):
 		return '|'.join(map(str, self.GameBoard))
 
 	def generateRow(self, empty = False):
+		self.RowCount += 1
+		row = WaterRow(self.GameCols, self.RowCount, is_empty = empty)
+
+		self.GameBoard.append(row)
+		self.RowsById[row.index] = row
+		
 		if len(self.GameBoard) > self.MAX_BOARD_ROWS:
 			pop_row = self.GameBoard.popleft()
 			if pop_row.index in self.RowsById:
 				del self.RowsById[pop_row.index]
 
 			return True, pop_row
-
-		self.RowCount += 1
-		row = WaterRow(self.GameCols, self.RowCount, is_empty = empty)
-
-		self.GameBoard.append(row)
-		self.RowsById[row.index] = row
 
 		return False, None
 
